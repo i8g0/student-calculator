@@ -338,57 +338,32 @@ function createCourseInputs(container, numCourses, type) {
     for (let i = 1; i <= numCourses; i++) {
         const courseItem = document.createElement('div');
         courseItem.className = 'course-item';
-        if (type === 'cumulative' || type === 'semester') {
-            courseItem.innerHTML = `
-                <div class="course-header">
-                    <span class="course-name">المادة ${i}</span>
+        courseItem.innerHTML = `
+            <div class="course-header">
+                <span class="course-name">المادة ${i}</span>
+            </div>
+            <div class="course-inputs">
+                <div class="form-group">
+                    <label>عدد الساعات</label>
+                    <input type="number" id="${type}-course-${i}-hours" min="1" max="10" step="1" required>
                 </div>
-                <div class="course-inputs">
-                    <div class="form-group">
-                        <label>عدد الساعات</label>
-                        <input type="number" id="${type}-course-${i}-hours" min="1" max="10" step="1" required>
-                    </div>
-                    <div class="form-group">
-                        <label>اختر التقدير</label>
-                        <select id="${type}-course-${i}-grade" required>
-                            <option value="">-- اختر التقدير --</option>
-                            <option value="A+">A+</option>
-                            <option value="A">A</option>
-                            <option value="B+">B+</option>
-                            <option value="B">B</option>
-                            <option value="C+">C+</option>
-                            <option value="C">C</option>
-                            <option value="D+">D+</option>
-                            <option value="D">D</option>
-                            <option value="F">F</option>
-                        </select>
-                    </div>
+                <div class="form-group">
+                    <label>اختر التقدير</label>
+                    <select id="${type}-course-${i}-grade" required>
+                        <option value="">-- اختر التقدير --</option>
+                        <option value="A+">A+</option>
+                        <option value="A">A</option>
+                        <option value="B+">B+</option>
+                        <option value="B">B</option>
+                        <option value="C+">C+</option>
+                        <option value="C">C</option>
+                        <option value="D+">D+</option>
+                        <option value="D">D</option>
+                        <option value="F">F</option>
+                    </select>
                 </div>
-            `;
-        } else {
-            courseItem.innerHTML = `
-                <div class="course-header">
-                    <span class="course-name">المادة ${i}</span>
-                    <span class="course-weight">3 ساعات</span>
-                </div>
-                <div class="course-inputs">
-                    <div class="form-group">
-                        <label for="${type}-course-${i}-name">
-                            <i class="fas fa-book"></i>
-                            اسم المادة
-                        </label>
-                        <input type="text" id="${type}-course-${i}-name" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="${type}-course-${i}-grade">
-                            <i class="fas fa-star"></i>
-                            الدرجة (من 5)
-                        </label>
-                        <input type="number" id="${type}-course-${i}-grade" min="0" max="5" step="0.01" required>
-                    </div>
-                </div>
-            `;
-        }
+            </div>
+        `;
         container.appendChild(courseItem);
     }
 }
@@ -701,7 +676,7 @@ function displayRateResult(result) {
                 <h4>نتيجة حساب الريت</h4>
             </div>
         </div>
-        <div class="result-value">${result.rate} <button class="pdf-btn" onclick="downloadResultPDF(this)"><i class="fas fa-file-pdf"></i></button></div>
+        <div class="result-value">${result.rate}</div>
     `;
     resultContainer.classList.add('show');
 }
@@ -718,7 +693,7 @@ function displayCumulativeResult(result) {
                 <p>المعدل الجديد بعد إضافة المواد</p>
             </div>
         </div>
-        <div class="result-value">${result.cumulativeGpa} <button class="pdf-btn" onclick="downloadResultPDF(this)"><i class="fas fa-file-pdf"></i></button></div>
+        <div class="result-value">${result.cumulativeGpa}</div>
         <div class="result-details">
             <div class="detail-item">
                 <div class="detail-label">المعدل السابق</div>
@@ -753,7 +728,7 @@ function displaySemesterResult(result) {
                 <p>معدل الفصل الحالي</p>
             </div>
         </div>
-        <div class="result-value">${result.semesterGpa} <button class="pdf-btn" onclick="downloadResultPDF(this)"><i class="fas fa-file-pdf"></i></button></div>
+        <div class="result-value">${result.semesterGpa}</div>
         <div class="result-details">
             <div class="detail-item">
                 <div class="detail-label">إجمالي الساعات</div>
@@ -780,7 +755,7 @@ function displayScienceCollegeResult(result) {
                 <p>المعدل النهائي للتخصيص</p>
             </div>
         </div>
-        <div class="result-value">${result.finalRate} <button class="pdf-btn" onclick="downloadResultPDF(this)"><i class="fas fa-file-pdf"></i></button></div>
+        <div class="result-value">${result.finalRate}</div>
         <div class="result-details">
             <div class="detail-item">
                 <div class="detail-label">المعدل التراكمي (50%)</div>
