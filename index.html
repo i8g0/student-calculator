@@ -1,113 +1,488 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>حاسبة الريت</title>
-  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حاسبة المعدل الجامعي | University GPA Calculator</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-  <div class="container">
-    <div class="header-controls">
-      <button class="toggle-button language-toggle animate__animated animate__pulse" onclick="toggleLanguage()">عربي</button>
-      <button class="toggle-button mode-toggle animate__animated animate__pulse" onclick="toggleMode()">داكن</button>
-    </div>
-    <div class="tabs">
-      <button class="tab-button animate__animated animate__fadeIn" onclick="openTab('original')">حاسبة الريت</button>
-      <button class="tab-button animate__animated animate__fadeIn" onclick="openTab('cumulative')">حساب المعدل التراكمي</button>
-      <button class="tab-button animate__animated animate__fadeIn" onclick="openTab('semester')">حساب المعدل الفصلي</button>
-    </div>
-
-    <!-- تبويب حاسبة الريت -->
-    <div id="original" class="tab-content">
-      <div class="section">
-        <h2 class="animate__animated animate__zoomIn">حاسبة الريت</h2>
-        <div class="input-group animate__animated animate__fadeIn">
-          <label>اختر التخصص</label>
-          <select id="major" onchange="updateCourses()">
-            <option value="">-- اختر التخصص --</option>
-            <option value="SE">هندسة البرمجيات</option>
-            <option value="CS">علوم الحاسوب</option>
-            <option value="IS">نظم المعلومات</option>
-            <option value="CE">هندسة الحاسوب</option>
-          </select>
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="loading-screen">
+        <div class="loading-content">
+            <div class="loading-logo">
+                <i class="fas fa-bolt"></i>
+            </div>
+            <div class="loading-spinner"></div>
+            <h3>حاسبة المعدل الجامعي</h3>
+            <p>جاري التحميل...</p>
         </div>
-        <div id="courses" class="animate__animated animate__fadeIn"></div>
-        <div class="input-group animate__animated animate__fadeIn">
-          <label>المعدل التراكمي (GPA)</label>
-          <input type="number" id="gpa" step="0.01" min="0" max="5" placeholder="أدخل المعدل">
-        </div>
-        <div class="input-group animate__animated animate__fadeIn">
-          <label>المعدل الإجمالي (SA)</label>
-          <input type="number" id="sa" step="0.01" min="0" max="5" placeholder="أدخل المعدل">
-        </div>
-        <div class="button-group">
-          <button class="animate__animated animate__pulse animate__infinite" onclick="calculateRate()">حساب الريت</button>
-          <button class="animate__animated animate__pulse animate__infinite" onclick="resetTab('original')">إعادة التعيين</button>
-        </div>
-        <div id="result" class="result hidden">الريت = <span id="rate">0.000</span></div>
-        <canvas id="rateChart" class="chart hidden"></canvas>
-      </div>
     </div>
 
-    <!-- تبويب حساب المعدل التراكمي -->
-    <div id="cumulative" class="tab-content">
-      <div class="section">
-        <h2 class="animate__animated animate__zoomIn">حساب المعدل التراكمي</h2>
-        <div class="input-group animate__animated animate__fadeIn">
-          <label>عدد الساعات السابقة</label>
-          <input type="number" id="prev-hours" step="1" min="0" placeholder="أدخل الساعات">
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <div class="brand-logo">
+                    <i class="fas fa-bolt"></i>
+                </div>
+                <div class="brand-text">
+                    <h1>حاسبة المعدل الجامعي</h1>
+                    <p>University GPA Calculator</p>
+                </div>
+            </div>
+            
+            <div class="nav-controls">
+                <button id="theme-toggle" class="control-btn" title="تبديل المظهر">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button id="menu-toggle" class="control-btn mobile-only" title="القائمة">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
         </div>
-        <div class="input-group animate__animated animate__fadeIn">
-          <label>المعدل السابق (من 5)</label>
-          <input type="number" id="prev-gpa" step="0.01" min="0" max="5" placeholder="أدخل المعدل">
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="mobile-menu">
+        <div class="mobile-menu-header">
+            <h3>القائمة الرئيسية</h3>
+            <button id="close-menu" class="close-btn">
+                <i class="fas fa-times"></i>
+            </button>
         </div>
-        <div class="input-group animate__animated animate__fadeIn">
-          <label>عدد المواد الجديدة (1-10)</label>
-          <input type="number" id="num-cumulative-courses" min="1" max="10" value="2" onchange="updateCumulativeCourses()">
+        <div class="mobile-menu-content">
+            <a href="#rate" class="menu-item">
+                <i class="fas fa-star"></i>
+                <span>حاسبة الريت</span>
+            </a>
+            <a href="#science-college" class="menu-item">
+                <i class="fas fa-flask"></i>
+                <span> كلية العلوم</span>
+            </a>
+            <a href="#cumulative" class="menu-item">
+                <i class="fas fa-chart-line"></i>
+                <span>المعدل التراكمي</span>
+            </a>
+            <a href="#semester" class="menu-item">
+                <i class="fas fa-graduation-cap"></i>
+                <span>المعدل الفصلي</span>
+            </a>
+            <a href="#analytics" class="menu-item">
+                <i class="fas fa-chart-pie"></i>
+                <span>التحليلات</span>
+            </a>
         </div>
-        <div id="cumulative-courses" class="animate__animated animate__fadeIn"></div>
-        <div class="button-group">
-          <button class="animate__animated animate__pulse animate__infinite" onclick="calculateCumulativeGPA()">حساب المعدل التراكمي</button>
-          <button class="animate__animated animate__pulse animate__infinite" onclick="resetTab('cumulative')">إعادة التعيين</button>
-        </div>
-        <div id="cumulative-result" class="result hidden">المعدل التراكمي = <span id="cumulative-gpa">0.000</span></div>
-        <canvas id="cumulativeChart" class="chart hidden"></canvas>
-      </div>
     </div>
 
-    <!-- تبويب حساب المعدل الفصلي -->
-    <div id="semester" class="tab-content">
-      <div class="section">
-        <h2 class="animate__animated animate__zoomIn">حساب المعدل الفصلي</h2>
-        <div class="input-group animate__animated animate__fadeIn">
-          <label>عدد المواد (1-10)</label>
-          <input type="number" id="num-semester-courses" min="1" max="10" value="2" onchange="updateSemesterCourses()">
-        </div>
-        <div id="semester-courses" class="animate__animated animate__fadeIn"></div>
-        <div class="button-group">
-          <button class="animate__animated animate__pulse animate__infinite" onclick="calculateSemesterGPA()">حساب المعدل الفصلي</button>
-          <button class="animate__animated animate__pulse animate__infinite" onclick="resetTab('semester')">إعادة التعيين</button>
-        </div>
-        <div id="semester-result" class="result hidden">المعدل الفصلي = <span id="semester-gpa">0.000</span></div>
-        <canvas id="semesterChart" class="chart hidden"></canvas>
-      </div>
-    </div>
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div id="particles-js"></div>
+            <div class="hero-container">
+                <div class="hero-visual">
+                    <div class="floating-cards-3d" style="position: relative; width: 320px; height: 270px; margin: 0 auto;">
+                        <div class="floating-card-3d neon-glow" style="position: absolute; top: 0; right: 0;">
+                            <i class="fas fa-star"></i>
+                            <span>الريت</span>
+                        </div>
+                        <div class="floating-card-3d neon-glow" style="position: absolute; top: 0; left: 0;">
+                            <i class="fas fa-bolt"></i>
+                            <span>التحليلات</span>
+                        </div>
+                        <div class="floating-card-3d neon-glow" style="position: absolute; bottom: 0; right: 0;">
+                            <i class="fas fa-flask"></i>
+                            <span>معدل كلية العلوم</span>
+                        </div>
+                        <div class="floating-card-3d neon-glow" style="position: absolute; bottom: 0; left: 0;">
+                            <i class="fas fa-chart-line"></i>
+                            <span>المعدل</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="hero-content">
+                    <h1 class="hero-title animated-gradient-text">حاسبة المعدل الجامعي</h1>
+                    <p class="hero-subtitle">أقوى وأجمل حاسبة ريت ومعدل جامعي مع مؤثرات بصرية مذهلة وواجهة عربية متطورة</p>
+                    <a href="#rate" class="cta-btn">
+                        <span>ابدأ الآن</span>
+                        <i class="fas fa-arrow-left"></i>
+                    </a>
+                </div>
+            </div>
+        </section>
 
-    <!-- قسم الملخص -->
-    <div id="summary" class="summary-section hidden">
-      <h2 class="animate__animated animate__zoomIn">الملخص</h2>
-      <div id="summary-content" class="summary-content">
-        <p>الريت: <span id="summary-rate">-</span></p>
-        <p>المعدل التراكمي: <span id="summary-cumulative">-</span></p>
-        <p>المعدل الفصلي: <span id="summary-semester">-</span></p>
-      </div>
-    </div>
-  </div>
-  <audio id="resultSound" src="https://cdn.pixabay.com/audio/2023/09/26/audio_3e3b2b2b2e.mp3"></audio>
-  <script src="script.js"></script>
+        <!-- Calculator Section -->
+        <section class="calculator-section">
+            <div class="container">
+                <!-- Tabs -->
+                <div class="tabs-container">
+                    <div class="tabs">
+                        <button class="tab-btn active" data-tab="rate">
+                            <i class="fas fa-star"></i>
+                            <span>حاسبة الريت</span>
+                        </button>
+                        <button class="tab-btn" data-tab="science-college">
+                            <i class="fas fa-flask"></i>
+                            <span>كلية العلوم</span>
+                        </button>
+                        <button class="tab-btn" data-tab="cumulative">
+                            <i class="fas fa-chart-line"></i>
+                            <span>المعدل التراكمي</span>
+                        </button>
+                        <button class="tab-btn" data-tab="semester">
+                            <i class="fas fa-graduation-cap"></i>
+                            <span>المعدل الفصلي</span>
+                        </button>
+                        <button class="tab-btn" data-tab="analytics">
+                            <i class="fas fa-chart-pie"></i>
+                            <span>التحليلات</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tab Contents -->
+                <div class="tab-contents">
+                    <!-- Rate Calculator -->
+                    <div id="rate" class="tab-content active">
+                        <div class="calculator-card">
+                            <div class="card-header">
+                                <div class="header-icon">
+                                    <i class="fas fa-star"></i>
+                                </div>
+                                <div class="header-content">
+                                    <h3>حاسبة الريت</h3>
+                                    <p>أداة متطورة لحساب معدلك الجامعي</p>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <form id="rate-form" class="calculator-form">
+                                    <div class="form-group">
+                                        <label for="major">
+                                            <i class="fas fa-graduation-cap"></i>
+                                            اختر التخصص
+                                        </label>
+                                        <select id="major" required>
+                                            <option value="">-- اختر التخصص --</option>
+                                            <option value="SE">هندسة البرمجيات</option>
+                                            <option value="CS">علوم الحاسوب</option>
+                                            <option value="IS">نظم المعلومات</option>
+                                            <option value="CE">هندسة الحاسوب</option>
+                                        </select>
+                                    </div>
+                                    <div id="rate-courses" class="courses-container"></div>
+                                    <div class="form-group">
+                                        <label for="rate-gpa">
+                                            <i class="fas fa-chart-bar"></i>
+                                            المعدل التراكمي (GPA)
+                                        </label>
+                                        <input type="number" id="rate-gpa" min="0" max="5" step="0.01" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="rate-sa">
+                                            <i class="fas fa-certificate"></i>
+                                            المعدل الإجمالي (SA)
+                                        </label>
+                                        <input type="number" id="rate-sa" min="0" max="5" step="0.01" required>
+                                    </div>
+                                    <button type="submit" class="submit-btn">
+                                        <i class="fas fa-calculator"></i>
+                                        <span>احسب الريت</span>
+                                    </button>
+                                </form>
+                                <div id="rate-result" class="result-container"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Science College Rate Calculator -->
+                    <div id="science-college" class="tab-content">
+                        <div class="calculator-card">
+                            <div class="card-header">
+                                <div class="header-icon">
+                                    <i class="fas fa-flask"></i>
+                                </div>
+                                <div class="header-content">
+                                    <h3> كلية العلوم</h3>
+                                    <p>احسب معدل تخصيصك لكلية العلوم</p>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <form id="science-college-form" class="calculator-form">
+                                    <div class="form-group">
+                                        <label for="sc-gpa">
+                                            <i class="fas fa-chart-bar"></i>
+                                            المعدل التراكمي (GPA) - 50%
+                                        </label>
+                                        <input type="number" id="sc-gpa" min="0" max="5" step="0.01" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="sc-weighted">
+                                            <i class="fas fa-balance-scale"></i>
+                                            الموزونة - 30%
+                                        </label>
+                                        <input type="number" id="sc-weighted" min="0" max="100" step="0.01" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="sc-physics">
+                                            <i class="fas fa-atom"></i>
+                                            درجة الفيزياء - 10%
+                                        </label>
+                                        <select id="sc-physics" required>
+                                            <option value="">-- اختر التقدير --</option>
+                                            <option value="A+">A+</option>
+                                            <option value="A">A</option>
+                                            <option value="B+">B+</option>
+                                            <option value="B">B</option>
+                                            <option value="C+">C+</option>
+                                            <option value="C">C</option>
+                                            <option value="D+">D+</option>
+                                            <option value="D">D</option>
+                                            <option value="F">F</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="sc-differential">
+                                            <i class="fas fa-infinity"></i>
+                                            درجة التفاضل - 5%
+                                        </label>
+                                        <select id="sc-differential" required>
+                                            <option value="">-- اختر التقدير --</option>
+                                            <option value="A+">A+</option>
+                                            <option value="A">A</option>
+                                            <option value="B+">B+</option>
+                                            <option value="B">B</option>
+                                            <option value="C+">C+</option>
+                                            <option value="C">C</option>
+                                            <option value="D+">D+</option>
+                                            <option value="D">D</option>
+                                            <option value="F">F</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="sc-integral">
+                                            <i class="fas fa-square-root-alt"></i>
+                                            درجة التكامل - 5%
+                                        </label>
+                                        <select id="sc-integral" required>
+                                            <option value="">-- اختر التقدير --</option>
+                                            <option value="A+">A+</option>
+                                            <option value="A">A</option>
+                                            <option value="B+">B+</option>
+                                            <option value="B">B</option>
+                                            <option value="C+">C+</option>
+                                            <option value="C">C</option>
+                                            <option value="D+">D+</option>
+                                            <option value="D">D</option>
+                                            <option value="F">F</option>
+                                        </select>
+                                    </div>
+                                    <button type="submit" class="submit-btn">
+                                        <i class="fas fa-calculator"></i>
+                                        <span>احسب معدل التخصيص</span>
+                                    </button>
+                                </form>
+                                <div id="science-college-result" class="result-container"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Cumulative GPA Calculator -->
+                    <div id="cumulative" class="tab-content">
+                        <div class="calculator-card">
+                            <div class="card-header">
+                                <div class="header-icon">
+                                    <i class="fas fa-chart-line"></i>
+                                </div>
+                                <div class="header-content">
+                                    <h3>حاسبة المعدل التراكمي</h3>
+                                    <p>احسب معدلك التراكمي مع المواد الجديدة</p>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <form id="cumulative-form" class="calculator-form">
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="prev-hours">
+                                                <i class="fas fa-clock"></i>
+                                                عدد الساعات السابقة
+                                            </label>
+                                            <input type="number" id="prev-hours" min="0" step="0.5" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="prev-gpa">
+                                                <i class="fas fa-chart-bar"></i>
+                                                المعدل السابق (من 5)
+                                            </label>
+                                            <input type="number" id="prev-gpa" min="0" max="5" step="0.01" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="cumulative-num">
+                                            <i class="fas fa-plus"></i>
+                                            عدد المواد الجديدة
+                                        </label>
+                                        <input type="number" id="cumulative-num" min="1" max="10" value="2" required>
+                                    </div>
+                                    <div id="cumulative-courses" class="courses-container"></div>
+                                    <button type="submit" class="submit-btn">
+                                        <i class="fas fa-calculator"></i>
+                                        <span>احسب المعدل التراكمي</span>
+                                    </button>
+                                </form>
+                                <div id="cumulative-result" class="result-container"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Semester GPA Calculator -->
+                    <div id="semester" class="tab-content">
+                        <div class="calculator-card">
+                            <div class="card-header">
+                                <div class="header-icon">
+                                    <i class="fas fa-graduation-cap"></i>
+                                </div>
+                                <div class="header-content">
+                                    <h3>حاسبة المعدل الفصلي</h3>
+                                    <p>احسب معدل الفصل الحالي</p>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <form id="semester-form" class="calculator-form">
+                                    <div class="form-group">
+                                        <label for="semester-num">
+                                            <i class="fas fa-list"></i>
+                                            عدد المواد في الفصل
+                                        </label>
+                                        <input type="number" id="semester-num" min="1" max="10" value="2" required>
+                                    </div>
+                                    <div id="semester-courses" class="courses-container"></div>
+                                    <button type="submit" class="submit-btn">
+                                        <i class="fas fa-calculator"></i>
+                                        <span>احسب المعدل الفصلي</span>
+                                    </button>
+                                </form>
+                                <div id="semester-result" class="result-container"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Analytics -->
+                    <div id="analytics" class="tab-content">
+                        <div class="analytics-container">
+                            <div class="analytics-card">
+                                <div class="card-header">
+                                    <div class="header-icon">
+                                        <i class="fas fa-chart-bar"></i>
+                                    </div>
+                                    <div class="header-content">
+                                        <h3>التحليلات</h3>
+                                        <p>توزيع تقديرات الريت (أبراج)</p>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="chart-container">
+                                        <canvas id="rate-bar-chart"></canvas>
+                                    </div>
+                                    <div class="analytics-summary">
+                                        <div class="summary-item">
+                                            <i class="fas fa-star"></i>
+                                            <div>
+                                                <h5>متوسط الريت</h5>
+                                                <span id="avg-rate">-</span>
+                                            </div>
+                                        </div>
+                                        <div class="summary-item">
+                                            <i class="fas fa-chart-line"></i>
+                                            <div>
+                                                <h5>متوسط المعدل الفصلي</h5>
+                                                <span id="avg-semester">-</span>
+                                            </div>
+                                        </div>
+                                        <div class="summary-item">
+                                            <i class="fas fa-chart-area"></i>
+                                            <div>
+                                                <h5>متوسط المعدل التراكمي</h5>
+                                                <span id="avg-gpa">-</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="features-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2>مميزات حاسبة المعدل الجامعي</h2>
+                    <p>اكتشف لماذا حاسبة المعدل الجامعي هي الأفضل</p>
+                </div>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-bolt"></i>
+                        </div>
+                        <h4>سرعة فائقة</h4>
+                        <p>حسابات دقيقة وفورية مع واجهة سريعة الاستجابة</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h4>دقة عالية</h4>
+                        <p>خوارزميات متطورة تضمن نتائج دقيقة 100%</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-mobile-alt"></i>
+                        </div>
+                        <h4>تصميم متجاوب</h4>
+                        <p>يعمل بشكل مثالي على جميع الأجهزة والشاشات</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <div class="brand-logo">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <div class="brand-text">
+                        <h3>حاسبة المعدل الجامعي</h3>
+                        <p>أداة متطورة لحساب معدلك الجامعي</p>
+                    </div>
+                </div>
+                <div class="footer-links">
+                    <a href="https://t.me/ii8g0" target="_blank" class="social-link">
+                        <i class="fab fa-telegram"></i>
+                        <span>تواصل معي</span>
+                    </a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 حاسبة المعدل الجامعي. جميع الحقوق محفوظة.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Toast Notifications -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Scripts -->
+    <script src="script.js"></script>
 </body>
-</html>
+</html> 
