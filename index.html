@@ -107,12 +107,12 @@
                 </div>
                 <div class="hero-content">
                     <h1 class="hero-title animated-gradient-text">حاسبة المعدل الجامعي</h1>
-                    <p class="hero-subtitle">أقوى وأجمل حاسبة ريت ومعدل جامعي مع مؤثرات بصرية مذهلة وواجهة عربية متطورة</p>
-                    <a href="#rate" class="cta-btn">
-                        <span>ابدأ الآن</span>
-                        <i class="fas fa-arrow-left"></i>
-                    </a>
+                    <p class="hero-subtitle">"أداة لحساب معدل تخصصيك والمعدل الجامعي بطريقة سهلة وواضحة..."</p>
                 </div>
+                <a href="#rate" class="cta-btn">
+                    <span>ابدأ الآن</span>
+                    <i class="fas fa-arrow-left"></i>
+                </a>
             </div>
         </section>
 
@@ -156,7 +156,7 @@
                                 </div>
                                 <div class="header-content">
                                     <h3>حاسبة الريت</h3>
-                                    <p>أداة متطورة لحساب معدلك الجامعي</p>
+                                    <p>أداة  لحساب  الريت لكلية الهندسة وعلوم الحاسب </p>
                                 </div>
                             </div>
                             <div class="card-body">
@@ -194,7 +194,11 @@
                                         <span>احسب الريت</span>
                                     </button>
                                 </form>
-                                <div id="rate-result" class="result-container"></div>
+                                <div id="rate-result" class="result-container">
+                                    <div class="result-value">
+                                        <button class="export-btn" onclick="exportResult(this)"><i class="fas fa-download"></i> تصدير/طباعة</button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -286,7 +290,11 @@
                                         <span>احسب معدل التخصيص</span>
                                     </button>
                                 </form>
-                                <div id="science-college-result" class="result-container"></div>
+                                <div id="science-college-result" class="result-container">
+                                    <div class="result-value">
+                                        <button class="export-btn" onclick="exportResult(this)"><i class="fas fa-download"></i> تصدير/طباعة</button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -334,7 +342,11 @@
                                         <span>احسب المعدل التراكمي</span>
                                     </button>
                                 </form>
-                                <div id="cumulative-result" class="result-container"></div>
+                                <div id="cumulative-result" class="result-container">
+                                    <div class="result-value">
+                                        <button class="export-btn" onclick="exportResult(this)"><i class="fas fa-download"></i> تصدير/طباعة</button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -366,7 +378,11 @@
                                         <span>احسب المعدل الفصلي</span>
                                     </button>
                                 </form>
-                                <div id="semester-result" class="result-container"></div>
+                                <div id="semester-result" class="result-container">
+                                    <div class="result-value">
+                                        <button class="export-btn" onclick="exportResult(this)"><i class="fas fa-download"></i> تصدير/طباعة</button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -381,7 +397,7 @@
                                     </div>
                                     <div class="header-content">
                                         <h3>التحليلات</h3>
-                                        <p>توزيع تقديرات الريت (أبراج)</p>
+                                        
                                     </div>
                                 </div>
                                 <div class="card-body">
@@ -392,21 +408,21 @@
                                         <div class="summary-item">
                                             <i class="fas fa-star"></i>
                                             <div>
-                                                <h5>متوسط الريت</h5>
+                                                <h5>الريت</h5>
                                                 <span id="avg-rate">-</span>
                                             </div>
                                         </div>
                                         <div class="summary-item">
                                             <i class="fas fa-chart-line"></i>
                                             <div>
-                                                <h5>متوسط المعدل الفصلي</h5>
+                                                <h5>المعدل الفصلي</h5>
                                                 <span id="avg-semester">-</span>
                                             </div>
                                         </div>
                                         <div class="summary-item">
                                             <i class="fas fa-chart-area"></i>
                                             <div>
-                                                <h5>متوسط المعدل التراكمي</h5>
+                                                <h5>المعدل التراكمي</h5>
                                                 <span id="avg-gpa">-</span>
                                             </div>
                                         </div>

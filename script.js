@@ -15,6 +15,9 @@ const closeMenu = document.getElementById('close-menu');
 const tabBtns = document.querySelectorAll('.tab-btn');
 const tabContents = document.querySelectorAll('.tab-content');
 const toastContainer = document.getElementById('toast-container');
+const themeSwitcher = document.getElementById('theme-switcher');
+const themes = ['theme-dark', 'theme-light', 'theme-colorful'];
+let currentThemeIdx = 0;
 
 // ===== INITIALIZATION =====
 document.addEventListener('DOMContentLoaded', function() {
@@ -82,6 +85,29 @@ function toggleTheme() {
     const newTheme = currentTheme === 'light' ? 'dark' : 'light';
     setTheme(newTheme);
     showToast(`تم تبديل المظهر إلى ${newTheme === 'dark' ? 'الوضع المظلم' : 'الوضع الفاتح'}`, 'success');
+}
+
+function applyTheme(idx) {
+    document.body.classList.remove(...themes);
+    document.body.classList.add(themes[idx]);
+    localStorage.setItem('theme', themes[idx]);
+}
+
+if (themeSwitcher) {
+    themeSwitcher.addEventListener('click', function() {
+        currentThemeIdx = (currentThemeIdx + 1) % themes.length;
+        applyTheme(currentThemeIdx);
+    });
+}
+
+// عند تحميل الصفحة، طبّق آخر ثيم محفوظ
+const savedTheme = localStorage.getItem('theme');
+if (savedTheme && themes.includes(savedTheme)) {
+    document.body.classList.add(savedTheme);
+    currentThemeIdx = themes.indexOf(savedTheme);
+} else {
+    document.body.classList.add('theme-dark');
+    currentThemeIdx = 0;
 }
 
 // ===== PARTICLES BACKGROUND =====
@@ -309,32 +335,60 @@ function initForms() {
 // ===== COURSE INPUTS CREATION =====
 function createCourseInputs(container, numCourses, type) {
     container.innerHTML = '';
-    
     for (let i = 1; i <= numCourses; i++) {
         const courseItem = document.createElement('div');
         courseItem.className = 'course-item';
-        courseItem.innerHTML = `
+        if (type === 'cumulative' || type === 'semester') {
+            courseItem.innerHTML = `
                 <div class="course-header">
-                <span class="course-name">المادة ${i}</span>
-                <span class="course-weight">${type === 'rate' ? '3' : '3'} ساعات</span>
+                    <span class="course-name">المادة ${i}</span>
                 </div>
                 <div class="course-inputs">
                     <div class="form-group">
-                    <label for="${type}-course-${i}-name">
-                        <i class="fas fa-book"></i>
-                        اسم المادة
-                        </label>
-                    <input type="text" id="${type}-course-${i}-name" required>
+                        <label>عدد الساعات</label>
+                        <input type="number" id="${type}-course-${i}-hours" min="1" max="10" step="1" required>
                     </div>
                     <div class="form-group">
-                    <label for="${type}-course-${i}-grade">
-                            <i class="fas fa-star"></i>
-                        الدرجة (من 5)
-                        </label>
-                    <input type="number" id="${type}-course-${i}-grade" min="0" max="5" step="0.01" required>
+                        <label>اختر التقدير</label>
+                        <select id="${type}-course-${i}-grade" required>
+                            <option value="">-- اختر التقدير --</option>
+                            <option value="A+">A+</option>
+                            <option value="A">A</option>
+                            <option value="B+">B+</option>
+                            <option value="B">B</option>
+                            <option value="C+">C+</option>
+                            <option value="C">C</option>
+                            <option value="D+">D+</option>
+                            <option value="D">D</option>
+                            <option value="F">F</option>
+                        </select>
+                    </div>
                 </div>
-            </div>
-        `;
+            `;
+        } else {
+            courseItem.innerHTML = `
+                <div class="course-header">
+                    <span class="course-name">المادة ${i}</span>
+                    <span class="course-weight">3 ساعات</span>
+                </div>
+                <div class="course-inputs">
+                    <div class="form-group">
+                        <label for="${type}-course-${i}-name">
+                            <i class="fas fa-book"></i>
+                            اسم المادة
+                        </label>
+                        <input type="text" id="${type}-course-${i}-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="${type}-course-${i}-grade">
+                            <i class="fas fa-star"></i>
+                            الدرجة (من 5)
+                        </label>
+                        <input type="number" id="${type}-course-${i}-grade" min="0" max="5" step="0.01" required>
+                    </div>
+                </div>
+            `;
+        }
         container.appendChild(courseItem);
     }
 }
@@ -439,42 +493,32 @@ function handleRateCalculation(e) {
         timestamp: new Date().toISOString()
     });
     showToast('تم حساب الريت بنجاح! 🎉', 'success');
+    updateAnalytics();
 }
 
 function handleCumulativeCalculation(e) {
     e.preventDefault();
-    
     const prevHours = parseFloat(document.getElementById('prev-hours').value);
     const prevGpa = parseFloat(document.getElementById('prev-gpa').value);
-    
     if (isNaN(prevHours) || isNaN(prevGpa)) {
         showToast('يرجى ملء جميع الحقول المطلوبة', 'error');
-            return;
-        }
-        
-    // Get course grades
+        return;
+    }
     const courseInputs = document.querySelectorAll('#cumulative-courses .course-item');
     const courses = [];
-    
     courseInputs.forEach((course, index) => {
-        const name = course.querySelector(`#cumulative-course-${index + 1}-name`).value;
-        const grade = parseFloat(course.querySelector(`#cumulative-course-${index + 1}-grade`).value);
-        
-        if (name && !isNaN(grade)) {
-            courses.push({ name, grade, hours: 3 });
+        const hours = parseFloat(course.querySelector(`#cumulative-course-${index + 1}-hours`).value);
+        const grade = gradeValues[course.querySelector(`#cumulative-course-${index + 1}-grade`).value];
+        if (!isNaN(hours) && grade !== undefined) {
+            courses.push({ hours, grade });
         }
     });
-    
     if (courses.length === 0) {
         showToast('يرجى إدخال بيانات المواد', 'error');
         return;
     }
-    
-    // Calculate cumulative GPA
     const result = calculateCumulativeGPA(prevHours, prevGpa, courses);
     displayCumulativeResult(result);
-    
-    // Save calculation
     saveCalculation({
         type: 'cumulative',
         prevHours,
@@ -483,44 +527,35 @@ function handleCumulativeCalculation(e) {
         result,
         timestamp: new Date().toISOString()
     });
-    
     showToast('تم حساب المعدل التراكمي بنجاح! 📊', 'success');
+    updateAnalytics();
 }
 
 function handleSemesterCalculation(e) {
     e.preventDefault();
-    
-    // Get course grades
     const courseInputs = document.querySelectorAll('#semester-courses .course-item');
     const courses = [];
-    
     courseInputs.forEach((course, index) => {
-        const name = course.querySelector(`#semester-course-${index + 1}-name`).value;
-        const grade = parseFloat(course.querySelector(`#semester-course-${index + 1}-grade`).value);
-        
-        if (name && !isNaN(grade)) {
-            courses.push({ name, grade, hours: 3 });
+        const hours = parseFloat(course.querySelector(`#semester-course-${index + 1}-hours`).value);
+        const grade = gradeValues[course.querySelector(`#semester-course-${index + 1}-grade`).value];
+        if (!isNaN(hours) && grade !== undefined) {
+            courses.push({ hours, grade });
         }
     });
-    
     if (courses.length === 0) {
         showToast('يرجى إدخال بيانات المواد', 'error');
         return;
     }
-    
-    // Calculate semester GPA
     const result = calculateSemesterGPA(courses);
     displaySemesterResult(result);
-    
-    // Save calculation
     saveCalculation({
         type: 'semester',
         courses,
         result,
         timestamp: new Date().toISOString()
     });
-    
     showToast('تم حساب المعدل الفصلي بنجاح! 🎓', 'success');
+    updateAnalytics();
 }
 
 function handleScienceCollegeCalculation(e) {
@@ -548,6 +583,7 @@ function handleScienceCollegeCalculation(e) {
         timestamp: new Date().toISOString()
     });
     showToast('تم حساب معدل تخصيص كلية العلوم بنجاح! 🧪', 'success');
+    updateAnalytics();
 }
 
 // ===== CALCULATION FUNCTIONS =====
@@ -665,7 +701,7 @@ function displayRateResult(result) {
                 <h4>نتيجة حساب الريت</h4>
             </div>
         </div>
-        <div class="result-value">${result.rate}</div>
+        <div class="result-value">${result.rate} <button class="pdf-btn" onclick="downloadResultPDF(this)"><i class="fas fa-file-pdf"></i></button></div>
     `;
     resultContainer.classList.add('show');
 }
@@ -682,7 +718,7 @@ function displayCumulativeResult(result) {
                 <p>المعدل الجديد بعد إضافة المواد</p>
             </div>
         </div>
-        <div class="result-value">${result.cumulativeGpa}</div>
+        <div class="result-value">${result.cumulativeGpa} <button class="pdf-btn" onclick="downloadResultPDF(this)"><i class="fas fa-file-pdf"></i></button></div>
         <div class="result-details">
             <div class="detail-item">
                 <div class="detail-label">المعدل السابق</div>
@@ -717,7 +753,7 @@ function displaySemesterResult(result) {
                 <p>معدل الفصل الحالي</p>
             </div>
         </div>
-        <div class="result-value">${result.semesterGpa}</div>
+        <div class="result-value">${result.semesterGpa} <button class="pdf-btn" onclick="downloadResultPDF(this)"><i class="fas fa-file-pdf"></i></button></div>
         <div class="result-details">
             <div class="detail-item">
                 <div class="detail-label">إجمالي الساعات</div>
@@ -744,7 +780,7 @@ function displayScienceCollegeResult(result) {
                 <p>المعدل النهائي للتخصيص</p>
             </div>
         </div>
-        <div class="result-value">${result.finalRate}</div>
+        <div class="result-value">${result.finalRate} <button class="pdf-btn" onclick="downloadResultPDF(this)"><i class="fas fa-file-pdf"></i></button></div>
         <div class="result-details">
             <div class="detail-item">
                 <div class="detail-label">المعدل التراكمي (50%)</div>
@@ -1101,21 +1137,61 @@ function initAnalyticsCharts() {
     rateBarChart = new Chart(barCtx, {
         type: 'bar',
         data: {
-            labels: ['متوسط الريت', 'متوسط الفصلي', 'متوسط التراكمي'],
+            labels: ['الريت', 'المعدل الفصلي', 'المعدل التراكمي'],
             datasets: [{
-                label: 'المتوسط',
+                label: '',
                 data: [avgRate, avgSemester, avgGpa],
-                backgroundColor: ['#1a73e8', '#34c0eb', '#ffb300'],
-                borderColor: ['#1557b0', '#2ba8d1', '#e6a700'],
-                borderWidth: 1
+                backgroundColor: [
+                    '#1976d2', // أزرق
+                    '#7c4dff', // بنفسجي
+                    '#ffb300'  // برتقالي
+                ],
+                borderRadius: 10,
+                barPercentage: 0.45,
+                categoryPercentage: 0.6,
+                borderSkipped: false,
+                // ظل خفيف للأعمدة (عن طريق borderColor و borderWidth)
+                borderColor: 'rgba(30,30,60,0.18)',
+                borderWidth: 3
             }]
         },
         options: {
             responsive: true,
-            plugins: { legend: { display: false } },
-            animation: { duration: 700 },
-            scales: { y: { beginAtZero: true, max: 5, stepSize: 1 } }
-        }
+            plugins: {
+                legend: { display: false },
+                datalabels: {
+                    anchor: 'end',
+                    align: 'end',
+                    color: '#fff',
+                    font: { weight: 'bold', size: 18 },
+                    textStrokeColor: '#222a3a',
+                    textStrokeWidth: 3,
+                    shadowBlur: 6,
+                    shadowColor: '#222a3a',
+                    formatter: function(value) {
+                        return value;
+                    }
+                }
+            },
+            animation: { duration: 900 },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 5,
+                    stepSize: 1,
+                    grid: { color: 'rgba(34,42,58,0.18)' },
+                    ticks: { color: '#bfc9da', font: { size: 15 } }
+                },
+                x: {
+                    grid: { display: false },
+                    ticks: { color: '#bfc9da', font: { size: 16, weight: 'bold' } }
+                }
+            },
+            layout: {
+                padding: { top: 20 }
+            }
+        },
+        plugins: window.ChartDataLabels ? [ChartDataLabels] : []
     });
     // تحديث المتوسطات
     document.getElementById('avg-rate').innerText = avgRate;
@@ -1129,4 +1205,62 @@ if (analyticsTabBtn) {
     analyticsTabBtn.addEventListener('click', () => {
         setTimeout(initAnalyticsCharts, 200);
     });
+}
+
+// دالة تصدير/طباعة النتيجة
+function exportResult(btn) {
+    // ابحث عن أقرب result-container
+    const resultContainer = btn.closest('.result-container');
+    if (!resultContainer) return;
+
+    // أنشئ قائمة خيارات منبثقة
+    let menu = document.createElement('div');
+    menu.className = 'export-menu';
+    menu.innerHTML = `
+        <button onclick="downloadResultImage(this)"><i class='fas fa-image'></i> تحميل كصورة</button>
+        <button onclick="printResult(this)"><i class='fas fa-print'></i> طباعة</button>
+    `;
+    // احذف أي قائمة سابقة
+    document.querySelectorAll('.export-menu').forEach(e => e.remove());
+    // أضف القائمة بعد الزر
+    btn.parentNode.appendChild(menu);
+    // أغلق القائمة عند الضغط خارجها
+    setTimeout(() => {
+        document.addEventListener('click', function handler(e) {
+            if (!menu.contains(e.target) && e.target !== btn) {
+                menu.remove();
+                document.removeEventListener('click', handler);
+            }
+        });
+    }, 100);
+}
+
+// تحميل النتيجة كصورة PNG
+function downloadResultImage(btn) {
+    const resultContainer = btn.closest('.result-container');
+    if (!window.html2canvas) {
+        alert('مطلوب مكتبة html2canvas لتحميل الصورة.');
+        return;
+    }
+    html2canvas(resultContainer, {backgroundColor: null}).then(canvas => {
+        const link = document.createElement('a');
+        link.download = 'university-gpa-result.png';
+        link.href = canvas.toDataURL();
+        link.click();
+    });
+    btn.parentNode.remove();
+}
+
+// طباعة النتيجة
+function printResult(btn) {
+    const resultContainer = btn.closest('.result-container');
+    const printWindow = window.open('', '', 'width=600,height=600');
+    printWindow.document.write('<html><head><title>طباعة النتيجة</title>');
+    printWindow.document.write('<link rel="stylesheet" href="styles.css">');
+    printWindow.document.write('</head><body >');
+    printWindow.document.write(resultContainer.outerHTML);
+    printWindow.document.write('</body></html>');
+    printWindow.document.close();
+    setTimeout(() => { printWindow.print(); printWindow.close(); }, 500);
+    btn.parentNode.remove();
 } 
