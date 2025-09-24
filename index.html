@@ -4,12 +4,129 @@
      crossorigin="anonymous"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>حاسبة المعدل الجامعي | University GPA Calculator</title>
-    <link rel="stylesheet" href="styles.css?v=2">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>حاسبة الطالب | Student Calculator</title>
+    <link rel="stylesheet" href="styles.css?v=9">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Success Popup Styles -->
+    <style>
+        .success-popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .success-popup {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            color: white;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            animation: slideIn 0.4s ease;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .success-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            animation: bounce 0.6s ease;
+        }
+
+        .success-icon i {
+            color: #ffffff;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .success-content h3 {
+            font-size: 1.8rem;
+            margin: 0 0 15px 0;
+            font-weight: 700;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .success-content p {
+            font-size: 1.1rem;
+            margin: 0 0 25px 0;
+            opacity: 0.95;
+            line-height: 1.5;
+        }
+
+        .success-actions {
+            display: flex;
+            justify-content: center;
+        }
+
+        .success-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            backdrop-filter: blur(10px);
+        }
+
+        .success-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .success-btn i {
+            font-size: 1.1rem;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from { 
+                opacity: 0;
+                transform: translateY(-50px) scale(0.9);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+    </style>
 </head>
 <body>
     <!-- Loading Screen -->
@@ -19,7 +136,7 @@
                 <i class="fas fa-bolt"></i>
             </div>
             <div class="loading-spinner"></div>
-            <h3>حاسبة المعدل الجامعي</h3>
+            <h3>حاسبة الطالب</h3>
             <p>جاري التحميل...</p>
         </div>
     </div>
@@ -32,8 +149,8 @@
                     <i class="fas fa-bolt"></i>
                 </div>
                 <div class="brand-text">
-                    <h1>حاسبة المعدل الجامعي</h1>
-                    <p>University GPA Calculator</p>
+                    <h1>حاسبة الطالب</h1>
+                    <p>Student Calculator</p>
                 </div>
             </div>
             
@@ -107,8 +224,8 @@
                     </div>
                 </div>
                 <div class="hero-content">
-                    <h1 class="hero-title animated-gradient-text">حاسبة المعدل الجامعي</h1>
-                    <p class="hero-subtitle">"    أداة لحساب معدل تخصصيك والمعدل الجامعي بطريقة سهلة وواضحة..."</p>
+                    <h1 class="hero-title animated-gradient-text">حاسبة الطالب</h1>
+                    <p class="hero-subtitle">"    أداة لحساب معدل تخصصيك والمعدل الجامعي والغياب بطريقة سهلة وواضحة..."</p>
                 </div>
                 <a href="#rate" class="cta-btn">
                     <span>ابدأ الآن</span>
@@ -126,6 +243,10 @@
                         <button class="tab-btn active" data-tab="rate">
                             <i class="fas fa-star"></i>
                             <span>حاسبة الريت</span>
+                        </button>
+                        <button class="tab-btn" data-tab="absence">
+                            <i class="fas fa-calendar-times"></i>
+                            <span>حاسبة الغياب</span>
                         </button>
                         <button class="tab-btn" data-tab="science-college">
                             <i class="fas fa-flask"></i>
@@ -200,6 +321,155 @@
                                         <button class="export-btn" onclick="exportResult(this)"><i class="fas fa-download"></i> تصدير/طباعة</button>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Absence Calculator -->
+                    <div id="absence" class="tab-content">
+                        <div class="calculator-card">
+                            <div class="card-header">
+                                <div class="header-icon">
+                                    <i class="fas fa-calendar-times"></i>
+                                </div>
+                                <div class="header-content">
+                                    <h3>حاسبة الغياب</h3>
+                                    <p>أدر موادك واحسب نسبة غيابك لكل مادة</p>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <!-- Add Course Form -->
+                                <div class="form-section">
+                                    <h4><i class="fas fa-plus-circle"></i> إضافة مادة جديدة</h4>
+                                    <form id="add-course-form">
+                                        <div class="form-group">
+                                            <label for="course-name">
+                                                <i class="fas fa-book"></i>
+                                                اسم المادة
+                                            </label>
+                                            <input type="text" id="course-name" placeholder="مثال: الفيزياء" required>
+                                        </div>
+                                        
+                                        <div class="form-group">
+                                            <label for="course-academic-hours">
+                                                <i class="fas fa-graduation-cap"></i>
+                                                الساعات الأكاديمية للمادة
+                                            </label>
+                                            <input type="number" id="course-academic-hours" min="1" max="10" placeholder="مثال: 3" required>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="course-weeks">
+                                                <i class="fas fa-calendar"></i>
+                                                عدد أسابيع الفصل الدراسي
+                                            </label>
+                                            <input type="number" id="course-weeks" min="10" max="20" placeholder="مثال: 16" required>
+                                        </div>
+
+                                        <div class="form-row">
+                                            <div class="form-group">
+                                                <label for="lectures-count">
+                                                    <i class="fas fa-chalkboard-teacher"></i>
+                                                    عدد المحاضرات في الأسبوع
+                                                </label>
+                                                <input type="number" id="lectures-count" min="0" max="5" placeholder="مثال: 2" required onchange="generateLectureFields();">
+                                            </div>
+                                            <div class="form-group" style="display: none;">
+                                                <label for="lecture-hours">
+                                                    <i class="fas fa-clock"></i>
+                                                    ساعات المحاضرة الواحدة
+                                                </label>
+                                                <input type="number" id="lecture-hours" min="1" max="3" step="0.5" placeholder="مثال: 1.5" required>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Dynamic Lecture Fields -->
+                                        <div id="lectures-container" class="dynamic-container" style="display: none;">
+                                            <h5><i class="fas fa-chalkboard-teacher"></i> تخصيص المحاضرات</h5>
+                                            <div id="lectures-fields"></div>
+                                        </div>
+
+                                        <div class="form-row">
+                                            <div class="form-group">
+                                                <label for="exercises-count">
+                                                    <i class="fas fa-calculator"></i>
+                                                    عدد التمارين في الأسبوع (اختياري)
+                                                </label>
+                                                <input type="number" id="exercises-count" min="0" max="3" placeholder="مثال: 0" onchange="generateExerciseFields();">
+                                            </div>
+                                            <div class="form-group" style="display: none;">
+                                                <label for="exercise-hours">
+                                                    <i class="fas fa-clock"></i>
+                                                    ساعات التمرين الواحد
+                                                </label>
+                                                <input type="number" id="exercise-hours" min="1" max="2" step="0.5" placeholder="مثال: 1">
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Dynamic Exercise Fields -->
+                                        <div id="exercises-container" class="dynamic-container" style="display: none;">
+                                            <h5><i class="fas fa-calculator"></i> تخصيص التمارين</h5>
+                                            <div id="exercises-fields"></div>
+                                        </div>
+
+                                        <div class="form-row">
+                                            <div class="form-group">
+                                                <label for="labs-count">
+                                                    <i class="fas fa-flask"></i>
+                                                    عدد المعامل في الأسبوع (اختياري)
+                                                </label>
+                                                <input type="number" id="labs-count" min="0" max="2" placeholder="مثال: 0" onchange="generateLabFields();">
+                                            </div>
+                                            <div class="form-group" style="display: none;">
+                                                <label for="lab-hours">
+                                                    <i class="fas fa-clock"></i>
+                                                    ساعات المعمل الواحد
+                                                </label>
+                                                <input type="number" id="lab-hours" min="1" max="4" step="0.5" placeholder="مثال: 2">
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Dynamic Lab Fields -->
+                                        <div id="labs-container" class="dynamic-container" style="display: none;">
+                                            <h5><i class="fas fa-flask"></i> تخصيص المعامل</h5>
+                                            <div id="labs-fields"></div>
+                                        </div>
+
+
+                                        <button type="button" class="submit-btn" id="add-course-btn" onclick="addCourseSimple()">
+                                            <i class="fas fa-plus"></i>
+                                            <span>إضافة المادة</span>
+                                        </button>
+                                    </form>
+                                </div>
+
+                                <!-- Courses List -->
+                                <div class="courses-section">
+                                    <h4><i class="fas fa-list"></i> المواد المسجلة</h4>
+                                    <p class="section-description">هنا ستظهر المواد التي أضفتها مع تفاصيل غيابك</p>
+                                    <div id="courses-list" class="courses-list">
+                                        <div class="empty-state">
+                                            <i class="fas fa-calendar-plus"></i>
+                                            <h4>لا توجد مواد بعد</h4>
+                                            <p>أضف مادة جديدة لبدء متابعة غيابك</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Absence Control Section -->
+                                <div class="absence-control-section" style="margin-top: 30px;">
+                                    <h4><i class="fas fa-calendar-check"></i> تحكم الغياب</h4>
+                                    <p class="section-description">أدخل غيابك الحالي لكل مادة لحساب المتبقي والتحذيرات</p>
+                                    
+                                    <div id="absence-control-list" class="absence-control-list">
+                                        <div class="empty-state">
+                                            <i class="fas fa-calendar-times"></i>
+                                            <h4>لا توجد مواد للتحكم</h4>
+                                            <p>أضف مادة أولاً لتتمكن من إدارة غيابك</p>
+                                        </div>
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
                     </div>
@@ -479,8 +749,8 @@
                         <i class="fas fa-bolt"></i>
                     </div>
                     <div class="brand-text">
-                        <h3>حاسبة المعدل الجامعي</h3>
-                        <p>أداة متطورة لحساب معدلك الجامعي</p>
+                        <h3>حاسبة الطالب</h3>
+                        <p>أداة متطورة تساعدك في حساباتك</p>
                     </div>
                 </div>
                 <div class="footer-links">
@@ -491,15 +761,18 @@
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2024 حاسبة المعدل الجامعي. جميع الحقوق محفوظة.</p>
+                <p>&copy; 2025 حاسبة الطالب . جميع الحقوق محفوظة.</p>
             </div>
         </div>
     </footer>
+
+ 
+
 
     <!-- Toast Notifications -->
     <div id="toast-container" class="toast-container"></div>
 
     <!-- Scripts -->
-    <script src="script.js?v=2"></script>
+    <script src="script.js?v=31"></script>
 </body>
 </html> 
