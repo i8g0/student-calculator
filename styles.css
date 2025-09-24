@@ -5,6 +5,17 @@
     box-sizing: border-box;
 }
 
+/* ===== MOBILE DROPDOWN FIX ===== */
+.day-dropdown-menu,
+.hours-dropdown-menu {
+    display: none !important;
+}
+
+.day-dropdown-menu.show,
+.hours-dropdown-menu.show {
+    display: block !important;
+}
+
 :root {
     /* Colors */
     --primary: #6366f1;
@@ -3069,17 +3080,45 @@ body {
 
 /* ===== RESPONSIVE DESIGN ===== */
 
-/* Mobile Styles */
+/* Mobile Styles - 100% Responsive */
 @media (max-width: 768px) {
     /* Global Mobile Adjustments */
     body {
-        font-size: 14px;
-        line-height: 1.4;
+        font-size: 16px;
+        line-height: 1.5;
+        width: 100%;
+        overflow-x: hidden;
     }
     
     .container {
-        padding: var(--space-sm);
+        padding: var(--space-md);
         max-width: 100%;
+        width: 100%;
+        margin: 0 auto;
+    }
+    
+    /* Force larger text on mobile */
+    * {
+        font-size: inherit !important;
+        max-width: 100%;
+    }
+    
+    h1, h2, h3, h4, h5, h6 {
+        font-size: larger !important;
+        width: 100%;
+    }
+    
+    input, select, textarea, button {
+        font-size: 16px !important;
+        min-height: 44px !important;
+        width: 100%;
+        max-width: 100%;
+    }
+    
+    /* Ensure all elements are 100% width */
+    .card, .form-group, .btn, .form-control {
+        width: 100% !important;
+        max-width: 100% !important;
     }
     
     /* Header and Navigation */
@@ -3133,28 +3172,35 @@ body {
         font-size: var(--font-size-xl);
     }
     
-    /* Forms */
+    /* Forms - 100% Mobile Optimized */
     .form-group {
         margin-bottom: var(--space-lg);
+        width: 100%;
+        max-width: 100%;
     }
     
     .form-group label {
-        font-size: var(--font-size-md);
+        font-size: 18px !important;
         margin-bottom: var(--space-sm);
         color: var(--text-primary);
         font-weight: 600;
         display: block;
+        line-height: 1.4;
+        width: 100%;
     }
     
     .form-control {
         padding: var(--space-md);
-        font-size: var(--font-size-md);
+        font-size: 16px !important;
         border-radius: var(--radius-md);
         border: 2px solid var(--border-medium);
         background: var(--bg-primary);
         color: var(--text-primary);
-        width: 100%;
+        width: 100% !important;
+        max-width: 100% !important;
         transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        min-height: 44px !important;
+        box-sizing: border-box;
     }
     
     .form-control:focus {
@@ -3163,28 +3209,39 @@ body {
         box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
     }
     
+    .form-control::placeholder {
+        font-size: 16px !important;
+        color: var(--text-secondary);
+    }
+    
     .btn {
         padding: var(--space-md) var(--space-lg);
-        font-size: var(--font-size-md);
-        width: 100%;
+        font-size: 16px !important;
+        width: 100% !important;
+        max-width: 100% !important;
         margin-bottom: var(--space-sm);
         border-radius: var(--radius-md);
         font-weight: 600;
         transition: all 0.2s ease;
+        min-height: 44px !important;
+        box-sizing: border-box;
     }
     
-    /* Day and Hours Dropdowns */
+    /* Day and Hours Dropdowns - 100% Mobile Fix */
     .day-dropdown-container,
     .hours-dropdown-container {
-        width: 100%;
+        width: 100% !important;
+        max-width: 100% !important;
         margin-bottom: var(--space-md);
+        position: relative;
     }
     
     .day-dropdown-trigger,
     .hours-dropdown-trigger {
-        width: 100%;
+        width: 100% !important;
+        max-width: 100% !important;
         padding: var(--space-md);
-        font-size: var(--font-size-md);
+        font-size: 16px !important;
         border-radius: var(--radius-md);
         border: 2px solid var(--border-medium);
         background: var(--bg-primary);
@@ -3192,6 +3249,11 @@ body {
         text-align: center;
         cursor: pointer;
         transition: all 0.2s ease;
+        min-height: 44px !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
     }
     
     .day-dropdown-trigger:hover,
@@ -3202,7 +3264,8 @@ body {
     
     .day-dropdown-menu,
     .hours-dropdown-menu {
-        width: 100%;
+        width: 100% !important;
+        max-width: 100% !important;
         background: var(--surface-color);
         border: 1px solid var(--border-light);
         border-radius: var(--radius-md);
@@ -3210,16 +3273,33 @@ body {
         margin-top: var(--space-xs);
         max-height: 200px;
         overflow-y: auto;
+        display: none !important;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        z-index: 1000;
+        box-sizing: border-box;
+    }
+    
+    .day-dropdown-menu.show,
+    .hours-dropdown-menu.show {
+        display: block !important;
     }
     
     .day-option,
     .hours-option {
         padding: var(--space-md);
-        font-size: var(--font-size-md);
+        font-size: 16px !important;
         color: var(--text-primary);
         cursor: pointer;
         transition: background-color 0.2s ease;
         border-bottom: 1px solid var(--border-light);
+        min-height: 44px !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100% !important;
+        box-sizing: border-box;
     }
     
     .day-option:hover,
@@ -3232,40 +3312,50 @@ body {
         border-bottom: none;
     }
     
-    /* Tables */
+    /* Tables - 100% Responsive */
     .table-responsive {
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
+        width: 100% !important;
+        max-width: 100% !important;
     }
     
     .table {
         font-size: var(--font-size-sm);
-        min-width: 600px;
+        min-width: 100% !important;
+        width: 100% !important;
+        max-width: 100% !important;
     }
     
     .table th,
     .table td {
         padding: var(--space-sm);
         white-space: nowrap;
+        width: auto;
     }
     
-    /* Session Table */
+    /* Session Table - 100% Responsive */
     .sessions-table {
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
         border-radius: var(--radius-md);
         background: var(--surface-color);
         margin: var(--space-md) 0;
+        width: 100% !important;
+        max-width: 100% !important;
     }
     
     .sessions-table-header,
     .session-row {
-        min-width: 100%;
+        min-width: 100% !important;
+        width: 100% !important;
+        max-width: 100% !important;
         display: grid;
         grid-template-columns: 1fr 1fr 1fr 1fr;
         gap: var(--space-xs);
         padding: var(--space-sm);
         border-bottom: 1px solid var(--border-light);
+        box-sizing: border-box;
     }
     
     .sessions-table-header {
@@ -3293,6 +3383,9 @@ body {
         align-items: center;
         justify-content: center;
         min-height: 40px;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box;
     }
     
     .session-cell.session-name {
@@ -3314,23 +3407,25 @@ body {
         justify-content: center;
     }
     
-    /* Absence Select */
+    /* Absence Select - 100% Responsive */
     .absence-select-container {
-        width: 100%;
-        max-width: 80px;
+        width: 100% !important;
+        max-width: 100% !important;
     }
     
     .absence-select {
-        font-size: var(--font-size-md);
+        font-size: 16px !important;
         padding: var(--space-sm);
-        min-height: 40px;
-        width: 100%;
+        min-height: 44px !important;
+        width: 100% !important;
+        max-width: 100% !important;
         border-radius: var(--radius-sm);
         border: 2px solid var(--border-medium);
         background: var(--bg-primary);
         color: var(--text-primary);
         text-align: center;
         font-weight: 600;
+        box-sizing: border-box;
     }
     
     .absence-select:focus {
@@ -3586,6 +3681,43 @@ body {
 
 /* Large Mobile Styles */
 @media (max-width: 480px) {
+    /* Force larger text on small screens */
+    body {
+        font-size: 18px !important;
+    }
+    
+    .form-group label {
+        font-size: 20px !important;
+    }
+    
+    .form-control {
+        font-size: 18px !important;
+        padding: var(--space-md);
+        min-height: 50px !important;
+    }
+    
+    .form-control::placeholder {
+        font-size: 18px !important;
+    }
+    
+    .btn {
+        font-size: 18px !important;
+        padding: var(--space-md);
+        min-height: 50px !important;
+    }
+    
+    .day-dropdown-trigger,
+    .hours-dropdown-trigger {
+        font-size: 18px !important;
+        min-height: 50px !important;
+    }
+    
+    .day-option,
+    .hours-option {
+        font-size: 18px !important;
+        min-height: 50px !important;
+    }
+    
     .hero h1 {
         font-size: 2rem;
     }
@@ -3598,35 +3730,25 @@ body {
         padding: var(--space-md);
     }
     
-    .form-control {
-        padding: var(--space-sm);
-        font-size: var(--font-size-sm);
-    }
-    
-    .btn {
-        padding: var(--space-sm) var(--space-md);
-        font-size: var(--font-size-sm);
-    }
-    
     .absence-summary-stats {
         grid-template-columns: 1fr;
     }
     
     .session-header-cell,
     .session-cell {
-        font-size: var(--font-size-xs);
-        padding: var(--space-xs);
-        min-height: 35px;
+        font-size: 16px !important;
+        padding: var(--space-sm);
+        min-height: 44px !important;
     }
     
     .absence-select {
-        font-size: var(--font-size-sm);
-        padding: var(--space-sm);
-        min-height: 35px;
+        font-size: 18px !important;
+        padding: var(--space-md);
+        min-height: 50px !important;
     }
     
     .absence-select-container {
-        max-width: 70px;
+        max-width: 100px;
     }
     
     .course-item {
@@ -3646,11 +3768,11 @@ body {
     }
     
     .absence-stat-label {
-        font-size: var(--font-size-xs);
+        font-size: 16px !important;
     }
     
     .absence-stat-value {
-        font-size: var(--font-size-md);
+        font-size: 18px !important;
     }
 }
 
