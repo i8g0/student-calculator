@@ -3824,6 +3824,7 @@ i,
     justify-content: center;
     gap: var(--space-lg);
     position: relative;
+    touch-action: manipulation;
 }
 
 .new-absence-counter-btn {
@@ -3841,6 +3842,10 @@ i,
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: 0 3px 10px rgba(99, 102, 241, 0.4);
     position: relative;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    -webkit-user-select: none;
 }
 
 .new-absence-counter-btn:hover {

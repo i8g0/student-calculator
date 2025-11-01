@@ -3855,10 +3855,22 @@ function renderNewAbsenceCourses() {
         const plusBtn = document.getElementById(`plus-btn-${course.id}`);
         
         if (minusBtn) {
-            minusBtn.addEventListener('click', () => updateAbsenceHours(course.id, -1));
+            const handleMinus = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                updateAbsenceHours(course.id, -1);
+            };
+            minusBtn.addEventListener('touchstart', handleMinus, { passive: false });
+            minusBtn.addEventListener('click', handleMinus);
         }
         if (plusBtn) {
-            plusBtn.addEventListener('click', () => updateAbsenceHours(course.id, 1));
+            const handlePlus = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                updateAbsenceHours(course.id, 1);
+            };
+            plusBtn.addEventListener('touchstart', handlePlus, { passive: false });
+            plusBtn.addEventListener('click', handlePlus);
         }
     });
 }
