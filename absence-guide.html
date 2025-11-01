@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>شرح تفصيلي لحاسبة الغياب | حاسبة الطالب</title>
+    <link rel="stylesheet" href="styles.css?v=10">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            font-family: var(--font-primary) !important;
+        }
+        
+        i, .fas, .far, .fab, .fa, [class*="fa-"], [class*="icon"] {
+            font-family: "Font Awesome 6 Free", "Font Awesome 6 Brands", "Font Awesome 6 Pro" !important;
+        }
+        
+        body {
+            background: var(--bg-secondary);
+            padding: 20px;
+        }
+        
+        .guide-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--bg-card);
+            border-radius: var(--radius-2xl);
+            padding: var(--space-2xl);
+            box-shadow: var(--shadow-xl);
+        }
+        
+        .guide-header {
+            background: var(--gradient-primary);
+            color: white;
+            padding: var(--space-xl);
+            border-radius: var(--radius-xl);
+            margin-bottom: var(--space-xl);
+            text-align: center;
+        }
+        
+        .guide-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: var(--space-sm);
+            color: white;
+        }
+        
+        .back-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-sm);
+            padding: var(--space-md) var(--space-lg);
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            border-radius: var(--radius-lg);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all var(--transition-normal);
+            box-shadow: var(--shadow-xl);
+            z-index: 1000;
+        }
+        
+        .back-btn:hover {
+            background: var(--gradient-secondary);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-2xl);
+        }
+        
+        .section {
+            margin-bottom: var(--space-2xl);
+            padding: var(--space-xl);
+            background: var(--bg-primary);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-light);
+        }
+        
+        .section-title {
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin-bottom: var(--space-lg);
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+        }
+        
+        .section-title i {
+            font-size: 2rem;
+        }
+        
+        .section-content {
+            line-height: 2;
+            font-size: 1.1rem;
+            color: var(--text-primary);
+        }
+        
+        .section-content p {
+            margin-bottom: var(--space-lg);
+        }
+        
+        .highlight-box {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-right: 4px solid var(--warning);
+            padding: var(--space-lg);
+            border-radius: var(--radius-lg);
+            margin: var(--space-lg) 0;
+        }
+        
+        .highlight-box.danger {
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            border-right-color: var(--error);
+        }
+        
+        .highlight-box.success {
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+            border-right-color: var(--success);
+        }
+        
+        .highlight-box.info {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            border-right-color: var(--info);
+        }
+        
+        .step-list {
+            list-style: none;
+            padding: 0;
+            counter-reset: step-counter;
+        }
+        
+        .step-list li {
+            padding: var(--space-lg);
+            margin-bottom: var(--space-lg);
+            background: var(--bg-secondary);
+            border-radius: var(--radius-lg);
+            border-right: 4px solid var(--primary);
+            position: relative;
+            padding-right: 60px;
+            transition: all var(--transition-normal);
+        }
+        
+        .step-list li:hover {
+            background: var(--bg-tertiary);
+            transform: translateX(-5px);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .step-list li::before {
+            content: counter(step-counter);
+            counter-increment: step-counter;
+            position: absolute;
+            right: var(--space-lg);
+            top: var(--space-lg);
+            background: var(--primary);
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1rem;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .example-box {
+            background: var(--bg-secondary);
+            padding: var(--space-lg);
+            border-radius: var(--radius-lg);
+            margin: var(--space-lg) 0;
+            border: 2px dashed var(--border-medium);
+        }
+        
+        .example-title {
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: var(--space-md);
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+        
+        .formula-box {
+            background: var(--bg-secondary);
+            padding: var(--space-lg);
+            border-radius: var(--radius-lg);
+            text-align: center;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin: var(--space-lg) 0;
+            border: 2px solid var(--primary);
+        }
+        
+        ul.features-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        ul.features-list li {
+            padding: var(--space-sm) 0;
+            padding-right: var(--space-xl);
+            position: relative;
+        }
+        
+        ul.features-list li::before {
+            content: "✓";
+            position: absolute;
+            right: 0;
+            color: var(--success);
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+        
+        @media (max-width: 768px) {
+            .guide-container {
+                padding: var(--space-md);
+            }
+            
+            .guide-header {
+                padding: var(--space-lg);
+            }
+            
+            .guide-header h1 {
+                font-size: 1.3rem;
+            }
+            
+            .guide-header p {
+                font-size: 0.8rem;
+            }
+            
+            .section {
+                padding: var(--space-md);
+            }
+            
+            .section-title {
+                font-size: 1.1rem;
+            }
+            
+            .section-title i {
+                font-size: 1.3rem;
+            }
+            
+            .section-content {
+                font-size: 0.8rem !important;
+                line-height: 1.6;
+            }
+            
+            .section-content p {
+                margin-bottom: var(--space-md);
+                font-size: 0.8rem;
+            }
+            
+            .section-content strong {
+                font-size: 0.85rem;
+            }
+            
+            .step-list li {
+                padding: var(--space-md);
+                padding-right: 45px;
+                font-size: 0.8rem;
+            }
+            
+            .step-list li strong {
+                font-size: 0.85rem;
+            }
+            
+            .step-list li::before {
+                width: 28px;
+                height: 28px;
+                font-size: 0.75rem;
+                right: var(--space-md);
+                top: var(--space-md);
+            }
+            
+            .highlight-box {
+                padding: var(--space-md);
+                font-size: 0.75rem;
+            }
+            
+            .highlight-box strong {
+                font-size: 0.8rem;
+            }
+            
+            .example-box {
+                padding: var(--space-md);
+                font-size: 0.75rem;
+            }
+            
+            .example-box p {
+                font-size: 0.75rem;
+            }
+            
+            .example-title {
+                font-size: 0.9rem;
+            }
+            
+            .formula-box {
+                padding: var(--space-md);
+                font-size: 0.85rem;
+            }
+            
+            .features-list li {
+                font-size: 0.8rem;
+                padding: var(--space-xs) 0;
+            }
+            
+            .features-list li strong {
+                font-size: 0.85rem;
+            }
+            
+            .back-btn {
+                bottom: 20px;
+                right: 20px;
+                width: 50px;
+                height: 50px;
+                border-radius: 50%;
+                justify-content: center;
+                padding: 0;
+            }
+            
+            .back-btn span {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="guide-container">
+        <div class="guide-header">
+            <h1><i class="fas fa-book-open"></i> شرح تفصيلي لحاسبة الغياب</h1>
+            <p>دليل شامل ومفصل حول كيفية استخدام حاسبة الغياب</p>
+        </div>
+        
+        <div class="section">
+            <h2 class="section-title">
+                <i class="fas fa-info-circle"></i>
+                ما هي حاسبة الغياب؟
+            </h2>
+            <div class="section-content">
+                <p>
+                    حاسبة الغياب هي أداة ذكية تساعدك على متابعة نسبة غيابك في كل مادة دراسية بدقة عالية. 
+                    تتيح لك هذه الأداة معرفة عدد ساعات الغياب المسموح بها قبل الوصول إلى حد الحرمان، 
+                    وتساعدك على إدارة غيابك بشكل أفضل لتجنب الحرمان من المقررات الدراسية.
+                </p>
+                <div class="highlight-box info">
+                    <strong>💡 ملاحظة مهمة:</strong> هذه الحاسبة تعتمد على نظام الجامعات السعودية حيث يكون حد الغياب 
+                    25% من إجمالي ساعات المقرر. إذا تجاوزت هذه النسبة، فستتعرض للحرمان من المقرر.
+                </div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2 class="section-title">
+                <i class="fas fa-calculator"></i>
+                كيفية حساب عدد ساعات الأسبوع
+            </h2>
+            <div class="section-content">
+                <p>
+                    <strong>الساعات الأسبوعية = عدد ساعات المحاضرات + عدد ساعات التمارين + عدد ساعات العملي</strong>
+                </p>
+                
+                <div class="highlight-box">
+                    <strong>📚 خطوات حساب الساعات الأسبوعية:</strong>
+                    <ol class="step-list">
+                        <li>
+                            <strong>افتح جدولك الدراسي:</strong> يمكنك العثور على جدولك الدراسي في التطبيق الرسمي للجامعة 
+                            (مثل تطبيق "جامعتي" أو الموقع الإلكتروني للجامعة). الجدول يحتوي على تفاصيل جميع مقرراتك الدراسية.
+                        </li>
+                        <li>
+                            <strong>ابحث عن المقرر:</strong> في جدولك الدراسي، ابحث عن المقرر الذي تريد إضافته إلى حاسبة الغياب. 
+                            ستجد بجانب اسم المقرر أو في عمود منفصل عدد الساعات الأسبوعية.
+                        </li>
+                        <li>
+                            <strong>جمع الساعات:</strong> لكل مقرر، اجمع عدد الساعات لكل نوع من أنواع المحاضرات:
+                            <div style="margin-top: var(--space-md); padding-right: var(--space-md);">
+                                <p style="margin-bottom: var(--space-sm);"><strong>• المحاضرات:</strong> هي الحصص النظرية التي يحضرها جميع الطلاب مع الدكتور</p>
+                                <p style="margin-bottom: var(--space-sm);"><strong>• التمارين:</strong> هي الحصص العملية أو التطبيقية التي تكون عادة مع مساعد التدريس</p>
+                                <p><strong>• العملي:</strong> هي الحصص المعملية أو العملية التي تتم في المختبرات أو ورش العمل</p>
+                            </div>
+                        </li>
+                        <li>
+                            <strong>مثال عملي:</strong>
+                            <div class="example-box">
+                                <div class="example-title">
+                                    <i class="fas fa-book"></i>
+                                    مثال: مادة الفيزياء
+                                </div>
+                                <p><strong>المحاضرات:</strong> 2 ساعة في الأسبوع</p>
+                                <p><strong>التمارين:</strong> 1 ساعة في الأسبوع</p>
+                                <p><strong>العملي:</strong> 1 ساعة في الأسبوع</p>
+                                <p style="margin-top: var(--space-md); font-weight: 700; color: var(--primary);">
+                                    <strong>النتيجة: 2 + 1 + 1 = 4 ساعات أسبوعية</strong>
+                                </p>
+                            </div>
+                        </li>
+                        <li>
+                            <strong>أدخل الرقم في الحاسبة:</strong> بعد حساب المجموع، اختر هذا الرقم من القائمة المنسدلة 
+                            في حاسبة الغياب تحت "عدد ساعات الأسبوع".
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2 class="section-title">
+                <i class="fas fa-clipboard-list"></i>
+                خطوات استخدام حاسبة الغياب
+            </h2>
+            <div class="section-content">
+                <ol class="step-list">
+                    <li>
+                        <strong>افتح حاسبة الغياب:</strong>
+                        <p>من الصفحة الرئيسية، اضغط على تبويب "حاسبة الغياب" في القائمة العلوية.</p>
+                    </li>
+                    <li>
+                        <strong>أدخل اسم المادة:</strong>
+                        <p>في حقل "اسم المادة"، اكتب اسم المقرر الدراسي كما هو مذكور في جدولك. 
+                        مثال: الفيزياء، الكيمياء، الرياضيات، البرمجة.</p>
+                    </li>
+                    <li>
+                        <strong>اختر عدد الساعات الأسبوعية:</strong>
+                        <p>من القائمة المنسدلة "عدد ساعات الأسبوع"، اختر العدد الذي حسبته مسبقاً 
+                        (مجموع المحاضرات + التمارين + العملي).</p>
+                        <div class="highlight-box success">
+                            <strong>✅ نصيحة:</strong> إذا نسيت العدد، يمكنك الرجوع إلى جدولك الدراسي في تطبيق أو موقع الجامعة.
+                        </div>
+                    </li>
+                    <li>
+                        <strong>اضغط "إضافة المادة":</strong>
+                        <p>بعد إدخال البيانات، اضغط على الزر البنفسجي "+ إضافة المادة" لإضافة المقرر إلى قائمة متابعة الغياب.</p>
+                    </li>
+                    <li>
+                        <strong>تابع عدد ساعات غيابك:</strong>
+                        <p>بعد إضافة المادة، ستظهر لك بطاقة للمقرر تحتوي على:</p>
+                        <ul class="features-list">
+                            <li>نسبة الغياب من إجمالي المقرر (بالنسبة المئوية)</li>
+                            <li>نسبة غياب الساعة الواحدة</li>
+                            <li>عدد ساعات الغياب الحالية</li>
+                            <li>إجمالي الساعات للمقرر في الفصل الدراسي</li>
+                            <li>حد الغياب المسموح (25%)</li>
+                            <li>عدد الساعات المتبقية قبل الوصول للحرمان</li>
+                        </ul>
+                    </li>
+                    <li>
+                        <strong>حدّث عدد ساعات غيابك:</strong>
+                        <p>في كل مرة تغيب فيها عن محاضرة أو تمرين أو عملي:</p>
+                        <div style="margin-top: var(--space-md); padding-right: var(--space-md);">
+                            <p style="margin-bottom: var(--space-sm);">• اضغط على زر <strong>"+"</strong> لزيادة عدد ساعات الغياب</p>
+                            <p>• إذا أخطأت وأضفت ساعة بالخطأ، اضغط على زر <strong>"-"</strong> لخفض العدد</p>
+                        </div>
+                    </li>
+                    <li>
+                        <strong>راقب نسبة الغياب:</strong>
+                        <p>الحاسبة تعرض لك نسبة الغياب بشكل مباشر وملون:</p>
+                        <div style="margin-top: var(--space-md);">
+                            <div style="display: flex; align-items: center; gap: var(--space-md); padding: var(--space-sm) 0;">
+                                <div style="width: 20px; height: 20px; border-radius: 50%; background: #10b981;"></div>
+                                <span><strong style="color: #10b981;">أخضر:</strong> أنت في أمان (أقل من 10%)</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: var(--space-md); padding: var(--space-sm) 0;">
+                                <div style="width: 20px; height: 20px; border-radius: 50%; background: #f59e0b;"></div>
+                                <span><strong style="color: #f59e0b;">أصفر:</strong> انتبه (بين 10% و 20%)</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: var(--space-md); padding: var(--space-sm) 0;">
+                                <div style="width: 20px; height: 20px; border-radius: 50%; background: #ef4444;"></div>
+                                <span><strong style="color: #ef4444;">أحمر:</strong> خطر الحرمان! (21% أو أكثر)</span>
+                            </div>
+                        </div>
+                    </li>
+                </ol>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2 class="section-title">
+                <i class="fas fa-calculator"></i>
+                كيف يتم الحساب؟
+            </h2>
+            <div class="section-content">
+                <p>تعتمد الحاسبة على المعادلات التالية:</p>
+                
+                <div class="formula-box">
+                    إجمالي الساعات في الفصل = عدد الساعات الأسبوعية × 16 أسبوع
+                </div>
+                
+                <div class="formula-box">
+                    نسبة الغياب = (عدد ساعات الغياب ÷ إجمالي الساعات) × 100%
+                </div>
+                
+                <div class="formula-box">
+                    نسبة غياب الساعة الواحدة = 6.25 ÷ عدد الساعات الأسبوعية
+                </div>
+                
+                <div class="example-box">
+                    <div class="example-title">
+                        <i class="fas fa-lightbulb"></i>
+                        مثال توضيحي:
+                    </div>
+                    <p><strong>مادة الرياضيات - 4 ساعات أسبوعية:</strong></p>
+                    <ul style="margin-top: var(--space-md); padding-right: var(--space-xl);">
+                        <li>إجمالي الساعات في الفصل = 4 × 16 = <strong>64 ساعة</strong></li>
+                        <li>حد الغياب المسموح = 64 × 25% = <strong>16 ساعة</strong></li>
+                        <li>إذا غبت 8 ساعات، نسبة الغياب = (8 ÷ 64) × 100% = <strong>12.5%</strong></li>
+                        <li>نسبة غياب الساعة الواحدة = 6.25 ÷ 4 = <strong>1.5625%</strong></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2 class="section-title">
+                <i class="fas fa-exclamation-triangle"></i>
+                معلومات مهمة يجب معرفتها
+            </h2>
+            <div class="section-content">
+                <div class="highlight-box danger">
+                    <strong>⚠️ حد الحرمان:</strong>
+                    <p>في معظم الجامعات السعودية، إذا وصلت نسبة غيابك إلى 25% أو أكثر من إجمالي ساعات المقرر، 
+                    سيتم حرمانك من دخول الاختبار النهائي. هذا يعني أنك ستحصل على صفر في المقرر حتى لو كانت 
+                    درجاتك في الأعمال الفصلية ممتازة.</p>
+                </div>
+                
+                <div class="highlight-box">
+                    <strong>📅 مدة الفصل الدراسي:</strong>
+                    <p>الحاسبة تفترض أن الفصل الدراسي الواحد يحتوي على 16 أسبوعاً دراسياً. هذه هي المدة المعتادة 
+                    في معظم الجامعات السعودية.</p>
+                </div>
+                
+                <div class="highlight-box success">
+                    <strong>💾 الحفظ التلقائي:</strong>
+                    <p>جميع بياناتك تُحفظ تلقائياً في المتصفح. حتى لو أغلقت الصفحة وعُدت لاحقاً، ستجد جميع 
+                    مقرراتك وعدد ساعات غيابك كما تركتها.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2 class="section-title">
+                <i class="fas fa-tips"></i>
+                نصائح مهمة
+            </h2>
+            <div class="section-content">
+                <ul class="features-list">
+                    <li><strong>تأكد من صحة البيانات:</strong> قبل إضافة المادة، تأكد من أن عدد الساعات الأسبوعية صحيح. 
+                    يمكنك التحقق من جدولك الدراسي في أي وقت.</li>
+                    
+                    <li><strong>حدّث الغياب فوراً:</strong> لا تؤجل تحديث ساعات غيابك. كلما حدثتها بسرعة، كان من السهل 
+                    متابعتها.</li>
+                    
+                    <li><strong>راقب الألوان:</strong> انتبه للألوان في بطاقة المقرر. إذا تحول اللون إلى أصفر، فهذا يعني 
+                    أنك تحتاج للانتباه. وإذا تحول إلى أحمر، فأنت في خطر الحرمان!</li>
+                    
+                    <li><strong>احسب الساعات المتبقية:</strong> استخدم عمود "الساعات المتبقية" لمعرفة عدد الساعات 
+                    التي يمكنك غيابها قبل الوصول للحرمان.</li>
+                    
+                    <li><strong>لا تنسى الحضور:</strong> تذكر أن الحضور مهم جداً ليس فقط لتجنب الحرمان، بل أيضاً 
+                    للاستفادة من المحاضرات وفهم المادة.</li>
+                    
+                    <li><strong>استخدم الحاسبة لجميع المقررات:</strong> أضف جميع مقرراتك الدراسية في بداية الفصل 
+                    لتتمكن من متابعة غيابك في جميع المقررات بسهولة.</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2 class="section-title">
+                <i class="fas fa-question-circle"></i>
+                أسئلة شائعة
+            </h2>
+            <div class="section-content">
+                <div class="example-box">
+                    <strong>س: ماذا أفعل إذا كان المقرر يحتوي على 3 ساعات محاضرة فقط بدون تمارين أو عملي؟</strong>
+                    <p>ج: في هذه الحالة، عدد الساعات الأسبوعية = 3 فقط. أدخل الرقم 3 في الحاسبة.</p>
+                </div>
+                
+                <div class="example-box">
+                    <strong>س: كيف أعرف عدد ساعات غيابي الحالية؟</strong>
+                    <p>ج: يمكنك معرفة ذلك من جدولك الدراسي أو من سجلات الحضور والغياب في تطبيق الجامعة. 
+                    ثم حدّث الرقم في الحاسبة باستخدام أزرار "+" و "-".</p>
+                </div>
+                
+                <div class="example-box">
+                    <strong>س: هل يمكنني حذف مادة إذا أضفتها بالخطأ؟</strong>
+                    <p>ج: نعم، يوجد زر "حذف" (أيقونة سلة المهملات) في أعلى يمين بطاقة كل مقرر.</p>
+                </div>
+                
+                <div class="example-box">
+                    <strong>س: ماذا يعني "نسبة غياب الساعة"؟</strong>
+                    <p>ج: هذه النسبة توضح لك كم تبلغ نسبة الغياب لكل ساعة تغيب فيها. مثلاً، إذا كانت النسبة 1.5%، 
+                    فهذا يعني أن كل ساعة تغيب فيها تزيد نسبة غيابك بمقدار 1.5%.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="highlight-box success">
+                <strong>🎓 نتمنى لك فصلاً دراسياً ناجحاً!</strong>
+                <p style="margin-top: var(--space-md);">استخدم هذه الحاسبة بانتظام لتتبع غيابك وتجنب الحرمان. 
+                تذكر أن الحضور المنتظم يساعدك على التفوق الدراسي والاستفادة القصوى من محاضراتك.</p>
+            </div>
+        </div>
+        
+    </div>
+    
+    <!-- Fixed Back Button -->
+    <a href="index.html#absence" class="back-btn">
+        <i class="fas fa-arrow-right"></i>
+        <span>العودة إلى حاسبة الغياب</span>
+    </a>
+</body>
+</html>
+
