@@ -433,10 +433,12 @@ i,
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 var(--space-lg);
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-3xl);
+    display: flex;
+    flex-direction: column;
     align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: var(--space-3xl);
     position: relative;
     z-index: 2;
 }
@@ -1384,7 +1386,7 @@ i,
         display: flex;
         flex-direction: column;
         text-align: center;
-        gap: var(--space-md);
+        gap: var(--space-lg);
         padding: 0 var(--space-sm) !important;
         width: 100%;
         max-width: 100%;
@@ -1392,9 +1394,8 @@ i,
     }
     
     .hero-content {
-        order: 1;
         width: 100%;
-        padding: 0 var(--space-xs);
+        padding: 0 var(--space-sm);
         box-sizing: border-box;
     }
     
@@ -1409,90 +1410,25 @@ i,
     
     .hero-subtitle {
         font-size: 0.85rem;
-        margin-bottom: var(--space-md);
+        margin-bottom: var(--space-lg);
         padding: 0;
         word-wrap: break-word;
         overflow-wrap: break-word;
         line-height: 1.4;
     }
     
-    .hero-visual {
-        order: 2;
-        width: 100%;
-        margin: var(--space-lg) 0;
-        padding: 0;
+    .cta-btn {
+        margin-left: calc(-1 * var(--space-sm));
+        margin-right: calc(-1 * var(--space-sm));
+        width: calc(100% + 2 * var(--space-sm));
+        max-width: calc(100% + 2 * var(--space-sm));
+        margin-top: var(--space-lg);
+        padding: var(--space-xl) var(--space-lg);
+        font-size: 1.25rem;
         box-sizing: border-box;
         display: flex;
         justify-content: center;
-        overflow: hidden;
-    }
-    
-    .dice-cards-layout {
-        width: 220px;
-        height: 220px;
-        margin: 0 auto;
-        max-width: calc(100vw - 40px);
-        overflow: visible;
-        position: relative;
-    }
-    
-    .floating-card-3d {
-        width: 65px;
-        height: 65px;
-        border-radius: var(--radius-lg);
-    }
-    
-    .dice-card-center {
-        width: 65px;
-        height: 65px;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%) !important;
-        animation: none !important;
-    }
-    
-    .dice-card-corner {
-        width: 65px;
-        height: 65px;
-    }
-    
-    .dice-card-top-right {
-        top: 0;
-        right: 0;
-    }
-    
-    .dice-card-top-left {
-        top: 0;
-        left: 0;
-    }
-    
-    .dice-card-bottom-right {
-        bottom: 0;
-        right: 0;
-    }
-    
-    .dice-card-bottom-left {
-        bottom: 0;
-        left: 0;
-    }
-    
-    .floating-card-3d i {
-        font-size: 1.2rem;
-        margin-bottom: 2px;
-    }
-    
-    .floating-card-3d span {
-        font-size: 0.65rem;
-        line-height: 1;
-        padding: 0 2px;
-    }
-    
-    .cta-btn {
-        order: 3;
-        width: calc(100% - var(--space-lg));
-        max-width: 300px;
-        margin: var(--space-lg) auto 0 auto;
-        box-sizing: border-box;
+        align-items: center;
     }
     
     .tabs {
@@ -1571,91 +1507,23 @@ i,
     
     .hero-subtitle {
         font-size: 0.75rem;
-        margin-bottom: var(--space-sm);
+        margin-bottom: var(--space-md);
         padding: 0;
         word-wrap: break-word;
         overflow-wrap: break-word;
         line-height: 1.4;
     }
     
-    .hero-visual {
-        order: 2;
+    .cta-btn {
         width: 100%;
-        margin: var(--space-md) 0;
-        padding: 0;
+        max-width: 100%;
+        margin: var(--space-md) 0 0 0;
+        padding: var(--space-lg) var(--space-md);
+        font-size: 1.1rem;
         box-sizing: border-box;
         display: flex;
         justify-content: center;
-        overflow: hidden;
-    }
-    
-    .dice-cards-layout {
-        width: 200px;
-        height: 200px;
-        margin: 0 auto;
-        max-width: calc(100vw - 30px);
-        overflow: visible;
-        position: relative;
-    }
-    
-    .floating-card-3d {
-        width: 60px;
-        height: 60px;
-        border-radius: var(--radius-lg);
-    }
-    
-    .dice-card-center {
-        width: 60px;
-        height: 60px;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%) !important;
-        animation: none !important;
-    }
-    
-    .dice-card-corner {
-        width: 60px;
-        height: 60px;
-    }
-    
-    .dice-card-top-right {
-        top: 0;
-        right: 0;
-    }
-    
-    .dice-card-top-left {
-        top: 0;
-        left: 0;
-    }
-    
-    .dice-card-bottom-right {
-        bottom: 0;
-        right: 0;
-    }
-    
-    .dice-card-bottom-left {
-        bottom: 0;
-        left: 0;
-    }
-    
-    .floating-card-3d i {
-        font-size: 1.1rem;
-        margin-bottom: 2px;
-    }
-    
-    .floating-card-3d span {
-        font-size: 0.6rem;
-        line-height: 1;
-        padding: 0 2px;
-    }
-    
-    .cta-btn {
-        order: 3;
-        width: 100%;
-        max-width: 280px;
-        margin: var(--space-md) auto 0 auto;
-        padding: var(--space-md) var(--space-lg);
-        font-size: 1rem;
+        align-items: center;
     }
     
     .tabs {
@@ -1748,83 +1616,23 @@ i,
     
     .hero-subtitle {
         font-size: 0.7rem;
+        margin-bottom: var(--space-sm);
         padding: 0;
         word-wrap: break-word;
         overflow-wrap: break-word;
         line-height: 1.4;
     }
     
-    .hero-visual {
-        padding: 0;
+    .cta-btn {
+        width: 100%;
+        max-width: 100%;
+        margin: var(--space-sm) 0 0 0;
+        padding: var(--space-lg) var(--space-md);
+        font-size: 1rem;
         box-sizing: border-box;
         display: flex;
         justify-content: center;
-        overflow: hidden;
-    }
-    
-    .dice-cards-layout {
-        width: 180px;
-        height: 180px;
-        max-width: calc(100vw - 20px);
-        overflow: visible;
-        position: relative;
-    }
-    
-    .floating-card-3d {
-        width: 55px;
-        height: 55px;
-        border-radius: var(--radius-lg);
-    }
-    
-    .dice-card-center {
-        width: 55px;
-        height: 55px;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%) !important;
-        animation: none !important;
-    }
-    
-    .dice-card-corner {
-        width: 55px;
-        height: 55px;
-    }
-    
-    .dice-card-top-right {
-        top: 0;
-        right: 0;
-    }
-    
-    .dice-card-top-left {
-        top: 0;
-        left: 0;
-    }
-    
-    .dice-card-bottom-right {
-        bottom: 0;
-        right: 0;
-    }
-    
-    .dice-card-bottom-left {
-        bottom: 0;
-        left: 0;
-    }
-    
-    .floating-card-3d i {
-        font-size: 1rem;
-        margin-bottom: 2px;
-    }
-    
-    .floating-card-3d span {
-        font-size: 0.55rem;
-        line-height: 1;
-        padding: 0 1px;
-    }
-    
-    .cta-btn {
-        max-width: 260px;
-        padding: var(--space-sm) var(--space-md);
-        font-size: 0.9rem;
+        align-items: center;
     }
     
     .tab-btn {
