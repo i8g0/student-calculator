@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>شرح تفصيلي لحاسبة الغياب | حاسبة الطالب</title>
+    <title>شرح حاسبة الغياب | حاسبة الطالب</title>
     <link rel="stylesheet" href="styles.css?v=10">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -68,6 +68,10 @@
             background: var(--gradient-secondary);
             transform: translateY(-3px);
             box-shadow: var(--shadow-2xl);
+        }
+        
+        .back-btn-text-mobile {
+            display: none;
         }
         
         .section {
@@ -322,8 +326,20 @@
                 padding: 0;
             }
             
-            .back-btn span {
-                display: none;
+            .back-btn {
+                width: auto !important;
+                height: auto !important;
+                padding: var(--space-sm) var(--space-md) !important;
+                border-radius: var(--radius-lg) !important;
+                font-size: 0.85rem !important;
+            }
+            
+            .back-btn-text-desktop {
+                display: none !important;
+            }
+            
+            .back-btn-text-mobile {
+                display: inline !important;
             }
         }
     </style>
@@ -331,7 +347,7 @@
 <body>
     <div class="guide-container">
         <div class="guide-header">
-            <h1><i class="fas fa-book-open"></i> شرح تفصيلي لحاسبة الغياب</h1>
+            <h1><i class="fas fa-book-open"></i> شرح حاسبة الغياب</h1>
             <p>دليل شامل ومفصل حول كيفية استخدام حاسبة الغياب</p>
         </div>
         
@@ -610,7 +626,8 @@
     <!-- Fixed Back Button -->
     <a href="index.html#absence" class="back-btn">
         <i class="fas fa-arrow-right"></i>
-        <span>العودة إلى حاسبة الغياب</span>
+        <span class="back-btn-text-desktop">العودة إلى حاسبة الغياب</span>
+        <span class="back-btn-text-mobile"> الرجوع</span>
     </a>
 </body>
 </html>

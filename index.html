@@ -232,16 +232,21 @@
         }
         
         @media (max-width: 768px) {
-            .guide-help-btn span {
-                display: none;
+            .guide-help-btn {
+                padding: var(--space-sm) var(--space-md) !important;
+                border-radius: var(--radius-lg) !important;
+                width: auto !important;
+                height: auto !important;
+                justify-content: center !important;
+                font-size: 0.85rem !important;
             }
             
-            .guide-help-btn {
-                padding: var(--space-md) !important;
-                border-radius: 50% !important;
-                width: 45px !important;
-                height: 45px !important;
-                justify-content: center !important;
+            .guide-help-text {
+                display: inline !important;
+            }
+            
+            .guide-help-btn i {
+                font-size: 0.9rem !important;
             }
         }
 
@@ -363,24 +368,29 @@
             <div id="particles-js"></div>
             <div class="hero-container">
                 <div class="hero-visual">
-                    <div class="floating-cards-3d" style="position: relative; width: 400px; height: 300px; margin: 0 auto;">
-                        <div class="floating-card-3d neon-glow" style="position: absolute; top: 0; right: 0;">
+                    <div class="dice-cards-layout">
+                        <!-- Top Right -->
+                        <div class="floating-card-3d neon-glow dice-card-corner dice-card-top-right">
                             <i class="fas fa-star"></i>
                             <span>الريت</span>
                         </div>
-                        <div class="floating-card-3d neon-glow" style="position: absolute; top: 0; left: 0;">
+                        <!-- Top Left -->
+                        <div class="floating-card-3d neon-glow dice-card-corner dice-card-top-left">
                             <i class="fas fa-chart-line"></i>
-                            <span>المعدل</span>
+                            <span>المعدل التراكمي</span>
                         </div>
-                        <div class="floating-card-3d neon-glow" style="position: absolute; top: 0; left: 50%; transform: translateX(-50%);">
+                        <!-- Center (Absence) - Dice 5 pattern -->
+                        <div class="floating-card-3d neon-glow dice-card-center">
                             <i class="fas fa-calendar-times"></i>
                             <span>الغياب</span>
                         </div>
-                        <div class="floating-card-3d neon-glow" style="position: absolute; bottom: 0; right: 0;">
+                        <!-- Bottom Right -->
+                        <div class="floating-card-3d neon-glow dice-card-corner dice-card-bottom-right">
                             <i class="fas fa-flask"></i>
-                            <span>معدل كلية العلوم</span>
+                            <span>كلية العلوم</span>
                         </div>
-                        <div class="floating-card-3d neon-glow" style="position: absolute; bottom: 0; left: 0;">
+                        <!-- Bottom Left -->
+                        <div class="floating-card-3d neon-glow dice-card-corner dice-card-bottom-left">
                             <i class="fas fa-bolt"></i>
                             <span>التحليلات</span>
                         </div>
@@ -503,9 +513,9 @@
                             <div class="card-body">
                                 <!-- Help Button -->
                                 <div style="position: relative; margin-bottom: var(--space-lg); min-height: 50px;">
-                                    <a href="absence-guide.html" target="_blank" class="guide-help-btn" style="position: absolute; top: 0; left: 0; display: inline-flex; align-items: center; gap: var(--space-sm); padding: var(--space-md) var(--space-lg); background: var(--gradient-primary); color: white; border-radius: var(--radius-lg); text-decoration: none; font-weight: 600; box-shadow: var(--shadow-md); transition: all var(--transition-normal); z-index: 10;">
+                                    <a href="absence-guide.html" target="_blank" class="guide-help-btn" style="position: absolute; top: 0; right: 0; display: inline-flex; align-items: center; gap: var(--space-sm); padding: var(--space-md) var(--space-lg); background: var(--gradient-primary); color: white; border-radius: var(--radius-lg); text-decoration: none; font-weight: 600; box-shadow: var(--shadow-md); transition: all var(--transition-normal); z-index: 10;">
                                         <i class="fas fa-book-open"></i>
-                                        <span>شرح تفصيلي</span>
+                                        <span class="guide-help-text">شرح حاسبة الغياب</span>
                                     </a>
                                 </div>
                                 

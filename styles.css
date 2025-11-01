@@ -487,10 +487,11 @@ i,
     align-items: center;
 }
 
-.floating-cards-3d {
+.dice-cards-layout {
     position: relative;
-    width: 400px;
-    height: 300px;
+    width: 350px;
+    height: 340px;
+    margin: 0 auto;
 }
 
 .floating-card-3d {
@@ -508,38 +509,56 @@ i,
     color: white;
     animation: float 6s ease-in-out infinite;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    transition: all var(--transition-normal);
 }
 
-.floating-card-3d:nth-child(1) {
-    top: 0;
+/* Corner cards hover - can move */
+.floating-card-3d:not(.dice-card-center):hover {
+    transform: translateY(-5px) scale(1.05);
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+}
+
+/* Center Card (Absence) - Like dice 5 center - SAME SIZE AS OTHERS */
+.dice-card-center {
+    top: 50%;
     left: 50%;
-    transform: translateX(-50%);
+    transform: translate(-50%, -50%) !important;
+    width: 110px;
+    height: 110px;
+    z-index: 1;
     animation-delay: 0s;
+    position: absolute;
 }
 
-.floating-card-3d:nth-child(2) {
-    top: 0;
-    left: 0;
-    animation-delay: 2s;
+/* Corner Cards - Like dice 5 corners - NO OVERLAP */
+.dice-card-corner {
+    width: 110px;
+    height: 110px;
 }
 
-.floating-card-3d:nth-child(3) {
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
+.dice-card-top-right {
+    top: 10px;
+    right: 10px;
     animation-delay: 1s;
 }
 
-.floating-card-3d:nth-child(4) {
-    bottom: 0;
-    right: 0;
-    animation-delay: 4s;
+.dice-card-top-left {
+    top: 10px;
+    left: 10px;
+    animation-delay: 1.5s;
 }
 
-.floating-card-3d:nth-child(5) {
-    bottom: 0;
-    left: 0;
+.dice-card-bottom-right {
+    bottom: 10px;
+    right: 10px;
     animation-delay: 2s;
+}
+
+.dice-card-bottom-left {
+    bottom: 10px;
+    left: 10px;
+    animation-delay: 2.5s;
 }
 
 .floating-card-3d i {
@@ -557,8 +576,22 @@ i,
 }
 
 @keyframes float {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-20px); }
+    0%, 100% { 
+        transform: translateY(0px);
+    }
+    50% { 
+        transform: translateY(-15px);
+    }
+}
+
+/* Prevent center card from moving in animation */
+.dice-card-center {
+    animation: none !important;
+}
+
+/* Keep center card position fixed */
+.dice-card-center:hover {
+    transform: translate(-50%, -50%) scale(1.05) !important;
 }
 
 .cta-btn {
@@ -1358,37 +1391,57 @@ i,
         margin: var(--space-lg) 0;
     }
     
-    .floating-cards-3d {
-        width: 300px;
-        height: 300px;
+    .dice-cards-layout {
+        width: 280px;
+        height: 280px;
         margin: 0 auto;
     }
     
-    /* Mobile Large-specific positioning for floating cards */
-    .floating-card-3d:nth-child(1) {
-        top: 0;
-        right: 0;
+    .floating-card-3d {
+        width: 90px;
+        height: 90px;
     }
     
-    .floating-card-3d:nth-child(2) {
-        top: 0;
-        left: 0;
-    }
-    
-    .floating-card-3d:nth-child(3) {
-        top: 0;
+    .dice-card-center {
+        width: 90px;
+        height: 90px;
+        top: 50%;
         left: 50%;
-        transform: translateX(-50%);
+        transform: translate(-50%, -50%) !important;
+        animation: none !important;
     }
     
-    .floating-card-3d:nth-child(4) {
-        bottom: 0;
-        right: 0;
+    .dice-card-corner {
+        width: 90px;
+        height: 90px;
     }
     
-    .floating-card-3d:nth-child(5) {
-        bottom: 0;
-        left: 0;
+    .dice-card-top-right {
+        top: 5px;
+        right: 5px;
+    }
+    
+    .dice-card-top-left {
+        top: 5px;
+        left: 5px;
+    }
+    
+    .dice-card-bottom-right {
+        bottom: 5px;
+        right: 5px;
+    }
+    
+    .dice-card-bottom-left {
+        bottom: 5px;
+        left: 5px;
+    }
+    
+    .floating-card-3d i {
+        font-size: 1.5rem;
+    }
+    
+    .floating-card-3d span {
+        font-size: 0.75rem;
     }
     
     .cta-btn {
@@ -1473,37 +1526,57 @@ i,
         margin: var(--space-md) 0;
     }
     
-    .floating-cards-3d {
-        width: 280px;
-        height: 280px;
+    .dice-cards-layout {
+        width: 260px;
+        height: 260px;
         margin: 0 auto;
     }
     
-    /* Mobile Small-specific positioning for floating cards */
-    .floating-card-3d:nth-child(1) {
-        top: 0;
-        right: 0;
+    .floating-card-3d {
+        width: 80px;
+        height: 80px;
     }
     
-    .floating-card-3d:nth-child(2) {
-        top: 0;
-        left: 0;
-    }
-    
-    .floating-card-3d:nth-child(3) {
-        top: 0;
+    .dice-card-center {
+        width: 80px;
+        height: 80px;
+        top: 50%;
         left: 50%;
-        transform: translateX(-50%);
+        transform: translate(-50%, -50%) !important;
+        animation: none !important;
     }
     
-    .floating-card-3d:nth-child(4) {
-        bottom: 0;
-        right: 0;
+    .dice-card-corner {
+        width: 80px;
+        height: 80px;
     }
     
-    .floating-card-3d:nth-child(5) {
-        bottom: 0;
-        left: 0;
+    .dice-card-top-right {
+        top: 5px;
+        right: 5px;
+    }
+    
+    .dice-card-top-left {
+        top: 5px;
+        left: 5px;
+    }
+    
+    .dice-card-bottom-right {
+        bottom: 5px;
+        right: 5px;
+    }
+    
+    .dice-card-bottom-left {
+        bottom: 5px;
+        left: 5px;
+    }
+    
+    .floating-card-3d i {
+        font-size: 1.3rem;
+    }
+    
+    .floating-card-3d span {
+        font-size: 0.7rem;
     }
     
     .cta-btn {
@@ -1590,36 +1663,56 @@ i,
         font-size: 0.85rem;
     }
     
-    .floating-cards-3d {
-        width: 260px;
-        height: 260px;
+    .dice-cards-layout {
+        width: 240px;
+        height: 240px;
     }
     
-    /* Extra Small Mobile-specific positioning for floating cards */
-    .floating-card-3d:nth-child(1) {
-        top: 0;
-        right: 0;
+    .floating-card-3d {
+        width: 70px;
+        height: 70px;
     }
     
-    .floating-card-3d:nth-child(2) {
-        top: 0;
-        left: 0;
-    }
-    
-    .floating-card-3d:nth-child(3) {
-        top: 0;
+    .dice-card-center {
+        width: 70px;
+        height: 70px;
+        top: 50%;
         left: 50%;
-        transform: translateX(-50%);
+        transform: translate(-50%, -50%) !important;
+        animation: none !important;
     }
     
-    .floating-card-3d:nth-child(4) {
-        bottom: 0;
-        right: 0;
+    .dice-card-corner {
+        width: 70px;
+        height: 70px;
     }
     
-    .floating-card-3d:nth-child(5) {
-        bottom: 0;
-        left: 0;
+    .dice-card-top-right {
+        top: 5px;
+        right: 5px;
+    }
+    
+    .dice-card-top-left {
+        top: 5px;
+        left: 5px;
+    }
+    
+    .dice-card-bottom-right {
+        bottom: 5px;
+        right: 5px;
+    }
+    
+    .dice-card-bottom-left {
+        bottom: 5px;
+        left: 5px;
+    }
+    
+    .floating-card-3d i {
+        font-size: 1.2rem;
+    }
+    
+    .floating-card-3d span {
+        font-size: 0.65rem;
     }
     
     .cta-btn {
