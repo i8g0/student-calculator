@@ -9,6 +9,23 @@ html, body {
     width: 100%;
     overflow-x: hidden;
     max-width: 100vw;
+    touch-action: pan-x pan-y;
+}
+
+/* منع zoom عند double tap على الأزرار - حل جذري */
+button.new-absence-counter-btn,
+button.new-absence-counter-btn *,
+.new-absence-counter,
+.new-absence-counter * {
+    touch-action: none !important;
+    -ms-touch-action: none !important;
+    -webkit-touch-callout: none !important;
+}
+
+/* منع zoom على جميع الأزرار */
+button {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
 }
 
 /* ===== MOBILE DROPDOWN FIX ===== */
@@ -3824,7 +3841,8 @@ i,
     justify-content: center;
     gap: var(--space-lg);
     position: relative;
-    touch-action: manipulation;
+    touch-action: none;
+    -webkit-touch-callout: none;
 }
 
 .new-absence-counter-btn {
@@ -3842,10 +3860,14 @@ i,
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: 0 3px 10px rgba(99, 102, 241, 0.4);
     position: relative;
-    touch-action: manipulation;
-    -webkit-tap-highlight-color: transparent;
-    user-select: none;
-    -webkit-user-select: none;
+    touch-action: none !important;
+    -webkit-tap-highlight-color: transparent !important;
+    -webkit-touch-callout: none !important;
+    user-select: none !important;
+    -webkit-user-select: none !important;
+    -moz-user-select: none !important;
+    -ms-user-select: none !important;
+    pointer-events: auto;
 }
 
 .new-absence-counter-btn:hover {

@@ -3018,6 +3018,49 @@ function updateCompletionSection() {
 
 
 
+// منع zoom عند double tap على أزرار العداد - حل جذري
+(function() {
+    let lastTouchEnd = 0;
+    let touchStartTime = 0;
+    
+    document.addEventListener('touchend', function(event) {
+        const now = Date.now();
+        const target = event.target.closest('.new-absence-counter-btn');
+        
+        if (target) {
+            if (now - lastTouchEnd <= 300) {
+                event.preventDefault();
+                event.stopPropagation();
+                event.stopImmediatePropagation();
+                return false;
+            }
+            lastTouchEnd = now;
+        }
+    }, { passive: false, capture: true });
+
+    // منع gesture zoom على الأزرار
+    ['gesturestart', 'gesturechange', 'gestureend'].forEach(function(eventName) {
+        document.addEventListener(eventName, function(e) {
+            if (e.target.closest('.new-absence-counter-btn')) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+        }, { passive: false });
+    });
+    
+    // منع double tap zoom على الأزرار
+    document.addEventListener('touchstart', function(e) {
+        if (e.target.closest('.new-absence-counter-btn')) {
+            const now = Date.now();
+            if (now - touchStartTime < 300) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            touchStartTime = now;
+        }
+    }, { passive: false, capture: true });
+})();
+
 // Initialize absence calculator when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize all calculators
@@ -3855,21 +3898,41 @@ function renderNewAbsenceCourses() {
         const plusBtn = document.getElementById(`plus-btn-${course.id}`);
         
         if (minusBtn) {
+            let touchStartTime = 0;
             const handleMinus = (e) => {
                 e.preventDefault();
                 e.stopPropagation();
+                e.cancelBubble = true;
+                const now = Date.now();
+                if (now - touchStartTime < 100) return;
+                touchStartTime = now;
                 updateAbsenceHours(course.id, -1);
+                return false;
             };
-            minusBtn.addEventListener('touchstart', handleMinus, { passive: false });
+            minusBtn.addEventListener('touchstart', handleMinus, { passive: false, capture: true });
+            minusBtn.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+            }, { passive: false, capture: true });
             minusBtn.addEventListener('click', handleMinus);
         }
         if (plusBtn) {
+            let touchStartTime = 0;
             const handlePlus = (e) => {
                 e.preventDefault();
                 e.stopPropagation();
+                e.cancelBubble = true;
+                const now = Date.now();
+                if (now - touchStartTime < 100) return;
+                touchStartTime = now;
                 updateAbsenceHours(course.id, 1);
+                return false;
             };
-            plusBtn.addEventListener('touchstart', handlePlus, { passive: false });
+            plusBtn.addEventListener('touchstart', handlePlus, { passive: false, capture: true });
+            plusBtn.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+            }, { passive: false, capture: true });
             plusBtn.addEventListener('click', handlePlus);
         }
     });
