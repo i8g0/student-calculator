@@ -4020,7 +4020,7 @@ function createCourseCard(course) {
                     </div>
                 </div>
                 <div class="new-absence-summary-card">
-                    <div class="new-absence-summary-label">حد الغياب</div>
+                    <div class="new-absence-summary-label">اقصى عدد ساعات الغياب</div>
                     <div class="new-absence-summary-value">
                         ${absenceLimit.toFixed(1)}
                         <i class="fas fa-check-circle"></i>
