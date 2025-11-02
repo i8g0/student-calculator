@@ -3424,10 +3424,10 @@ function calculateIntegratedStats(course) {
     
     // تحديد الحالة
     let status = 'safe';
-    if (absencePercentage >= 25.01) {
-        status = 'danger'; // حرمان من 25.01% فما فوق
+    if (absencePercentage >= 25.00) {
+        status = 'danger'; // حرمان من 25.00% فما فوق
     } else if (absencePercentage >= 20) {
-        status = 'warning'; // تحذير أحمر من 20% إلى 25%
+        status = 'warning'; // تحذير أحمر من 20% إلى أقل من 25%
     } else if (absencePercentage >= 11) {
         status = 'safe-yellow'; // آمن أصفر من 11% إلى 19%
     } else {
@@ -3485,10 +3485,10 @@ function updateProgressBarIntegrated(courseId, stats) {
         
         // تحديث اللون حسب المستوى
         progressBar.className = 'absence-progress-fill';
-        if (stats.absencePercentage >= 25.01) {
-            progressBar.classList.add('danger'); // حرمان من 25.01% فما فوق
+        if (stats.absencePercentage >= 25.00) {
+            progressBar.classList.add('danger'); // حرمان من 25.00% فما فوق
         } else if (stats.absencePercentage >= 20) {
-            progressBar.classList.add('warning'); // أحمر من 20% إلى 25%
+            progressBar.classList.add('warning'); // أحمر من 20% إلى أقل من 25%
         } else if (stats.absencePercentage >= 11) {
             progressBar.classList.add('safe-yellow'); // أصفر من 11% إلى 19%
         } else {
@@ -3508,7 +3508,12 @@ function updateStatusDisplayIntegrated(courseId, stats) {
     if (statusElement) {
         let statusText = 'آمن';
         if (stats.status === 'danger') {
-            statusText = 'حرمان!';
+            // التحقق إذا كانت 25.00 بالضبط
+            if (Math.abs(stats.absencePercentage - 25.00) < 0.01) {
+                statusText = 'خلصت غياباتك';
+            } else {
+                statusText = 'حرمان!';
+            }
         } else if (stats.status === 'warning') {
             statusText = 'تحذير!';
         }
@@ -3629,17 +3634,28 @@ function createAbsenceControlItem(course) {
     
     // Determine status
     let status = 'safe';
-    if (absencePercentage >= 25.01) {
-        status = 'danger'; // حرمان من 25.01% فما فوق
+    if (absencePercentage >= 25.00) {
+        status = 'danger'; // حرمان من 25.00% فما فوق
     } else if (absencePercentage >= 20) {
-        status = 'warning'; // تحذير أحمر من 20% إلى 25%
+        status = 'warning'; // تحذير أحمر من 20% إلى أقل من 25%
     } else if (absencePercentage >= 11) {
         status = 'safe-yellow'; // آمن أصفر من 11% إلى 19%
     } else {
         status = 'safe'; // آمن أخضر من 0% إلى 10%
     }
     
-    const statusText = status === 'danger' ? 'حرمان!' : status === 'warning' ? 'تحذير!' : 'آمن';
+    // تحديد نص الحالة
+    let statusText = 'آمن';
+    if (status === 'danger') {
+        // التحقق إذا كانت 25.00 بالضبط
+        if (Math.abs(absencePercentage - 25.00) < 0.01) {
+            statusText = 'خلصت غياباتك';
+        } else {
+            statusText = 'حرمان!';
+        }
+    } else if (status === 'warning') {
+        statusText = 'تحذير!';
+    }
     
     const controlItem = document.createElement('div');
     controlItem.className = 'absence-control-item';
@@ -3952,9 +3968,14 @@ function createCourseCard(course) {
     let statusClass = 'safe';
     let statusText = 'في أمان';
     
-    if (absencePercentage >= 25) {
+    if (absencePercentage >= 25.00) {
         statusClass = 'danger';
-        statusText = 'حرمان';
+        // التحقق إذا كانت 25.00 بالضبط
+        if (Math.abs(absencePercentage - 25.00) < 0.01) {
+            statusText = 'خلصت غياباتك';
+        } else {
+            statusText = 'حرمان';
+        }
     } else if (absencePercentage >= 21) {
         statusClass = 'danger';
         statusText = 'تحذير';
