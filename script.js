@@ -3854,7 +3854,11 @@ function handleNewAbsenceFormSubmit(e) {
         return;
     }
     
-    // Calculate absence percentage per hour (6.25 divided by hours per week)
+    // Calculate absence percentage per hour
+    // نسبة غياب الساعة الواحدة = 6.25 ÷ عدد الساعات الأسبوعية
+    // هذه المعادلة تعطي نسبة الغياب لكل ساعة غياب من إجمالي المقرر
+    // مثال: مادة 4 ساعات → 6.25 ÷ 4 = 1.5625%
+    // مثال: مادة 6 ساعات → 6.25 ÷ 6 = 1.04167%
     const absencePercentagePerHour = 6.25 / hoursPerWeek;
     
     // Create course object
@@ -4064,6 +4068,62 @@ let currentAlertShowing = false;
 let absenceAlertTimer = null;
 
 // Show absence alert popup
+// دالة تشغيل الإشعارات الصوتية عند الخطورة
+function playAbsenceAlertSound(alertType) {
+    try {
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        
+        let frequency = 400; // تردد الصوت الأساسي
+        let duration = 0.2; // مدة الصوت بالثواني
+        let beeps = 1; // عدد النغمات
+        
+        // تحديد نوع الصوت حسب مستوى الخطورة
+        if (alertType === '25' || alertType === 'danger') {
+            // صوت خطير (حرمان) - نغمات عالية متتالية
+            frequency = 600;
+            duration = 0.15;
+            beeps = 3;
+        } else if (alertType === '20' || alertType === 'warning-high') {
+            // صوت تحذير قوي (20-25%)
+            frequency = 500;
+            duration = 0.2;
+            beeps = 2;
+        } else if (alertType === '10' || alertType === 'warning') {
+            // صوت تحذير خفيف (10-20%)
+            frequency = 400;
+            duration = 0.25;
+            beeps = 1;
+        }
+        
+        // تشغيل النغمات
+        for (let i = 0; i < beeps; i++) {
+            setTimeout(() => {
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.frequency.value = frequency;
+                oscillator.type = 'sine';
+                
+                // تطبيق envelope للتأثير الطبيعي
+                const now = audioContext.currentTime;
+                gainNode.gain.setValueAtTime(0, now);
+                gainNode.gain.linearRampToValueAtTime(0.3, now + 0.01);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, now + duration);
+                
+                oscillator.start(now);
+                oscillator.stop(now + duration);
+            }, i * (duration * 1000 + 50)); // تأخير بين النغمات
+        }
+    } catch (error) {
+        // إذا فشل Web Audio API، استخدم صوت بديل بسيط
+        console.log('Web Audio API not available, using fallback sound');
+        // يمكن إضافة ملف صوتي بديل هنا لاحقاً
+    }
+}
+
 function showAbsenceAlert(courseName, percentage, alertType) {
     // Prevent showing multiple alerts at the same time
     if (currentAlertShowing) {
@@ -4071,6 +4131,9 @@ function showAbsenceAlert(courseName, percentage, alertType) {
     }
     
     currentAlertShowing = true;
+    
+    // تشغيل صوت التنبيه
+    playAbsenceAlertSound(alertType);
     
     // Clear any existing timer
     if (absenceAlertTimer) {
@@ -4228,6 +4291,16 @@ function updateAbsenceHours(courseId, change) {
     
     // Save to localStorage
     localStorage.setItem('newAbsenceCourses', JSON.stringify(newAbsenceCourses));
+    
+    // Check for danger states and play sound when crossing thresholds (only when increasing)
+    if (change > 0) {
+        // فقط عند زيادة الغياب
+        if (newPercentage >= 25.00 && oldPercentage >= 25.00) {
+            // بالفعل فوق 25% وتحديث آخر يزيد الغياب - صوت خطير مستمر
+            playAbsenceAlertSound('danger');
+        }
+        // الصوت عند عبور العتبات (10%, 20%, 25%) سيتم تشغيله في showAbsenceAlert
+    }
     
     // Re-render courses first
     renderNewAbsenceCourses();
