@@ -296,6 +296,12 @@ function initForms() {
         scienceCollegeForm.addEventListener('submit', handleScienceCollegeCalculation);
     }
     
+    // Applied College calculator form
+    const appliedCollegeForm = document.getElementById('applied-college-form');
+    if (appliedCollegeForm) {
+        appliedCollegeForm.addEventListener('submit', handleAppliedCollegeCalculation);
+    }
+    
     // Cumulative GPA form
     const cumulativeForm = document.getElementById('cumulative-form');
     const cumulativeNumInput = document.getElementById('cumulative-num');
@@ -561,6 +567,32 @@ function handleScienceCollegeCalculation(e) {
     updateAnalytics();
 }
 
+function handleAppliedCollegeCalculation(e) {
+    e.preventDefault();
+    const gpa = parseFloat(document.getElementById('ac-gpa').value);
+    const composite = parseFloat(document.getElementById('ac-composite').value);
+    const organicChemistry = gradeValues[document.getElementById('ac-organic-chemistry').value];
+    const biology = gradeValues[document.getElementById('ac-biology').value];
+    if (isNaN(gpa) || isNaN(composite) || organicChemistry === undefined || biology === undefined) {
+        showToast('يرجى ملء جميع الحقول المطلوبة', 'error');
+        return;
+    }
+    // حساب معدل الكلية التطبيقية
+    const result = calculateAppliedCollegeRate(gpa, composite, organicChemistry, biology);
+    displayAppliedCollegeResult(result);
+    saveCalculation({
+        type: 'applied-college',
+        gpa,
+        composite,
+        organicChemistry,
+        biology,
+        result,
+        timestamp: new Date().toISOString()
+    });
+    showToast('تم حساب معدل تخصيص الكلية التطبيقية بنجاح! 🔬', 'success');
+    updateAnalytics();
+}
+
 // ===== CALCULATION FUNCTIONS =====
 function calculateRate(major, gpa, sa, g1, w1, g2, w2) {
     // حساب الريت حسب المعادلة الجديدة
@@ -635,6 +667,24 @@ function calculateScienceCollegeRate(gpa, weighted, physics, differential, integ
             physicsContribution: (physics * 0.1).toFixed(3),
             differentialContribution: (differential * 0.05).toFixed(3),
             integralContribution: (integral * 0.05).toFixed(3)
+        }
+    };
+}
+
+function calculateAppliedCollegeRate(gpa, composite, organicChemistry, biology) {
+    const composite5 = composite / 20;
+    const finalRate = (gpa * 0.5) + (composite5 * 0.3) + (organicChemistry * 0.1) + (biology * 0.1);
+    return {
+        finalRate: finalRate.toFixed(2),
+        gpa: gpa,
+        composite: composite,
+        organicChemistry: organicChemistry,
+        biology: biology,
+        breakdown: {
+            gpaContribution: (gpa * 0.5).toFixed(3),
+            compositeContribution: (composite5 * 0.3).toFixed(3),
+            organicChemistryContribution: (organicChemistry * 0.1).toFixed(3),
+            biologyContribution: (biology * 0.1).toFixed(3)
         }
     };
 }
@@ -776,6 +826,41 @@ function displayScienceCollegeResult(result) {
             <div class="detail-item">
                 <div class="detail-label">التكامل (5%)</div>
                 <div class="detail-value">${result.breakdown.integralContribution}</div>
+            </div>
+        </div>
+    `;
+    resultContainer.classList.add('show');
+}
+
+function displayAppliedCollegeResult(result) {
+    const resultContainer = document.getElementById('applied-college-result');
+    resultContainer.innerHTML = `
+        <div class="result-header">
+            <div class="result-icon success">
+                <i class="fas fa-microscope"></i>
+            </div>
+            <div class="result-content">
+                <h4>نتيجة معدل تخصيص الكلية التطبيقية</h4>
+                <p>المعدل النهائي للتخصيص</p>
+            </div>
+        </div>
+        <div class="result-value">${result.finalRate}</div>
+        <div class="result-details">
+            <div class="detail-item">
+                <div class="detail-label">المعدل التراكمي (50%)</div>
+                <div class="detail-value">${result.breakdown.gpaContribution}</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">نسبة الطالب المركبة (30%)</div>
+                <div class="detail-value">${result.breakdown.compositeContribution}</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">الكيمياء العضوية 106كيم (10%)</div>
+                <div class="detail-value">${result.breakdown.organicChemistryContribution}</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">علم الاحياء العام 106 حيا (10%)</div>
+                <div class="detail-value">${result.breakdown.biologyContribution}</div>
             </div>
         </div>
     `;

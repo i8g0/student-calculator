@@ -349,6 +349,10 @@
                 <i class="fas fa-flask"></i>
                 <span> كلية العلوم</span>
             </a>
+            <a href="#applied-college" class="menu-item">
+                <i class="fas fa-microscope"></i>
+                <span>الكلية التطبيقية</span>
+            </a>
             <a href="#cumulative" class="menu-item">
                 <i class="fas fa-chart-line"></i>
                 <span>المعدل التراكمي</span>
@@ -398,6 +402,10 @@
                         <button class="tab-btn" data-tab="science-college">
                             <i class="fas fa-flask"></i>
                             <span>كلية العلوم</span>
+                        </button>
+                        <button class="tab-btn" data-tab="applied-college">
+                            <i class="fas fa-microscope"></i>
+                            <span>الكلية التطبيقية</span>
                         </button>
                         <button class="tab-btn" data-tab="cumulative">
                             <i class="fas fa-chart-line"></i>
@@ -620,6 +628,84 @@
                                     </button>
                                 </form>
                                 <div id="science-college-result" class="result-container">
+                                    <div class="result-value">
+                                        <button class="export-btn" onclick="exportResult(this)"><i class="fas fa-download"></i> تصدير/طباعة</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Applied College Rate Calculator -->
+                    <div id="applied-college" class="tab-content">
+                        <div class="calculator-card">
+                            <div class="card-header">
+                                <div class="header-icon">
+                                    <i class="fas fa-microscope"></i>
+                                </div>
+                                <div class="header-content">
+                                    <h3>الكلية التطبيقية</h3>
+                                    <p>احسب معدل تخصيصك للكلية التطبيقية</p>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <form id="applied-college-form" class="calculator-form">
+                                    <div class="form-group">
+                                        <label for="ac-gpa">
+                                            <i class="fas fa-chart-bar"></i>
+                                            المعدل التراكمي في السنة التحضيرية - 50%
+                                        </label>
+                                        <input type="number" id="ac-gpa" min="0" max="5" step="0.01" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="ac-composite">
+                                            <i class="fas fa-balance-scale"></i>
+                                            نسبة الطالب المركبة - 30%
+                                        </label>
+                                        <input type="number" id="ac-composite" min="0" max="100" step="0.01" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="ac-organic-chemistry">
+                                            <i class="fas fa-flask"></i>
+                                            درجة الكيمياء العضوية 106كيم - 10%
+                                        </label>
+                                        <select id="ac-organic-chemistry" required>
+                                            <option value="">-- اختر التقدير --</option>
+                                            <option value="A+">A+</option>
+                                            <option value="A">A</option>
+                                            <option value="B+">B+</option>
+                                            <option value="B">B</option>
+                                            <option value="C+">C+</option>
+                                            <option value="C">C</option>
+                                            <option value="D+">D+</option>
+                                            <option value="D">D</option>
+                                            <option value="F">F</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="ac-biology">
+                                            <i class="fas fa-dna"></i>
+                                            درجة علم الاحياء العام 106 حيا - 10%
+                                        </label>
+                                        <select id="ac-biology" required>
+                                            <option value="">-- اختر التقدير --</option>
+                                            <option value="A+">A+</option>
+                                            <option value="A">A</option>
+                                            <option value="B+">B+</option>
+                                            <option value="B">B</option>
+                                            <option value="C+">C+</option>
+                                            <option value="C">C</option>
+                                            <option value="D+">D+</option>
+                                            <option value="D">D</option>
+                                            <option value="F">F</option>
+                                        </select>
+                                    </div>
+                                    <button type="submit" class="submit-btn">
+                                        <i class="fas fa-calculator"></i>
+                                        <span>احسب معدل التخصيص</span>
+                                    </button>
+                                </form>
+                                <div id="applied-college-result" class="result-container">
                                     <div class="result-value">
                                         <button class="export-btn" onclick="exportResult(this)"><i class="fas fa-download"></i> تصدير/طباعة</button>
                                     </div>
