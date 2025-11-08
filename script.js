@@ -5068,19 +5068,19 @@ function initEducationalVideos() {
         {
             title: 'كيفية استخدام حاسبة الريت',
             description: 'شرح مفصل لكيفية حساب الريت باستخدام الموقع',
-            embed: '<iframe width="100%" height="315" src="https://www.youtube.com/embed/dQw4w9WgXcQ" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="border-radius: 8px;"></iframe>',
+            embed: '<div style="padding: 1rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px; text-align: center; color: white;"><i class="fas fa-video" style="font-size: 3rem; margin-bottom: 1rem;"></i><p>سيتم إضافة الفيديو قريباً</p></div>',
             icon: 'fas fa-star'
         },
         {
             title: 'كيفية متابعة الغياب',
             description: 'تعلم كيفية استخدام حاسبة الغياب بشكل فعال',
-            embed: '<iframe width="100%" height="315" src="https://www.youtube.com/embed/dQw4w9WgXcQ" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="border-radius: 8px;"></iframe>',
+            embed: '<div style="padding: 1rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px; text-align: center; color: white;"><i class="fas fa-video" style="font-size: 3rem; margin-bottom: 1rem;"></i><p>سيتم إضافة الفيديو قريباً</p></div>',
             icon: 'fas fa-calendar-times'
         },
         {
             title: 'نصائح لتحسين المعدل التراكمي',
             description: 'نصائح عملية لرفع معدلك التراكمي',
-            embed: '<iframe width="100%" height="315" src="https://www.youtube.com/embed/dQw4w9WgXcQ" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="border-radius: 8px;"></iframe>',
+            embed: '<div style="padding: 1rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px; text-align: center; color: white;"><i class="fas fa-video" style="font-size: 3rem; margin-bottom: 1rem;"></i><p>سيتم إضافة الفيديو قريباً</p></div>',
             icon: 'fas fa-chart-line'
         }
     ];
