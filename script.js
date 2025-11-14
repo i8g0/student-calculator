@@ -1369,19 +1369,77 @@ document.addEventListener('focusout', (e) => {
     }
 });
 
-// ===== SERVICE WORKER (PWA SUPPORT) =====
-if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.getRegistrations().then(function(registrations) {
-        for(let registration of registrations) {
-            registration.unregister();
+// ===== SERVICE WORKER & CACHE CLEARING =====
+// حذف Service Workers والكاش عند تحميل الصفحة
+async function clearAllCache() {
+    try {
+        // حذف Service Workers
+        if ('serviceWorker' in navigator) {
+            const registrations = await navigator.serviceWorker.getRegistrations();
+            for(let registration of registrations) {
+                await registration.unregister();
+            }
         }
-    });
+        
+        // حذف جميع الكاشات
+        if ('caches' in window) {
+            const cacheNames = await caches.keys();
+            await Promise.all(
+                cacheNames.map(name => caches.delete(name))
+            );
+        }
+        
+        // حذف cache storage إذا كان متاحاً
+        if ('storage' in navigator && 'estimate' in navigator.storage) {
+            const estimate = await navigator.storage.estimate();
+            if (estimate.usage > 0) {
+                // محاولة حذف جميع البيانات المخزنة
+                if (navigator.storage && navigator.storage.persist) {
+                    await navigator.storage.persist();
+                }
+            }
+        }
+    } catch (error) {
+        console.log('خطأ في حذف الكاش:', error);
+    }
 }
-if ('caches' in window) {
-    caches.keys().then(function(names) {
-        for (let name of names) caches.delete(name);
-    });
-}
+
+// تشغيل حذف الكاش عند تحميل الصفحة
+clearAllCache();
+
+// إضافة timestamp للملفات المحلية فقط لمنع الكاش
+document.addEventListener('DOMContentLoaded', function() {
+    try {
+        const timestamp = new Date().getTime();
+        const origin = window.location.origin;
+        
+        // معالجة ملفات CSS المحلية
+        const links = document.querySelectorAll('link[rel="stylesheet"][href]');
+        links.forEach(link => {
+            const href = link.getAttribute('href');
+            if (href && (href.startsWith('/') || href.startsWith('./') || href.includes(origin))) {
+                if (!href.includes('?') || !href.includes('v=')) {
+                    const separator = href.includes('?') ? '&' : '?';
+                    link.setAttribute('href', href + separator + '_nocache=' + timestamp);
+                }
+            }
+        });
+        
+        // معالجة ملفات JavaScript المحلية
+        const scripts = document.querySelectorAll('script[src]');
+        scripts.forEach(script => {
+            const src = script.getAttribute('src');
+            if (src && (src.startsWith('/') || src.startsWith('./') || src.includes(origin))) {
+                if (!src.includes('?') || !src.includes('v=')) {
+                    const separator = src.includes('?') ? '&' : '?';
+                    script.setAttribute('src', src + separator + '_nocache=' + timestamp);
+                }
+            }
+        });
+    } catch (error) {
+        console.log('خطأ في إضافة timestamp:', error);
+    }
+});
 
 // ===== EXPORT FUNCTIONS FOR GLOBAL ACCESS =====
 window.RateCalculator = {
