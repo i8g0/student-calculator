@@ -374,23 +374,23 @@ function createCourseInputs(container, numCourses, type) {
     }
 }
 
-// تعريف المواد والأوزان حسب التخصص
+// تعريف المواد والأوزان حسب التخصص (النظام الجديد)
 const majorCourses = {
-    CE: [
-        { name: "التصميم المنطقي (1111)", weight: 0.75 },
-        { name: "الرياضيات المتقطعة (1112)", weight: 0.25 }
+    CE: [ // هندسة الحاسب
+        { name: "الرياضيات المتقطعة (1112عال)", weight: 0.5 },
+        { name: "برمجة الحاسب 1 (1301عال)", weight: 0.5 }
     ],
-    CS: [
-        { name: "الرياضيات المتقطعة (1112)", weight: 0.25 },
-        { name: "برمجة الحاسب 1 (1301)", weight: 0.75 }
+    CS: [ // علوم الحاسب
+        { name: "الرياضيات المتقطعة (1112عال)", weight: 0.25 },
+        { name: "برمجة الحاسب 1 (1301عال)", weight: 0.75 }
     ],
-    IS: [
-        { name: "برمجة الحاسب 1 (1301)", weight: 0.75 },
-        { name: "التصميم المنطقي (1111)", weight: 0.25 }
+    IS: [ // نظم المعلومات
+        { name: "برمجة الحاسب 1 (1301عال)", weight: 0.5 },
+        { name: "أساسيات نظم قواعد البيانات (2511نال)", weight: 0.5 }
     ],
-    SE: [
-        { name: "التصميم المنطقي (1111)", weight: 0.5 },
-        { name: "برمجة الحاسب 1 (1301)", weight: 0.5 }
+    SE: [ // هندسة البرمجيات
+        { name: "الرياضيات المتقطعة (1112عال)", weight: 0.5 },
+        { name: "برمجة الحاسب 1 (1301عال)", weight: 0.5 }
     ]
 };
 
@@ -1369,77 +1369,19 @@ document.addEventListener('focusout', (e) => {
     }
 });
 
-// ===== SERVICE WORKER & CACHE CLEARING =====
-// حذف Service Workers والكاش عند تحميل الصفحة
-async function clearAllCache() {
-    try {
-        // حذف Service Workers
-        if ('serviceWorker' in navigator) {
-            const registrations = await navigator.serviceWorker.getRegistrations();
-            for(let registration of registrations) {
-                await registration.unregister();
-            }
+// ===== SERVICE WORKER (PWA SUPPORT) =====
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then(function(registrations) {
+        for(let registration of registrations) {
+            registration.unregister();
         }
-        
-        // حذف جميع الكاشات
-        if ('caches' in window) {
-            const cacheNames = await caches.keys();
-            await Promise.all(
-                cacheNames.map(name => caches.delete(name))
-            );
-        }
-        
-        // حذف cache storage إذا كان متاحاً
-        if ('storage' in navigator && 'estimate' in navigator.storage) {
-            const estimate = await navigator.storage.estimate();
-            if (estimate.usage > 0) {
-                // محاولة حذف جميع البيانات المخزنة
-                if (navigator.storage && navigator.storage.persist) {
-                    await navigator.storage.persist();
-                }
-            }
-        }
-    } catch (error) {
-        console.log('خطأ في حذف الكاش:', error);
-    }
+    });
 }
-
-// تشغيل حذف الكاش عند تحميل الصفحة
-clearAllCache();
-
-// إضافة timestamp للملفات المحلية فقط لمنع الكاش
-document.addEventListener('DOMContentLoaded', function() {
-    try {
-        const timestamp = new Date().getTime();
-        const origin = window.location.origin;
-        
-        // معالجة ملفات CSS المحلية
-        const links = document.querySelectorAll('link[rel="stylesheet"][href]');
-        links.forEach(link => {
-            const href = link.getAttribute('href');
-            if (href && (href.startsWith('/') || href.startsWith('./') || href.includes(origin))) {
-                if (!href.includes('?') || !href.includes('v=')) {
-                    const separator = href.includes('?') ? '&' : '?';
-                    link.setAttribute('href', href + separator + '_nocache=' + timestamp);
-                }
-            }
-        });
-        
-        // معالجة ملفات JavaScript المحلية
-        const scripts = document.querySelectorAll('script[src]');
-        scripts.forEach(script => {
-            const src = script.getAttribute('src');
-            if (src && (src.startsWith('/') || src.startsWith('./') || src.includes(origin))) {
-                if (!src.includes('?') || !src.includes('v=')) {
-                    const separator = src.includes('?') ? '&' : '?';
-                    script.setAttribute('src', src + separator + '_nocache=' + timestamp);
-                }
-            }
-        });
-    } catch (error) {
-        console.log('خطأ في إضافة timestamp:', error);
-    }
-});
+if ('caches' in window) {
+    caches.keys().then(function(names) {
+        for (let name of names) caches.delete(name);
+    });
+}
 
 // ===== EXPORT FUNCTIONS FOR GLOBAL ACCESS =====
 window.RateCalculator = {
