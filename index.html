@@ -1011,13 +1011,32 @@
     <!-- Toast Notifications -->
     <div id="toast-container" class="toast-container"></div>
 
+    <!-- PWA Install Banner (يظهر مرة واحدة فقط) -->
+    <div id="pwa-install-banner" class="pwa-install-banner">
+        <button class="pwa-close-btn" onclick="closePWAInstallBanner()" aria-label="إغلاق">
+            <i class="fas fa-times"></i>
+        </button>
+        <div class="pwa-banner-content">
+            <div class="pwa-icon">
+                <i class="fas fa-mobile-alt"></i>
+            </div>
+            <div class="pwa-text">
+                <h3>📱 أضف التطبيق للشاشة الرئيسية</h3>
+                <p>احصل على تجربة أفضل وأسرع!</p>
+            </div>
+        </div>
+        <div class="pwa-instructions" id="pwa-instructions">
+            <!-- سيتم ملؤه بالكود JavaScript -->
+        </div>
+    </div>
+
 
     <!-- Scripts -->
     <script src="script.js?v=32"></script>
     
-    <!-- PWA Install Prompt (hidden by default) -->
+    <!-- PWA Install Banner Styles -->
     <style>
-        #pwa-install-banner {
+        .pwa-install-banner {
             display: none;
             position: fixed;
             bottom: 20px;
@@ -1025,69 +1044,148 @@
             transform: translateX(-50%);
             background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
             color: white;
-            padding: 20px 30px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
             z-index: 10000;
-            max-width: 90%;
-            text-align: center;
-            animation: slideUp 0.5s ease;
+            max-width: 500px;
+            width: 90%;
+            animation: slideUpBanner 0.5s ease;
+            direction: rtl;
         }
         
-        #pwa-install-banner.show {
+        .pwa-install-banner.show {
             display: block;
         }
         
-        #pwa-install-banner .banner-content {
+        .pwa-close-btn {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 15px;
-            flex-wrap: wrap;
             justify-content: center;
-        }
-        
-        #pwa-install-banner .banner-text {
-            flex: 1;
-            min-width: 200px;
-        }
-        
-        #pwa-install-banner .banner-buttons {
-            display: flex;
-            gap: 10px;
-        }
-        
-        #pwa-install-banner button {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 25px;
-            font-weight: 600;
-            cursor: pointer;
+            font-size: 18px;
             transition: all 0.3s;
         }
         
-        #pwa-install-banner .install-btn {
+        .pwa-close-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: rotate(90deg);
+        }
+        
+        .pwa-banner-content {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding-right: 10px;
+        }
+        
+        .pwa-icon {
+            font-size: 2.5rem;
+            animation: pulse 2s infinite;
+        }
+        
+        .pwa-text h3 {
+            margin: 0 0 5px 0;
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+        
+        .pwa-text p {
+            margin: 0;
+            opacity: 0.9;
+            font-size: 0.95rem;
+        }
+        
+        .pwa-instructions {
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 15px;
+        }
+        
+        .pwa-instructions h4 {
+            margin: 0 0 15px 0;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .pwa-steps {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .pwa-steps li {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 15px;
+            padding: 12px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            transition: all 0.3s;
+        }
+        
+        .pwa-steps li:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateX(-5px);
+        }
+        
+        .pwa-steps li:last-child {
+            margin-bottom: 0;
+        }
+        
+        .step-number {
             background: white;
             color: #6366f1;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            flex-shrink: 0;
+            font-size: 0.9rem;
         }
         
-        #pwa-install-banner .install-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(255,255,255,0.3);
+        .step-text {
+            flex: 1;
+            line-height: 1.6;
+            font-size: 0.95rem;
         }
         
-        #pwa-install-banner .dismiss-btn {
+        .step-icon {
+            font-size: 1.2rem;
+            margin-left: 5px;
+        }
+        
+        .device-badge {
+            display: inline-block;
             background: rgba(255,255,255,0.2);
-            color: white;
-            border: 2px solid rgba(255,255,255,0.3);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            margin-bottom: 10px;
+            font-weight: 600;
         }
         
-        #pwa-install-banner .dismiss-btn:hover {
-            background: rgba(255,255,255,0.3);
-        }
-        
-        @keyframes slideUp {
+        @keyframes slideUpBanner {
             from {
-                transform: translateX(-50%) translateY(100px);
+                transform: translateX(-50%) translateY(150px);
                 opacity: 0;
             }
             to {
@@ -1096,26 +1194,49 @@
             }
         }
         
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+        }
+        
         @media (max-width: 768px) {
-            #pwa-install-banner {
+            .pwa-install-banner {
                 bottom: 10px;
                 left: 10px;
                 right: 10px;
                 transform: none;
                 max-width: none;
+                width: auto;
+                padding: 20px;
             }
             
-            #pwa-install-banner .banner-content {
+            .pwa-banner-content {
                 flex-direction: column;
+                text-align: center;
             }
             
-            #pwa-install-banner .banner-buttons {
-                width: 100%;
-                flex-direction: column;
+            .pwa-text h3 {
+                font-size: 1.1rem;
             }
             
-            #pwa-install-banner button {
-                width: 100%;
+            .pwa-text p {
+                font-size: 0.85rem;
+            }
+            
+            .pwa-instructions {
+                padding: 15px;
+            }
+            
+            .pwa-steps li {
+                padding: 10px;
+            }
+            
+            .step-text {
+                font-size: 0.85rem;
             }
         }
     </style>

@@ -45,6 +45,8 @@ function initializeApp() {
         loadingScreen.classList.add('hidden');
         setTimeout(() => {
             loadingScreen.style.display = 'none';
+            // إظهار الباندير مباشرة بعد انتهاء التحميل
+            showPWAInstallBanner();
         }, 500);
     }, 2000);
 
@@ -71,6 +73,9 @@ function initializeApp() {
     
     // Show welcome toast
     showToast('مرحباً بك في حاسبة الريت الذكية! 🚀', 'info');
+    
+    // مراقبة تغيير display mode (عند فتح التطبيق من الشاشة الرئيسية)
+    checkDisplayMode();
 }
 
 // ===== PWA SERVICE WORKER =====
@@ -188,61 +193,150 @@ function checkInstallPrompt() {
     window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
         deferredPrompt = e;
-        showInstallButton();
+        // عند ظهور beforeinstallprompt، لا نحتاج لإظهار زر إضافي
+        // الباندير موجود بالفعل
     });
     
-    function showInstallButton() {
-        // إظهار زر التثبيت إذا لم يكن التطبيق مثبتاً
-        if (!window.matchMedia('(display-mode: standalone)').matches) {
-            const installBtn = document.createElement('button');
-            installBtn.id = 'pwa-install-btn';
-            installBtn.innerHTML = '<i class="fas fa-download"></i> تثبيت التطبيق';
-            installBtn.style.cssText = `
-                position: fixed;
-                bottom: 20px;
-                left: 20px;
-                background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-                color: white;
-                border: none;
-                padding: 12px 24px;
-                border-radius: 25px;
-                font-weight: 600;
-                cursor: pointer;
-                box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
-                z-index: 9999;
-                display: flex;
-                align-items: center;
-                gap: 8px;
-                transition: all 0.3s;
-            `;
-            
-            installBtn.addEventListener('click', async () => {
-                if (deferredPrompt) {
-                    deferredPrompt.prompt();
-                    const { outcome } = await deferredPrompt.userChoice;
-                    console.log(`User response to install prompt: ${outcome}`);
-                    deferredPrompt = null;
-                    installBtn.remove();
-                }
-            });
-            
-            installBtn.addEventListener('mouseenter', () => {
-                installBtn.style.transform = 'translateY(-2px)';
-                installBtn.style.boxShadow = '0 6px 20px rgba(16, 185, 129, 0.5)';
-            });
-            
-            installBtn.addEventListener('mouseleave', () => {
-                installBtn.style.transform = 'translateY(0)';
-                installBtn.style.boxShadow = '0 4px 15px rgba(16, 185, 129, 0.4)';
-            });
-            
-            document.body.appendChild(installBtn);
-        }
+    // مراقبة عند تثبيت التطبيق
+    window.addEventListener('appinstalled', () => {
+        console.log('PWA installed successfully');
+        // إخفاء الباندير عند التثبيت
+        closePWAInstallBanner();
+        // حفظ في localStorage
+        localStorage.setItem('pwaBannerShown', 'true');
+        localStorage.setItem('pwaInstalled', 'true');
+    });
+}
+
+// دالة للتحقق من display mode (عند فتح التطبيق من الشاشة الرئيسية)
+function checkDisplayMode() {
+    // التحقق عند تحميل الصفحة
+    if (window.matchMedia('(display-mode: standalone)').matches) {
+        // التطبيق مفتوح من الشاشة الرئيسية
+        closePWAInstallBanner();
+        localStorage.setItem('pwaBannerShown', 'true');
+        localStorage.setItem('pwaInstalled', 'true');
+        return;
     }
+    
+    // مراقبة تغيير display mode
+    const mediaQuery = window.matchMedia('(display-mode: standalone)');
+    mediaQuery.addEventListener('change', (e) => {
+        if (e.matches) {
+            // التطبيق أصبح في وضع standalone
+            closePWAInstallBanner();
+            localStorage.setItem('pwaBannerShown', 'true');
+            localStorage.setItem('pwaInstalled', 'true');
+        }
+    });
 }
 
 // استدعاء دالة التحقق من التثبيت
 checkInstallPrompt();
+
+// ===== PWA INSTALL BANNER (يظهر مرة واحدة فقط) =====
+function showPWAInstallBanner() {
+    // التحقق من أن الباندير لم يظهر من قبل
+    const bannerShown = localStorage.getItem('pwaBannerShown');
+    if (bannerShown === 'true') {
+        return; // لا تظهر إذا تم عرضها من قبل
+    }
+    
+    // التحقق من أن التطبيق غير مثبت بالفعل
+    if (window.matchMedia('(display-mode: standalone)').matches) {
+        // إذا كان التطبيق مثبت، احفظ في localStorage ولا تظهر الباندير
+        localStorage.setItem('pwaBannerShown', 'true');
+        return;
+    }
+    
+    const banner = document.getElementById('pwa-install-banner');
+    if (!banner) return;
+    
+    // اكتشاف نوع الجهاز
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    const isAndroid = /Android/.test(navigator.userAgent);
+    const isMobile = isIOS || isAndroid;
+    
+    // إذا كان على الكمبيوتر، لا تظهر الباندير
+    if (!isMobile) {
+        return;
+    }
+    
+    // ملء التعليمات حسب نوع الجهاز
+    const instructionsDiv = document.getElementById('pwa-instructions');
+    if (instructionsDiv) {
+        if (isIOS) {
+            instructionsDiv.innerHTML = `
+                <span class="device-badge">🍎 iPhone / iPad</span>
+                <h4><i class="fas fa-info-circle"></i> خطوات الإضافة:</h4>
+                <ol class="pwa-steps">
+                    <li>
+                        <span class="step-number">1</span>
+                        <span class="step-text">
+                            اضغط على زر <strong>المشاركة</strong> <i class="fas fa-share step-icon"></i> في أسفل الشاشة
+                        </span>
+                    </li>
+                    <li>
+                        <span class="step-number">2</span>
+                        <span class="step-text">
+                            اختر <strong>"إضافة إلى الشاشة الرئيسية"</strong> <i class="fas fa-plus-square step-icon"></i>
+                        </span>
+                    </li>
+                    <li>
+                        <span class="step-number">3</span>
+                        <span class="step-text">
+                            اضغط <strong>"إضافة"</strong> <i class="fas fa-check step-icon"></i> وستجد التطبيق على الشاشة الرئيسية
+                        </span>
+                    </li>
+                </ol>
+            `;
+        } else if (isAndroid) {
+            instructionsDiv.innerHTML = `
+                <span class="device-badge">🤖 Android</span>
+                <h4><i class="fas fa-info-circle"></i> خطوات الإضافة:</h4>
+                <ol class="pwa-steps">
+                    <li>
+                        <span class="step-number">1</span>
+                        <span class="step-text">
+                            اضغط على <strong>القائمة</strong> <i class="fas fa-ellipsis-v step-icon"></i> في أعلى المتصفح
+                        </span>
+                    </li>
+                    <li>
+                        <span class="step-number">2</span>
+                        <span class="step-text">
+                            اختر <strong>"إضافة إلى الشاشة الرئيسية"</strong> <i class="fas fa-home step-icon"></i> أو <strong>"Install app"</strong>
+                        </span>
+                    </li>
+                    <li>
+                        <span class="step-number">3</span>
+                        <span class="step-text">
+                            اضغط <strong>"إضافة"</strong> <i class="fas fa-check step-icon"></i> وستجد التطبيق على الشاشة الرئيسية
+                        </span>
+                    </li>
+                </ol>
+            `;
+        }
+    }
+    
+    // إظهار الباندير مباشرة
+    banner.classList.add('show');
+    
+    // حفظ في localStorage أنه تم عرض الباندير
+    localStorage.setItem('pwaBannerShown', 'true');
+}
+
+// دالة إغلاق الباندير
+function closePWAInstallBanner() {
+    const banner = document.getElementById('pwa-install-banner');
+    if (banner) {
+        banner.classList.remove('show');
+        // حفظ في localStorage أنه تم إغلاق الباندير
+        localStorage.setItem('pwaBannerShown', 'true');
+    }
+}
+
+// جعل الدالة متاحة عالمياً
+window.closePWAInstallBanner = closePWAInstallBanner;
 
 // ===== THEME MANAGEMENT =====
 function setTheme(theme) {
