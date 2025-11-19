@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إنشاء أيقونات PWA</title>
+    <style>
+        body {
+            font-family: 'Cairo', Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+            max-width: 600px;
+        }
+        h1 {
+            color: #6366f1;
+            margin-bottom: 30px;
+        }
+        .icon-preview {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+        .icon-item {
+            text-align: center;
+        }
+        canvas {
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            margin: 10px;
+        }
+        .download-btn {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 10px;
+            transition: transform 0.2s;
+        }
+        .download-btn:hover {
+            transform: translateY(-2px);
+        }
+        .info {
+            background: #f3f4f6;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            color: #6b7280;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 إنشاء أيقونات PWA</h1>
+        <p>سيتم إنشاء أيقونات بحجم 192x192 و 512x512</p>
+        
+        <div class="icon-preview">
+            <div class="icon-item">
+                <canvas id="icon192" width="192" height="192"></canvas>
+                <p>192x192</p>
+                <button class="download-btn" onclick="downloadIcon('icon192', 'icon-192.png')">
+                    تحميل
+                </button>
+            </div>
+            <div class="icon-item">
+                <canvas id="icon512" width="512" height="512"></canvas>
+                <p>512x512</p>
+                <button class="download-btn" onclick="downloadIcon('icon512', 'icon-512.png')">
+                    تحميل
+                </button>
+            </div>
+        </div>
+        
+        <div class="info">
+            <strong>تعليمات:</strong><br>
+            1. اضغط على زر التحميل لحفظ الأيقونة<br>
+            2. احفظ الملفات في نفس مجلد index.html<br>
+            3. الأيقونات جاهزة للاستخدام مع PWA
+        </div>
+    </div>
+
+    <script>
+        function drawIcon(canvas, size) {
+            const ctx = canvas.getContext('2d');
+            const center = size / 2;
+            
+            // خلفية متدرجة
+            const gradient = ctx.createLinearGradient(0, 0, size, size);
+            gradient.addColorStop(0, '#6366f1');
+            gradient.addColorStop(1, '#8b5cf6');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, size, size);
+            
+            // رسم أيقونة البرق
+            ctx.fillStyle = 'white';
+            ctx.strokeStyle = 'white';
+            ctx.lineWidth = size * 0.08;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            
+            // رسم البرق
+            const scale = size / 200;
+            ctx.beginPath();
+            ctx.moveTo(center - 30 * scale, center - 50 * scale);
+            ctx.lineTo(center - 10 * scale, center - 10 * scale);
+            ctx.lineTo(center - 20 * scale, center - 10 * scale);
+            ctx.lineTo(center + 20 * scale, center + 50 * scale);
+            ctx.lineTo(center + 10 * scale, center + 10 * scale);
+            ctx.lineTo(center + 20 * scale, center + 10 * scale);
+            ctx.lineTo(center - 30 * scale, center - 50 * scale);
+            ctx.closePath();
+            ctx.fill();
+            
+            // إضافة ظل خفيف
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
+            ctx.shadowBlur = 10;
+            ctx.shadowOffsetX = 0;
+            ctx.shadowOffsetY = 5;
+        }
+        
+        function downloadIcon(canvasId, filename) {
+            const canvas = document.getElementById(canvasId);
+            const link = document.createElement('a');
+            link.download = filename;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+        
+        // رسم الأيقونات عند التحميل
+        window.addEventListener('load', () => {
+            drawIcon(document.getElementById('icon192'), 192);
+            drawIcon(document.getElementById('icon512'), 512);
+        });
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,54 @@
+{
+  "name": "حاسبة الطالب",
+  "short_name": "حاسبة الطالب",
+  "description": "أداة متطورة لحساب المعدل الجامعي والريت والغياب للطلاب",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#6366f1",
+  "theme_color": "#6366f1",
+  "orientation": "portrait-primary",
+  "dir": "rtl",
+  "lang": "ar",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["education", "productivity", "utilities"],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "حاسبة الريت",
+      "short_name": "الريت",
+      "description": "احسب الريت بسرعة",
+      "url": "/#rate",
+      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "حاسبة الغياب",
+      "short_name": "الغياب",
+      "description": "تابع غيابك",
+      "url": "/#absence",
+      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "المعدل التراكمي",
+      "short_name": "التراكمي",
+      "description": "احسب معدلك التراكمي",
+      "url": "/#cumulative",
+      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
+    }
+  ],
+  "prefer_related_applications": false
+}
+
