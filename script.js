@@ -22,6 +22,7 @@ let currentThemeIdx = 0;
 // ===== INITIALIZATION =====
 document.addEventListener('DOMContentLoaded', function() {
     initializeApp();
+    // زر ابدأ الآن ينزل المستخدم إلى قسم الريت مع تعويض الترويسة
     const ctaBtn = document.querySelector('.cta-btn');
     if (ctaBtn) {
         ctaBtn.addEventListener('click', function(e) {
@@ -40,20 +41,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function initializeApp() {
     // Show loading screen
-    if (loadingScreen) {
+    setTimeout(() => {
+        loadingScreen.classList.add('hidden');
         setTimeout(() => {
-            loadingScreen.classList.add('hidden');
-            setTimeout(() => {
-                loadingScreen.style.display = 'none';
-            }, 500);
-        }, 2000);
-    }
+            loadingScreen.style.display = 'none';
+        }, 500);
+    }, 2000);
 
     // Initialize theme
     setTheme(currentTheme);
-    
-    // Initialize PWA Service Worker
-    initServiceWorker();
     
     // Initialize particles
     initParticles();
@@ -72,168 +68,7 @@ function initializeApp() {
     
     // Show welcome toast
     showToast('مرحباً بك في حاسبة الريت الذكية! 🚀', 'info');
-    
-    // مراقبة تغيير display mode (عند فتح التطبيق من الشاشة الرئيسية)
-    checkDisplayMode();
 }
-
-// ===== PWA SERVICE WORKER =====
-function initServiceWorker() {
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('./service-worker.js')
-                .then((registration) => {
-                    console.log('Service Worker registered successfully:', registration.scope);
-                    
-                    // التحقق من التحديثات
-                    registration.addEventListener('updatefound', () => {
-                        const newWorker = registration.installing;
-                        newWorker.addEventListener('statechange', () => {
-                            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                // يوجد تحديث جديد
-                                showPWAUpdateNotification();
-                            }
-                        });
-                    });
-                })
-                .catch((error) => {
-                    console.log('Service Worker registration failed:', error);
-                });
-        });
-        
-        // الاستماع للتحديثات
-        let refreshing = false;
-        navigator.serviceWorker.addEventListener('controllerchange', () => {
-            if (!refreshing) {
-                refreshing = true;
-                window.location.reload();
-            }
-        });
-    }
-}
-
-// إظهار إشعار عند وجود تحديث جديد
-function showPWAUpdateNotification() {
-    const updateBanner = document.createElement('div');
-    updateBanner.id = 'pwa-update-banner';
-    updateBanner.style.cssText = `
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        left: 20px;
-        max-width: 400px;
-        margin: 0 auto;
-        background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-        color: white;
-        padding: 20px;
-        border-radius: 12px;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-        z-index: 10000;
-        display: flex;
-        align-items: center;
-        gap: 15px;
-        animation: slideUp 0.3s ease;
-    `;
-    updateBanner.innerHTML = `
-        <i class="fas fa-sync-alt" style="font-size: 1.5rem;"></i>
-        <div style="flex: 1;">
-            <strong>تحديث جديد متاح!</strong>
-            <p style="margin: 5px 0 0 0; font-size: 0.9rem; opacity: 0.9;">
-                اضغط لتحديث التطبيق
-            </p>
-        </div>
-        <button id="pwa-update-btn" style="
-            background: rgba(255,255,255,0.2);
-            border: 2px solid rgba(255,255,255,0.3);
-            color: white;
-            padding: 8px 20px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s;
-        ">
-            تحديث
-        </button>
-    `;
-    
-    document.body.appendChild(updateBanner);
-    
-    document.getElementById('pwa-update-btn').addEventListener('click', () => {
-        if (navigator.serviceWorker.controller) {
-            navigator.serviceWorker.controller.postMessage({ type: 'SKIP_WAITING' });
-        }
-        window.location.reload();
-    });
-    
-    // إضافة CSS للأنيميشن
-    if (!document.getElementById('pwa-update-style')) {
-        const style = document.createElement('style');
-        style.id = 'pwa-update-style';
-        style.textContent = `
-            @keyframes slideUp {
-                from {
-                    transform: translateY(100px);
-                    opacity: 0;
-                }
-                to {
-                    transform: translateY(0);
-                    opacity: 1;
-                }
-            }
-        `;
-        document.head.appendChild(style);
-    }
-}
-
-// دالة للتحقق من إمكانية التثبيت
-function checkInstallPrompt() {
-    let deferredPrompt;
-    
-    window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault();
-        deferredPrompt = e;
-        // عند ظهور beforeinstallprompt، لا نحتاج لإظهار زر إضافي
-        // الباندير موجود بالفعل
-    });
-    
-    // مراقبة عند تثبيت التطبيق
-    window.addEventListener('appinstalled', () => {
-        console.log('PWA installed successfully');
-        // إخفاء الباندير عند التثبيت
-        closePWAInstallBanner();
-        // حفظ في localStorage
-        localStorage.setItem('pwaBannerShown', 'true');
-        localStorage.setItem('pwaInstalled', 'true');
-    });
-}
-
-// دالة للتحقق من display mode (عند فتح التطبيق من الشاشة الرئيسية)
-function checkDisplayMode() {
-    // التحقق عند تحميل الصفحة
-    if (window.matchMedia('(display-mode: standalone)').matches) {
-        // التطبيق مفتوح من الشاشة الرئيسية
-        closePWAInstallBanner();
-        localStorage.setItem('pwaBannerShown', 'true');
-        localStorage.setItem('pwaInstalled', 'true');
-        return;
-    }
-    
-    // مراقبة تغيير display mode
-    const mediaQuery = window.matchMedia('(display-mode: standalone)');
-    mediaQuery.addEventListener('change', (e) => {
-        if (e.matches) {
-            // التطبيق أصبح في وضع standalone
-            closePWAInstallBanner();
-            localStorage.setItem('pwaBannerShown', 'true');
-            localStorage.setItem('pwaInstalled', 'true');
-        }
-    });
-}
-
-// استدعاء دالة التحقق من التثبيت
-checkInstallPrompt();
-
-// ===== PWA INSTALL BANNER (يظهر مرة واحدة فقط) =====
 
 // ===== THEME MANAGEMENT =====
 function setTheme(theme) {
@@ -242,12 +77,8 @@ function setTheme(theme) {
     localStorage.setItem('theme', theme);
     
     // Update theme toggle icon
-    if (themeToggle) {
         const icon = themeToggle.querySelector('i');
-        if (icon) {
-            icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
-        }
-    }
+    icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
 }
 
 function toggleTheme() {
@@ -1168,11 +999,6 @@ function updateAnalytics() {
 
 // ===== TOAST NOTIFICATIONS =====
 function showToast(message, type = 'info', duration = 5000) {
-    if (!toastContainer) {
-        console.warn('Toast container not found');
-        return;
-    }
-    
     const toast = document.createElement('div');
     toast.className = `toast ${type}`;
     
@@ -1229,19 +1055,13 @@ function getToastTitle(type) {
 // ===== EVENT LISTENERS =====
 function initEventListeners() {
     // Theme toggle
-    if (themeToggle) {
-        themeToggle.addEventListener('click', toggleTheme);
-    }
+    themeToggle.addEventListener('click', toggleTheme);
     
     // Mobile menu
-    if (menuToggle && mobileMenu && closeMenu) {
-        initMobileMenu();
-    }
+    initMobileMenu();
     
     // Tabs
-    if (tabBtns.length > 0 && tabContents.length > 0) {
-        initTabs();
-    }
+    initTabs();
     
     // Smooth scrolling for anchor links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
