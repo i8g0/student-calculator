@@ -22,7 +22,6 @@ let currentThemeIdx = 0;
 // ===== INITIALIZATION =====
 document.addEventListener('DOMContentLoaded', function() {
     initializeApp();
-    // زر ابدأ الآن ينزل المستخدم إلى قسم الريت مع تعويض الترويسة
     const ctaBtn = document.querySelector('.cta-btn');
     if (ctaBtn) {
         ctaBtn.addEventListener('click', function(e) {
@@ -41,14 +40,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function initializeApp() {
     // Show loading screen
-    setTimeout(() => {
-        loadingScreen.classList.add('hidden');
+    if (loadingScreen) {
         setTimeout(() => {
-            loadingScreen.style.display = 'none';
-            // إظهار الباندير مباشرة بعد انتهاء التحميل
-            showPWAInstallBanner();
-        }, 500);
-    }, 2000);
+            loadingScreen.classList.add('hidden');
+            setTimeout(() => {
+                loadingScreen.style.display = 'none';
+            }, 500);
+        }, 2000);
+    }
 
     // Initialize theme
     setTheme(currentTheme);
@@ -82,7 +81,7 @@ function initializeApp() {
 function initServiceWorker() {
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-            navigator.serviceWorker.register('/service-worker.js')
+            navigator.serviceWorker.register('./service-worker.js')
                 .then((registration) => {
                     console.log('Service Worker registered successfully:', registration.scope);
                     
@@ -235,108 +234,6 @@ function checkDisplayMode() {
 checkInstallPrompt();
 
 // ===== PWA INSTALL BANNER (يظهر مرة واحدة فقط) =====
-function showPWAInstallBanner() {
-    // التحقق من أن الباندير لم يظهر من قبل
-    const bannerShown = localStorage.getItem('pwaBannerShown');
-    if (bannerShown === 'true') {
-        return; // لا تظهر إذا تم عرضها من قبل
-    }
-    
-    // التحقق من أن التطبيق غير مثبت بالفعل
-    if (window.matchMedia('(display-mode: standalone)').matches) {
-        // إذا كان التطبيق مثبت، احفظ في localStorage ولا تظهر الباندير
-        localStorage.setItem('pwaBannerShown', 'true');
-        return;
-    }
-    
-    const banner = document.getElementById('pwa-install-banner');
-    if (!banner) return;
-    
-    // اكتشاف نوع الجهاز
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-    const isAndroid = /Android/.test(navigator.userAgent);
-    const isMobile = isIOS || isAndroid;
-    
-    // إذا كان على الكمبيوتر، لا تظهر الباندير
-    if (!isMobile) {
-        return;
-    }
-    
-    // ملء التعليمات حسب نوع الجهاز
-    const instructionsDiv = document.getElementById('pwa-instructions');
-    if (instructionsDiv) {
-        if (isIOS) {
-            instructionsDiv.innerHTML = `
-                <span class="device-badge">🍎 iPhone / iPad</span>
-                <h4><i class="fas fa-info-circle"></i> خطوات الإضافة:</h4>
-                <ol class="pwa-steps">
-                    <li>
-                        <span class="step-number">1</span>
-                        <span class="step-text">
-                            اضغط على زر <strong>المشاركة</strong> <i class="fas fa-share step-icon"></i> في أسفل الشاشة
-                        </span>
-                    </li>
-                    <li>
-                        <span class="step-number">2</span>
-                        <span class="step-text">
-                            اختر <strong>"إضافة إلى الشاشة الرئيسية"</strong> <i class="fas fa-plus-square step-icon"></i>
-                        </span>
-                    </li>
-                    <li>
-                        <span class="step-number">3</span>
-                        <span class="step-text">
-                            اضغط <strong>"إضافة"</strong> <i class="fas fa-check step-icon"></i> وستجد التطبيق على الشاشة الرئيسية
-                        </span>
-                    </li>
-                </ol>
-            `;
-        } else if (isAndroid) {
-            instructionsDiv.innerHTML = `
-                <span class="device-badge">🤖 Android</span>
-                <h4><i class="fas fa-info-circle"></i> خطوات الإضافة:</h4>
-                <ol class="pwa-steps">
-                    <li>
-                        <span class="step-number">1</span>
-                        <span class="step-text">
-                            اضغط على <strong>القائمة</strong> <i class="fas fa-ellipsis-v step-icon"></i> في أعلى المتصفح
-                        </span>
-                    </li>
-                    <li>
-                        <span class="step-number">2</span>
-                        <span class="step-text">
-                            اختر <strong>"إضافة إلى الشاشة الرئيسية"</strong> <i class="fas fa-home step-icon"></i> أو <strong>"Install app"</strong>
-                        </span>
-                    </li>
-                    <li>
-                        <span class="step-number">3</span>
-                        <span class="step-text">
-                            اضغط <strong>"إضافة"</strong> <i class="fas fa-check step-icon"></i> وستجد التطبيق على الشاشة الرئيسية
-                        </span>
-                    </li>
-                </ol>
-            `;
-        }
-    }
-    
-    // إظهار الباندير مباشرة
-    banner.classList.add('show');
-    
-    // حفظ في localStorage أنه تم عرض الباندير
-    localStorage.setItem('pwaBannerShown', 'true');
-}
-
-// دالة إغلاق الباندير
-function closePWAInstallBanner() {
-    const banner = document.getElementById('pwa-install-banner');
-    if (banner) {
-        banner.classList.remove('show');
-        // حفظ في localStorage أنه تم إغلاق الباندير
-        localStorage.setItem('pwaBannerShown', 'true');
-    }
-}
-
-// جعل الدالة متاحة عالمياً
-window.closePWAInstallBanner = closePWAInstallBanner;
 
 // ===== THEME MANAGEMENT =====
 function setTheme(theme) {
@@ -345,8 +242,12 @@ function setTheme(theme) {
     localStorage.setItem('theme', theme);
     
     // Update theme toggle icon
+    if (themeToggle) {
         const icon = themeToggle.querySelector('i');
-    icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        if (icon) {
+            icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        }
+    }
 }
 
 function toggleTheme() {
@@ -1267,6 +1168,11 @@ function updateAnalytics() {
 
 // ===== TOAST NOTIFICATIONS =====
 function showToast(message, type = 'info', duration = 5000) {
+    if (!toastContainer) {
+        console.warn('Toast container not found');
+        return;
+    }
+    
     const toast = document.createElement('div');
     toast.className = `toast ${type}`;
     
@@ -1323,13 +1229,19 @@ function getToastTitle(type) {
 // ===== EVENT LISTENERS =====
 function initEventListeners() {
     // Theme toggle
-    themeToggle.addEventListener('click', toggleTheme);
+    if (themeToggle) {
+        themeToggle.addEventListener('click', toggleTheme);
+    }
     
     // Mobile menu
-    initMobileMenu();
+    if (menuToggle && mobileMenu && closeMenu) {
+        initMobileMenu();
+    }
     
     // Tabs
-    initTabs();
+    if (tabBtns.length > 0 && tabContents.length > 0) {
+        initTabs();
+    }
     
     // Smooth scrolling for anchor links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {

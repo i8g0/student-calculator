@@ -4,12 +4,12 @@ const RUNTIME_CACHE = 'runtime-cache-v1';
 
 // الملفات التي يجب تخزينها في الكاش
 const STATIC_CACHE_URLS = [
-  '/',
-  '/index.html',
-  '/styles.css',
-  '/script.js',
-  '/manifest.json',
-  '/absence-guide.html',
+  './',
+  './index.html',
+  './styles.css',
+  './script.js',
+  './manifest.json',
+  './absence-guide.html',
   'https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap',
   'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css'
 ];
@@ -138,7 +138,7 @@ self.addEventListener('fetch', (event) => {
           .catch(() => {
             // إذا فشل الاتصال، حاول إرجاع صفحة offline
             if (request.mode === 'navigate') {
-              return caches.match('/index.html');
+              return caches.match('./index.html');
             }
             // للموارد الأخرى، حاول إرجاع أي شيء من الكاش
             return caches.match(request);
