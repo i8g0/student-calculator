@@ -33,7 +33,6 @@ const universityCourses = [
   { "major": "مشترك", "courseName": "مقدمة في الذكاء الاصطناعي", "courseCode": "101 عال", "hours": 3 },
   { "major": "مشترك", "courseName": "مهارات الاتصال", "courseCode": "1400 علم", "hours": 2 },
   { "major": "مشترك", "courseName": "مهارات الاستماع والمحادثة", "courseCode": "1230 نجم", "hours": 6 },
-  { "major": "مشترك", "courseName": "مهارات الحاسب الآلي", "courseCode": "1400 تقن", "hours": 3 },
   { "major": "مشترك", "courseName": "مهارات القراءة", "courseCode": "1210 نجم", "hours": 6 },
   { "major": "مشترك", "courseName": "مهارات الكتابة", "courseCode": "1220 نجم", "hours": 6 },
   { "major": "مشترك", "courseName": "نظم التشغيل", "courseCode": "3701 عال", "hours": 3 },
@@ -285,4 +284,5 @@ const universityCourses = [
   { "major": "هندسة الحاسب", "courseName": "نظرية الأعداد", "courseCode": "3270 هال", "hours": 3 },
   { "major": "هندسة الحاسب", "courseName": "هندسة النظم وإدارة المشاريع", "courseCode": "3611 هال", "hours": 3 }
 ];
+
 
