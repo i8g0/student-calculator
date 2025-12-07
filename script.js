@@ -63,6 +63,12 @@ function initializeApp() {
     // Initialize forms
     initForms();
     
+    // Initialize course search (after a delay to ensure DOM is ready)
+    setTimeout(() => {
+        createCourseSearchField();
+        setupCourseSearchEvents();
+    }, 1000);
+    
     // Update analytics
     updateAnalytics();
     
@@ -4454,3 +4460,390 @@ if (document.readyState === 'loading') {
 } else {
     initNewAbsenceCalculator();
 }
+
+// ============================================
+// نظام البحث والاختيار الذكي للمواد
+// ============================================
+
+// إنشاء حقل البحث والاختيار الذكي
+function createCourseSearchField() {
+    // انتظر حتى تحميل البيانات
+    if (typeof universityCourses === 'undefined' || !Array.isArray(universityCourses)) {
+        console.log('⏳ جاري تحميل البيانات...');
+        setTimeout(createCourseSearchField, 500);
+        return;
+    }
+    
+    // انتظر قليلاً للتأكد من تحميل الـ DOM
+    if (!document.querySelector('.new-absence-form-section')) {
+        console.log('⏳ جاري تحميل النموذج...');
+        setTimeout(createCourseSearchField, 500);
+        return;
+    }
+    
+    const formSection = document.querySelector('.new-absence-form-section');
+    const coursesDatabase = universityCourses;
+    
+    console.log(`✅ تحميل ${coursesDatabase.length} مادة من قاعدة البيانات`);
+    
+    if (!formSection) return;
+    
+    // التحقق من عدم وجود حقل البحث مسبقاً
+    if (document.getElementById('course-search')) return;
+    
+    const searchHTML = `
+        <div class="form-group" style="position: relative; margin-bottom: 1.5rem;">
+            <label for="course-search" style="
+                display: flex; 
+                align-items: center; 
+                gap: 0.5rem; 
+                margin-bottom: 0.5rem; 
+                font-weight: 600; 
+                color: var(--text-primary);
+                font-size: 1rem;
+            ">
+                <i class="fas fa-search" style="color: #667eea;"></i>
+                <span> البحث</span>
+                <span style="
+                    color: var(--text-muted); 
+                    font-size: 0.85rem; 
+                    font-weight: 400;
+                    background: var(--bg-secondary);
+                    padding: 2px 8px;
+                    border-radius: 12px;
+                ">(${coursesDatabase.length} مادة)</span>
+            </label>
+            <input 
+                type="text" 
+                id="course-search" 
+                placeholder="ابحث عن المادة... (مثال: برمجة، رياضيات، قواعد البيانات)"
+                style="
+                    width: 100%; 
+                    padding: 14px 16px; 
+                    border: 2px solid var(--border-light); 
+                    border-radius: 12px; 
+                    font-size: 1rem; 
+                    font-family: var(--font-primary);
+                    transition: all 0.3s ease;
+                    background: var(--bg-secondary);
+                "
+                autocomplete="off"
+            >
+            <div id="course-suggestions" style="
+                position: absolute;
+                top: 100%;
+                right: 0;
+                left: 0;
+                background: var(--bg-primary);
+                border: 2px solid var(--border-light);
+                border-top: none;
+                border-radius: 0 0 12px 12px;
+                max-height: 400px;
+                overflow-y: auto;
+                z-index: 1000;
+                display: none;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+                margin-top: -2px;
+            "></div>
+        </div>
+    `;
+    
+    // إدراج حقل البحث قبل "اسم المادة"
+    const courseNameLabel = formSection.querySelector('label[for="new-course-name"]');
+    if (courseNameLabel) {
+        courseNameLabel.parentElement.insertAdjacentHTML('beforebegin', searchHTML);
+    } else {
+        formSection.insertAdjacentHTML('afterbegin', searchHTML);
+    }
+    
+    // إضافة أحداث البحث
+    setupCourseSearchEvents(coursesDatabase);
+}
+
+// إعداد أحداث البحث
+function setupCourseSearchEvents(coursesDatabase) {
+    const searchInput = document.getElementById('course-search');
+    const suggestionsDiv = document.getElementById('course-suggestions');
+    
+    if (!searchInput || !suggestionsDiv) return;
+    
+    searchInput.addEventListener('input', function() {
+        const query = this.value.trim().toLowerCase();
+        
+        if (query.length === 0) {
+            suggestionsDiv.style.display = 'none';
+            return;
+        }
+        
+        const filtered = coursesDatabase.filter(course => 
+            course.courseName.toLowerCase().includes(query) || 
+            course.courseCode.toLowerCase().includes(query) ||
+            course.major.toLowerCase().includes(query)
+        );
+        
+        if (filtered.length === 0) {
+            suggestionsDiv.innerHTML = `
+                <div style="
+                    padding: 30px 20px; 
+                    text-align: center; 
+                    color: var(--text-muted);
+                ">
+                    <i class="fas fa-search" style="
+                        font-size: 2.5rem; 
+                        margin-bottom: 15px; 
+                        display: block; 
+                        opacity: 0.4;
+                    "></i>
+                    <p style="font-size: 1rem; margin: 0;">لم يتم العثور على مادة</p>
+                </div>
+            `;
+            suggestionsDiv.style.display = 'block';
+            return;
+        }
+        
+
+        suggestionsDiv.innerHTML = filtered.slice(0, 12).map((course, index) => `
+            <div class="suggestion-item" style="
+                padding: 14px 16px;
+                border-bottom: 1px solid var(--border-light);
+                cursor: pointer;
+                transition: all 0.2s ease;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            " data-index="${index}" data-course='${JSON.stringify(course).replace(/'/g, "&apos;")}'>
+                <div style="flex: 1;">
+                    <div style="
+                        font-weight: 600; 
+                        color: var(--text-primary); 
+                        margin-bottom: 6px;
+                        font-size: 1rem;
+                    ">
+                        ${course.courseName}
+                    </div>
+                    <div style="
+                        display: flex; 
+                        gap: 16px; 
+                        font-size: 0.85rem; 
+                        color: var(--text-muted);
+                    ">
+                        <span>
+                            <strong>📌 الرمز:</strong> ${course.courseCode}
+                        </span>
+                        <span>
+                            <strong>🎓 التخصص:</strong> ${course.major}
+                        </span>
+                    </div>
+                </div>
+                <span style="
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    color: white; 
+                    padding: 8px 16px; 
+                    border-radius: 20px; 
+                    font-size: 0.9rem; 
+                    font-weight: 700;
+                    white-space: nowrap;
+                    margin-right: 15px;
+                    min-width: 85px;
+                    text-align: center;
+                    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+                ">
+                    ⏱️ ${course.hours}h
+                </span>
+            </div>
+        `).join('');
+        
+        suggestionsDiv.style.display = 'block';
+        
+        // إضافة أحداث الاختيار
+        document.querySelectorAll('.suggestion-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const course = JSON.parse(this.getAttribute('data-course'));
+                selectCourse(course);
+            });
+            
+            item.addEventListener('mouseenter', function() {
+                this.style.background = 'var(--bg-secondary)';
+                this.style.transform = 'translateX(-8px)';
+            });
+            
+            item.addEventListener('mouseleave', function() {
+                this.style.background = 'transparent';
+                this.style.transform = 'translateX(0)';
+            });
+        });
+    });
+    
+    // إغلاق الاقتراحات عند النقر خارجها
+    document.addEventListener('click', function(e) {
+        if (e.target !== searchInput && !e.target.closest('.suggestion-item')) {
+            suggestionsDiv.style.display = 'none';
+        }
+    });
+    
+    // إغلاق عند الضغط على Escape
+    searchInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            suggestionsDiv.style.display = 'none';
+        }
+    });
+}
+
+// اختيار مادة من القائمة
+function selectCourse(course) {
+    const searchInput = document.getElementById('course-search');
+    document.getElementById('course-suggestions').style.display = 'none';
+    
+    // ملء الحقول تلقائياً
+    const courseNameField = document.getElementById('new-course-name');
+    const hoursField = document.getElementById('new-course-hours-per-week');
+    
+    if (courseNameField) courseNameField.value = course.courseName;
+    if (hoursField) hoursField.value = course.hours;
+    
+    // إضافة المادة تلقائياً
+    setTimeout(() => {
+        // حساب نسبة الغياب لكل ساعة
+        const absencePercentagePerHour = 6.25 / course.hours;
+        
+        // إنشاء كائن المادة
+        const newCourse = {
+            id: Date.now().toString(),
+            name: course.courseName,
+            hoursPerWeek: course.hours,
+            absencePercentagePerHour: absencePercentagePerHour,
+            currentAbsenceHours: 0,
+            createdAt: new Date().toISOString()
+        };
+        
+        // إضافة إلى المصفوفة
+        newAbsenceCourses.push(newCourse);
+        
+        // حفظ في localStorage
+        localStorage.setItem('newAbsenceCourses', JSON.stringify(newAbsenceCourses));
+        
+        // عرض المواد
+        renderNewAbsenceCourses();
+        
+        // تنظيف النموذج وحقل البحث
+        document.getElementById('new-absence-form').reset();
+        searchInput.value = '';
+        
+        // إظهار إشعار النجاح
+        showSuccessNotification(`✅ تمت إضافة: ${course.courseName}`);
+    }, 100);
+}
+
+// إشعار النجاح
+function showSuccessNotification(message) {
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 16px 24px;
+        border-radius: 12px;
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        z-index: 9999;
+        animation: slideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 1rem;
+    `;
+    notification.innerHTML = message;
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.style.animation = 'slideOut 0.3s ease';
+        setTimeout(() => notification.remove(), 300);
+    }, 3000);
+}
+
+// حساب ساعات الأسبوع
+function getWeeklyHours() {
+    const lecturesCount = Number(document.getElementById('lectures-count')?.value) || 0;
+    const lectureHour = Number(document.getElementById('lecture-hours')?.value) || 0;
+    const lecturesHours = lecturesCount * lectureHour;
+
+    const exercisesCount = Number(document.getElementById('exercises-count')?.value) || 0;
+    const exerciseHour = Number(document.getElementById('exercise-hours')?.value) || 0;
+    const exercisesHours = exercisesCount * exerciseHour;
+
+    const labsCount = Number(document.getElementById('labs-count')?.value) || 0;
+    const labHour = Number(document.getElementById('lab-hours')?.value) || 0;
+    const labsHours = labsCount * labHour;
+
+    return lecturesHours + exercisesHours + labsHours;
+}
+
+// تحديث صندوق الغياب
+function updateAbsenceBox() {
+    const weeklyHours = getWeeklyHours();
+    const weeks = Number(document.getElementById('course-weeks')?.value) || 0;
+    const totalHours = weeklyHours * weeks;
+    const maxAbsence = Math.floor(totalHours * 0.25);
+    const absencePercentage = weeklyHours ? ((maxAbsence / weeklyHours) * 100).toFixed(2) : 0;
+
+    const totalWeeklyEl = document.getElementById('total-weekly-hours');
+    const maxAbsenceEl = document.getElementById('max-absence-hours');
+    const absencePercentageEl = document.getElementById('absence-per-hour');
+
+    if (totalWeeklyEl) totalWeeklyEl.textContent = weeklyHours;
+    if (maxAbsenceEl) maxAbsenceEl.textContent = maxAbsence;
+    if (absencePercentageEl) absencePercentageEl.textContent = absencePercentage;
+}
+
+// إنشاء خيارات الساعات
+function populateHoursSelect() {
+    const select = document.getElementById('new-course-hours-per-week');
+    if (!select) return;
+    
+    const hours = [0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5, 7, 8];
+    
+    select.innerHTML = '<option value="">-- اختر عدد الساعات --</option>' + 
+        hours.map(h => `<option value="${h}">${h} ساعة</option>`).join('');
+}
+
+// إضافة الكود عند تحميل الصفحة
+// تحديث عند تغيير الحقول
+['new-course-name', 'new-course-hours-per-week', 'course-weeks', 'lectures-count', 'lecture-hours', 'exercises-count', 'exercise-hours', 'labs-count', 'lab-hours'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+        el.addEventListener('change', updateAbsenceBox);
+        el.addEventListener('input', updateAbsenceBox);
+    }
+});
+
+// تحديث كل ثانية
+setInterval(updateAbsenceBox, 1000);
+
+// أنيميشن Slide
+const slideStyle = document.createElement('style');
+slideStyle.textContent = `
+    @keyframes slideIn {
+        from {
+            transform: translateX(400px);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+    
+    @keyframes slideOut {
+        from {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        to {
+            transform: translateX(400px);
+            opacity: 0;
+        }
+    }
+`;
+document.head.appendChild(slideStyle);

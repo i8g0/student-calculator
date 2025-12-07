@@ -166,4 +166,3 @@ self.addEventListener('message', (event) => {
 self.addEventListener('updatefound', () => {
   console.log('[Service Worker] Update found');
 });
-
