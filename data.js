@@ -41,10 +41,10 @@ const universityCourses = [
   { "major": "علوم الحاسب", "courseName": "معالجة الصورة الرقمية", "courseCode": "4654 عال", "hours": 3 },
   { "major": "علوم الحاسب", "courseName": "معمارية الحاسب ولغة التجميع", "courseCode": "2471 هال", "hours": 3 },
   { "major": "علوم الحاسب", "courseName": "معمل نظم شبكات الحاسب", "courseCode": "3791 هال", "hours": 1 },
-  { "major": "علوم الحاسب", "courseName": "مهارات الاتصال", "courseCode": "1400 علم", "hours": 2 },
-  { "major": "علوم الحاسب", "courseName": "مهارات الاستماع والمحادثة", "courseCode": "1230 نجم", "hours": 6 },
-  { "major": "علوم الحاسب", "courseName": "مهارات القراءة", "courseCode": "1210 نجم", "hours": 6 },
-  { "major": "علوم الحاسب", "courseName": "مهارات الكتابة", "courseCode": "1220 نجم", "hours": 6 },
+  { "major": "مشترك", "courseName": "مهارات الاتصال", "courseCode": "1400 علم", "hours": 2 },
+  { "major": "مشترك", "courseName": "مهارات الاستماع والمحادثة", "courseCode": "1230 نجم", "hours": 6 },
+  { "major": "مشترك", "courseName": "مهارات القراءة", "courseCode": "1210 نجم", "hours": 6 },
+  { "major": "مشترك", "courseName": "مهارات الكتابة", "courseCode": "1220 نجم", "hours": 6 },
 
   // --- نظم المعلومات (Information Systems) ---
   { "major": "نظم المعلومات", "courseName": "أخلاقيات واستدامة نظم المعلومات", "courseCode": "4905 نال", "hours": 3 },
@@ -101,4 +101,5 @@ const universityCourses = [
   { "major": "هندسة الحاسب", "courseName": "معمل شبكات الحاسب", "courseCode": "3721 هال", "hours": 1 },
   { "major": "هندسة الحاسب", "courseName": "نظرية الأعداد", "courseCode": "3270 هال", "hours": 3 },
   { "major": "هندسة الحاسب", "courseName": "هندسة النظم وإدارة المشاريع", "courseCode": "3611 هال", "hours": 3 }
+
 ];
