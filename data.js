@@ -71,7 +71,7 @@ const universityCourses = [
   { "major": "هندسة البرمجيات", "courseName": "الطرائق العددية", "courseCode": "2540 ريض", "hours": 4 },
   { "major": "هندسة البرمجيات", "courseName": "تصميم ومعمارية البرمجيات", "courseCode": "3201 هاب", "hours": 3 },
   { "major": "هندسة البرمجيات", "courseName": "تطوير تطبيقات الاجهزة المتنقلة", "courseCode": "4831 عال", "hours": 4 },
-  { "major": "هندسة البرمجيات", "courseName": "تنظيم وتصميم الحاسب", "courseCode": "2401 هال", "hours": 3 },
+  { "major": "مشترك", "courseName": "تنظيم وتصميم الحاسب", "courseCode": "2401 هال", "hours": 3 },
   { "major": "هندسة البرمجيات", "courseName": "ضمان جودة البرمجيات", "courseCode": "4221 هاب", "hours": 3 },
   { "major": "هندسة البرمجيات", "courseName": "مشروع تخرج 1", "courseCode": "4911 هاب", "hours": 3 },
   { "major": "هندسة البرمجيات", "courseName": "مشروع تخرج ٢", "courseCode": "4921 هاب", "hours": 3 },
@@ -104,3 +104,4 @@ const universityCourses = [
   { "major": "هندسة الحاسب", "courseName": "تحليل الإشارات والنظم", "courseCode": "3520 هال", "hours": 3 },
   { "major": "هندسة الحاسب", "courseName": "تراسل البيانات", "courseCode": "3701 هال", "hours": 3 }
 ];
+
