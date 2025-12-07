@@ -29,7 +29,7 @@ const universityCourses = [
   { "major": "مشترك", "courseName": "حساب التفاضل والتكامل (هندسة)", "courseCode": "2030 ريض", "hours": 3 },
   { "major": "مشترك", "courseName": "فيزياء عامة (1)", "courseCode": "1010 فيز", "hours": 6 },
   { "major": "مشترك", "courseName": "فيزياء عامة (2)", "courseCode": "1040 فيز", "hours": 6 },
-  { "major": "مشترك", "courseName": "كيمياء عامة (1)", "courseCode": "1010 كيم", "hours": 4 },
+  { "major": "مشترك", "courseName": "كيمياء عامة (1)", "courseCode": "1010 كيم", "hours": 6 },
   { "major": "مشترك", "courseName": "مقدمة في الذكاء الاصطناعي", "courseCode": "101 عال", "hours": 3 },
   { "major": "مشترك", "courseName": "مهارات الاتصال", "courseCode": "1400 علم", "hours": 2 },
   { "major": "مشترك", "courseName": "مهارات الاستماع والمحادثة", "courseCode": "1230 نجم", "hours": 6 },
@@ -285,3 +285,4 @@ const universityCourses = [
   { "major": "هندسة الحاسب", "courseName": "نظرية الأعداد", "courseCode": "3270 هال", "hours": 3 },
   { "major": "هندسة الحاسب", "courseName": "هندسة النظم وإدارة المشاريع", "courseCode": "3611 هال", "hours": 3 }
 ];
+
