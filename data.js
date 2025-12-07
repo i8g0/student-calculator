@@ -11,7 +11,7 @@ const universityCourses = [
   { "major": "مشترك", "courseName": "التصميم المنطقي", "courseCode": "1111 هال", "hours": 4 },
   { "major": "مشترك", "courseName": "التفاعل بين الإنسان والحاسب", "courseCode": "3111 هاب", "hours": 3 },
   { "major": "مشترك", "courseName": "الجبر الخطي", "courseCode": "2220 ريض", "hours": 4 },
-  { "major": "مشترك", "courseName": "الجبر والهندسة التحليلية", "courseCode": "1070 ريض", "hours": 3 },
+  { "major": "مشترك", "courseName": "الجبر والهندسة التحليلية", "courseCode": "1070 ريض", "hours": 4 },
   { "major": "مشترك", "courseName": "الخوارزميات وتراكيب البيانات", "courseCode": "2321 عال", "hours": 3 },
   { "major": "مشترك", "courseName": "الرسم الهندسي", "courseCode": "1011 هنع", "hours": 2 },
   { "major": "مشترك", "courseName": "الرياضيات المتقطعة", "courseCode": "1112 عال", "hours": 4 },
@@ -27,8 +27,8 @@ const universityCourses = [
   { "major": "مشترك", "courseName": "حساب التفاضل", "courseCode": "1050 ريض", "hours": 5 },
   { "major": "مشترك", "courseName": "حساب التكامل", "courseCode": "1060 ريض", "hours": 5 },
   { "major": "مشترك", "courseName": "حساب التفاضل والتكامل (هندسة)", "courseCode": "2030 ريض", "hours": 3 },
-  { "major": "مشترك", "courseName": "فيزياء عامة (1)", "courseCode": "1010 فيز", "hours": 5 },
-  { "major": "مشترك", "courseName": "فيزياء عامة (2)", "courseCode": "1040 فيز", "hours": 5 },
+  { "major": "مشترك", "courseName": "فيزياء عامة (1)", "courseCode": "1010 فيز", "hours": 6 },
+  { "major": "مشترك", "courseName": "فيزياء عامة (2)", "courseCode": "1040 فيز", "hours": 6 },
   { "major": "مشترك", "courseName": "كيمياء عامة (1)", "courseCode": "1010 كيم", "hours": 4 },
   { "major": "مشترك", "courseName": "مقدمة في الذكاء الاصطناعي", "courseCode": "101 عال", "hours": 3 },
   { "major": "مشترك", "courseName": "مهارات الاتصال", "courseCode": "1400 علم", "hours": 2 },
@@ -226,7 +226,7 @@ const universityCourses = [
   { "major": "علوم الحاسب", "courseName": "مشروع تخرج 1", "courseCode": "4912 عال", "hours": 3 },
   { "major": "علوم الحاسب", "courseName": "مشروع تخرج 2", "courseCode": "4921 عال", "hours": 3 },
   { "major": "علوم الحاسب", "courseName": "معالجة الصورة الرقمية", "courseCode": "4654 عال", "hours": 3 },
-  { "major": "علوم الحاسب", "courseName": "معمارية الحاسب ولغة التجميع", "courseCode": "2471 هال", "hours": 3 },
+  { "major": "علوم الحاسب", "courseName": "معمارية الحاسب ولغة التجميع", "courseCode": "2471 هال", "hours": 4 },
   { "major": "علوم الحاسب", "courseName": "معمل نظم شبكات الحاسب", "courseCode": "3791 هال", "hours": 1 },
 
   // --- نظم المعلومات (Information Systems) ---
