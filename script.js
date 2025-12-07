@@ -4107,6 +4107,10 @@ function createCourseCard(course) {
                     <span class="hour-percentage-label">نسبة غياب الساعة:</span>
                     <span class="hour-percentage-value">${course.absencePercentagePerHour.toFixed(3)}%</span>
                 </div>
+                <div class="new-absence-hour-percentage">
+                    <span class="hour-percentage-label">نسبة غياب الساعتين:</span>
+                    <span class="hour-percentage-value">${(course.absencePercentagePerHour * 2).toFixed(3)}%</span>
+                </div>
                 <div class="new-absence-progress-container">
                     <div class="new-absence-progress-bar ${statusClass}" style="width: ${progressPercentage}%"></div>
                     <div class="new-absence-progress-marker" style="right: 25%"></div>
