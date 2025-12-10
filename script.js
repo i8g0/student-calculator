@@ -357,7 +357,15 @@ function createCourseInputs(container, numCourses, type) {
             <div class="course-inputs">
                 <div class="form-group">
                     <label>عدد الساعات</label>
-                    <input type="number" id="${type}-course-${i}-hours" min="1" max="10" step="1" required>
+                    <select id="${type}-course-${i}-hours" required>
+                        <option value="">-- اختر عدد الساعات --</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                    </select>
                 </div>
                 <div class="form-group">
                     <label>اختر التقدير</label>

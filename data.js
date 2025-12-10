@@ -29,14 +29,23 @@ const universityCourses = [
   { "major": "مشترك", "courseName": "حساب التفاضل والتكامل (هندسة)", "courseCode": "2030 ريض", "hours": 3 },
   { "major": "مشترك", "courseName": "فيزياء عامة (1)", "courseCode": "1010 فيز", "hours": 6 },
   { "major": "مشترك", "courseName": "فيزياء عامة (2)", "courseCode": "1040 فيز", "hours": 6 },
-  { "major": "مشترك", "courseName": "كيمياء عامة (1)", "courseCode": "1010 كيم", "hours": 6 },
+  { "major": "مشترك", "courseName": "كيمياء عامة (1)", "courseCode": "1010 كيم", "hours": 4 },
   { "major": "مشترك", "courseName": "مقدمة في الذكاء الاصطناعي", "courseCode": "101 عال", "hours": 3 },
   { "major": "مشترك", "courseName": "مهارات الاتصال", "courseCode": "1400 علم", "hours": 2 },
   { "major": "مشترك", "courseName": "مهارات الاستماع والمحادثة", "courseCode": "1230 نجم", "hours": 6 },
+  { "major": "مشترك", "courseName": "مهارات الحاسب الآلي", "courseCode": "1400 تقن", "hours": 3 },
   { "major": "مشترك", "courseName": "مهارات القراءة", "courseCode": "1210 نجم", "hours": 6 },
   { "major": "مشترك", "courseName": "مهارات الكتابة", "courseCode": "1220 نجم", "hours": 6 },
   { "major": "مشترك", "courseName": "نظم التشغيل", "courseCode": "3701 عال", "hours": 3 },
-  { "major": "مشترك", "courseName": "نظم شبكات الحاسب", "courseCode": "3761 هال", "hours": 3 },
+  { "major": "مشترك", "courseName": "نظم شبكات الحاسب", "courseCode": "3761 هال", "hours": 3 },  { "major": "مشترك", "courseName": "نظم شبكات الحاسب", "courseCode": "3761 هال", "hours": 3 },
+  { "major": "مشترك", "courseName": "المدخل الى الثقافة الإسلامية ", "courseCode": "101 سلم ", "hours": 2 },
+  { "major": "مشترك", "courseName": " برمجة الحاسب في الهندسة ", "courseCode": "1090 هنع ", "hours": 5 },
+      { "major": "مشترك", "courseName": " مقدمة في الهندسة ", "courseCode": "1011 هنع ", "hours": 3 },
+        { "major": "مشترك", "courseName": " الإسلام وبناء المجتمع  ", "courseCode": "102 سلم ", "hours": 2 },
+
+
+
+
 
   // --- الهندسة الصناعية (Industrial Engineering) ---
   { "major": "الهندسة الصناعية", "courseName": "أساليب التصنيع 1", "courseCode": "2511 صنع", "hours": 3 },
@@ -284,5 +293,3 @@ const universityCourses = [
   { "major": "هندسة الحاسب", "courseName": "نظرية الأعداد", "courseCode": "3270 هال", "hours": 3 },
   { "major": "هندسة الحاسب", "courseName": "هندسة النظم وإدارة المشاريع", "courseCode": "3611 هال", "hours": 3 }
 ];
-
-
