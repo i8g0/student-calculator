@@ -21,15 +21,14 @@
     <meta name="application-name" content="حاسبة الطالب">
     <title>حاسبة الطالب | Student Calculator</title>
     
-    <!-- PWA Manifest -->
+
     <link rel="manifest" href="manifest.json">
     
-    <!-- Apple Touch Icons -->
+
     <link rel="apple-touch-icon" href="icon-192.png">
     <link rel="apple-touch-icon" sizes="192x192" href="icon-192.png">
     <link rel="apple-touch-icon" sizes="512x512" href="icon-512.png">
-    
-    <!-- Favicon -->
+
     <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
     <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
     
@@ -39,7 +38,7 @@
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     
-    <!-- Success Popup Styles -->
+
     <style>
         .success-popup-overlay {
             position: fixed;
@@ -157,7 +156,7 @@
             to { opacity: 0; }
         }
 
-        /* Absence Alert Popup Styles */
+   
         .absence-alert-overlay {
             position: fixed;
             top: 0;
@@ -275,7 +274,6 @@
             }
         }
 
-        /* Hours Select Dropdown Styles */
         .hours-select-dropdown {
             width: 100%;
             padding: 16px 20px;
@@ -314,7 +312,7 @@
     </style>
 </head>
 <body>
-    <!-- Loading Screen -->
+
     <div id="loading-screen" class="loading-screen">
         <div class="loading-content">
             <div class="loading-logo">
@@ -326,7 +324,6 @@
         </div>
     </div>
 
-    <!-- Navigation -->
     <nav class="navbar">
         <div class="nav-container">
             <div class="nav-brand">
@@ -350,7 +347,7 @@
         </div>
     </nav>
 
-    <!-- Mobile Menu -->
+    
     <div id="mobile-menu" class="mobile-menu">
         <div class="mobile-menu-header">
             <h3>القائمة الرئيسية</h3>
@@ -390,9 +387,8 @@
         </div>
     </div>
 
-    <!-- Main Content -->
     <main class="main-content">
-        <!-- Hero Section -->
+       
         <section class="hero-section">
             <div id="particles-js"></div>
             <div class="hero-container">
@@ -407,10 +403,10 @@
             </div>
         </section>
 
-        <!-- Calculator Section -->
+        
         <section class="calculator-section">
             <div class="container">
-                <!-- Tabs -->
+            
                 <div class="tabs-container">
                     <div class="tabs">
                         <button class="tab-btn active" data-tab="rate">
@@ -444,9 +440,9 @@
                     </div>
                 </div>
 
-                <!-- Tab Contents -->
+                
                 <div class="tab-contents">
-                    <!-- Rate Calculator -->
+                  
                     <div id="rate" class="tab-content active">
                         <div class="calculator-card">
                             <div class="card-header">
@@ -502,7 +498,7 @@
                         </div>
                     </div>
 
-                    <!-- Absence Calculator -->
+                  
                     <div id="absence" class="tab-content">
                         <div class="calculator-card">
                             <div class="card-header">
@@ -515,7 +511,7 @@
                                 </div>
                             </div>
                             <div class="card-body">
-                                <!-- Help Button -->
+                              
                                 <div style="position: relative; margin-bottom: var(--space-lg); min-height: 50px;">
                                     <a href="absence-guide.html" target="_blank" class="guide-help-btn" style="position: absolute; top: 0; right: 0; display: inline-flex; align-items: center; gap: var(--space-sm); padding: var(--space-md) var(--space-lg); background: var(--gradient-primary); color: white; border-radius: var(--radius-lg); text-decoration: none; font-weight: 600; box-shadow: var(--shadow-md); transition: all var(--transition-normal); z-index: 10;">
                                         <i class="fas fa-book-open"></i>
@@ -523,7 +519,6 @@
                                     </a>
                                 </div>
                                 
-                                <!-- Add Course Form -->
                                 <div class="new-absence-form-section">
                                     <h4><i class="fas fa-plus-circle"></i> إضافة مادة جديدة</h4>
                                     <form id="new-absence-form">
@@ -550,7 +545,6 @@
                                     </form>
                                 </div>
 
-                                <!-- Courses List -->
                                 <div id="new-absence-courses-list" class="new-absence-courses-list">
                                     <div class="empty-state">
                                         <i class="fas fa-calendar-plus"></i>
@@ -559,18 +553,15 @@
                                     </div>
                                 </div>
 
-                                <!-- Statistics Section (Feature 25) -->
                                 <div id="absence-statistics" class="absence-statistics-section" style="display: none; margin-top: 2rem; padding: 1.5rem; background: var(--card-bg, #fff); border-radius: var(--radius-lg, 12px); box-shadow: var(--shadow-md, 0 4px 6px rgba(0,0,0,0.1));">
                                     <h4 style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
                                         <i class="fas fa-chart-bar"></i>
                                         <span>إحصائيات الغياب</span>
                                     </h4>
                                     <div id="absence-stats-content" class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
-                                        <!-- Statistics will be populated by JavaScript -->
                                     </div>
                                 </div>
 
-                                <!-- Goals Section (Feature 26) -->
                                 <div id="absence-goals" class="absence-goals-section" style="display: none; margin-top: 2rem; padding: 1.5rem; background: var(--card-bg, #fff); border-radius: var(--radius-lg, 12px); box-shadow: var(--shadow-md, 0 4px 6px rgba(0,0,0,0.1));">
                                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
                                         <h4 style="display: flex; align-items: center; gap: 0.5rem; margin: 0;">
@@ -582,25 +573,22 @@
                                         </button>
                                     </div>
                                     <div id="absence-goals-content">
-                                        <!-- Goals will be populated by JavaScript -->
+                                        
                                     </div>
                                 </div>
 
-                                <!-- Recommendations Section (Feature 30) -->
                                 <div id="absence-recommendations" class="absence-recommendations-section" style="display: none; margin-top: 2rem; padding: 1.5rem; background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%); border-radius: var(--radius-lg, 12px); border: 2px solid var(--gradient-primary, #667eea);">
                                     <h4 style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
                                         <i class="fas fa-lightbulb"></i>
                                         <span>توصيات ذكية</span>
                                     </h4>
                                     <div id="absence-recommendations-content">
-                                        <!-- Recommendations will be populated by JavaScript -->
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Science College Rate Calculator -->
                     <div id="science-college" class="tab-content">
                         <div class="calculator-card">
                             <div class="card-header">
@@ -696,7 +684,6 @@
                         </div>
                     </div>
 
-                    <!-- Applied College Rate Calculator -->
                     <div id="applied-college" class="tab-content">
                         <div class="calculator-card">
                             <div class="card-header">
@@ -774,7 +761,6 @@
                         </div>
                     </div>
 
-                    <!-- Cumulative GPA Calculator -->
                     <div id="cumulative" class="tab-content">
                         <div class="calculator-card">
                             <div class="card-header">
@@ -826,7 +812,6 @@
                         </div>
                     </div>
 
-                    <!-- Semester GPA Calculator -->
                     <div id="semester" class="tab-content">
                         <div class="calculator-card">
                             <div class="card-header">
@@ -862,7 +847,6 @@
                         </div>
                     </div>
 
-                    <!-- Study Tips Section (Feature 103) -->
                     <div id="study-tips" class="tab-content" style="display: none;">
                         <div class="calculator-card">
                             <div class="card-header">
@@ -875,12 +859,12 @@
                                 </div>
                             </div>
                             <div class="card-body" id="study-tips-content">
-                                <!-- Tips will be populated by JavaScript -->
+                                
                             </div>
                         </div>
                     </div>
 
-                    <!-- Educational Videos Section (Feature 108) -->
+                    
                     <div id="educational-videos" class="tab-content" style="display: none;">
                         <div class="calculator-card">
                             <div class="card-header">
@@ -893,12 +877,12 @@
                                 </div>
                             </div>
                             <div class="card-body" id="educational-videos-content">
-                                <!-- Videos will be populated by JavaScript -->
+                                
                             </div>
                         </div>
                     </div>
 
-                    <!-- Analytics -->
+                
                     <div id="analytics" class="tab-content">
                         <div class="analytics-container">
                             <div class="analytics-card">
@@ -946,12 +930,12 @@
             </div>
         </section>
 
-        <!-- Features Section -->
+        
         <section class="features-section">
             <div class="container">
                 <div class="section-header">
-                    <h2>مميزات حاسبة الطالب </h2>
-                    <p>اكتشف لماذا حاسبة الطالب هي الأفضل</p>
+                    <h2>مميزات حاسبة المعدل الجامعي</h2>
+                    <p>اكتشف لماذا حاسبة المعدل الجامعي هي الأفضل</p>
                 </div>
                 <div class="features-grid">
                     <div class="feature-card">
@@ -980,7 +964,7 @@
         </section>
     </main>
 
-    <!-- Footer -->
+    
     <footer class="footer">
         <div class="container">
             <div class="footer-content">
@@ -1008,10 +992,10 @@
  
 
 
-    <!-- Toast Notifications -->
+    
     <div id="toast-container" class="toast-container"></div>
 
-    <!-- Scripts -->
+    
     <script src="data.js"></script>
     <script src="script.js?v=32"></script>
 </body>

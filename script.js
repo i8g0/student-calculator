@@ -1,4 +1,4 @@
-// ===== GLOBAL VARIABLES =====
+
 let currentTheme = localStorage.getItem('theme') || 'light';
 let calculations = JSON.parse(localStorage.getItem('calculations')) || [];
 let currentTab = 'rate';
@@ -6,7 +6,7 @@ let summaryBarChart = null;
 let rateGradePie = null;
 let rateBarChart = null;
 
-// ===== DOM ELEMENTS =====
+
 const loadingScreen = document.getElementById('loading-screen');
 const themeToggle = document.getElementById('theme-toggle');
 const menuToggle = document.getElementById('menu-toggle');
@@ -19,10 +19,10 @@ const themeSwitcher = document.getElementById('theme-switcher');
 const themes = ['theme-dark', 'theme-light', 'theme-colorful'];
 let currentThemeIdx = 0;
 
-// ===== INITIALIZATION =====
+
 document.addEventListener('DOMContentLoaded', function() {
     initializeApp();
-    // زر ابدأ الآن ينزل المستخدم إلى قسم الريت مع تعويض الترويسة
+
     const ctaBtn = document.querySelector('.cta-btn');
     if (ctaBtn) {
         ctaBtn.addEventListener('click', function(e) {
@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (target) {
                 const navbar = document.querySelector('.navbar');
                 const navHeight = navbar ? navbar.offsetHeight : 0;
-                const extraOffset = 150; // مسافة إضافية ليظهر النموذج في منتصف الشاشة
+                const extraOffset = 150;
                 const targetPos = target.getBoundingClientRect().top + window.pageYOffset - navHeight - extraOffset;
                 window.scrollTo({ top: targetPos, behavior: 'smooth' });
             }
@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function initializeApp() {
-    // Show loading screen
+
     setTimeout(() => {
         loadingScreen.classList.add('hidden');
         setTimeout(() => {
@@ -48,41 +48,41 @@ function initializeApp() {
         }, 500);
     }, 2000);
 
-    // Initialize theme
+
     setTheme(currentTheme);
-    
-    // Initialize particles
+
+
     initParticles();
-    
-    // Initialize charts
+
+
     initCharts();
-    
-    // Initialize event listeners
+
+
     initEventListeners();
-    
-    // Initialize forms
+
+
     initForms();
-    
-    // Initialize course search (after a delay to ensure DOM is ready)
+
+
     setTimeout(() => {
         createCourseSearchField();
         setupCourseSearchEvents();
     }, 1000);
-    
-    // Update analytics
+
+
     updateAnalytics();
-    
-    // Show welcome toast
+
+
     showToast('مرحباً بك في حاسبة الريت الذكية! 🚀', 'info');
 }
 
-// ===== THEME MANAGEMENT =====
+
 function setTheme(theme) {
     document.documentElement.setAttribute('data-theme', theme);
     currentTheme = theme;
     localStorage.setItem('theme', theme);
-    
-    // Update theme toggle icon
+
+
         const icon = themeToggle.querySelector('i');
     icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
 }
@@ -106,7 +106,7 @@ if (themeSwitcher) {
     });
 }
 
-// عند تحميل الصفحة، طبّق آخر ثيم محفوظ
+
 const savedTheme = localStorage.getItem('theme');
 if (savedTheme && themes.includes(savedTheme)) {
     document.body.classList.add(savedTheme);
@@ -116,7 +116,7 @@ if (savedTheme && themes.includes(savedTheme)) {
     currentThemeIdx = 0;
 }
 
-// ===== PARTICLES BACKGROUND =====
+
 function initParticles() {
     if (typeof particlesJS !== 'undefined') {
         particlesJS('particles-js', {
@@ -224,7 +224,7 @@ function initParticles() {
     }
 }
 
-// ===== TAB SYSTEM =====
+
 function initTabs() {
     tabBtns.forEach(btn => {
         btn.addEventListener('click', () => {
@@ -235,40 +235,40 @@ function initTabs() {
 }
 
 function switchTab(tabId) {
-    // Remove active class from all tabs and contents
+
     tabBtns.forEach(btn => btn.classList.remove('active'));
     tabContents.forEach(content => content.classList.remove('active'));
-    
-    // Add active class to selected tab and content
+
+
     document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
     document.getElementById(tabId).classList.add('active');
-    
+
     currentTab = tabId;
-    
-    // Update mobile menu if open
+
+
     if (mobileMenu.classList.contains('active')) {
         mobileMenu.classList.remove('active');
     }
 }
 
-// ===== MOBILE MENU =====
+
 function initMobileMenu() {
     menuToggle.addEventListener('click', () => {
         mobileMenu.classList.add('active');
     });
-    
+
     closeMenu.addEventListener('click', () => {
         mobileMenu.classList.remove('active');
     });
-    
-    // Close menu when clicking outside
+
+
     document.addEventListener('click', (e) => {
         if (!mobileMenu.contains(e.target) && !menuToggle.contains(e.target)) {
             mobileMenu.classList.remove('active');
         }
     });
-    
-    // Menu item clicks
+
+
     document.querySelectorAll('.menu-item').forEach(item => {
         item.addEventListener('click', (e) => {
             e.preventDefault();
@@ -279,72 +279,72 @@ function initMobileMenu() {
     });
 }
 
-// ===== FORM INITIALIZATION =====
+
 function initForms() {
-    // Rate calculator form
+
     const rateForm = document.getElementById('rate-form');
     const rateNumInput = document.getElementById('rate-num');
     const rateCoursesContainer = document.getElementById('rate-courses');
-    
+
     if (rateNumInput) {
         rateNumInput.addEventListener('change', () => {
             createCourseInputs(rateCoursesContainer, parseInt(rateNumInput.value), 'rate');
         });
     }
-    
+
     if (rateForm) {
         rateForm.addEventListener('submit', handleRateCalculation);
     }
-    
-    // Science College calculator form
+
+
     const scienceCollegeForm = document.getElementById('science-college-form');
     if (scienceCollegeForm) {
         scienceCollegeForm.addEventListener('submit', handleScienceCollegeCalculation);
     }
-    
-    // Applied College calculator form
+
+
     const appliedCollegeForm = document.getElementById('applied-college-form');
     if (appliedCollegeForm) {
         appliedCollegeForm.addEventListener('submit', handleAppliedCollegeCalculation);
     }
-    
-    // Cumulative GPA form
+
+
     const cumulativeForm = document.getElementById('cumulative-form');
     const cumulativeNumInput = document.getElementById('cumulative-num');
     const cumulativeCoursesContainer = document.getElementById('cumulative-courses');
-    
+
     if (cumulativeNumInput) {
         cumulativeNumInput.addEventListener('change', () => {
             createCourseInputs(cumulativeCoursesContainer, parseInt(cumulativeNumInput.value), 'cumulative');
         });
     }
-    
+
     if (cumulativeForm) {
         cumulativeForm.addEventListener('submit', handleCumulativeCalculation);
     }
-    
-    // Semester GPA form
+
+
     const semesterForm = document.getElementById('semester-form');
     const semesterNumInput = document.getElementById('semester-num');
     const semesterCoursesContainer = document.getElementById('semester-courses');
-    
+
     if (semesterNumInput) {
         semesterNumInput.addEventListener('change', () => {
             createCourseInputs(semesterCoursesContainer, parseInt(semesterNumInput.value), 'semester');
         });
     }
-    
+
     if (semesterForm) {
         semesterForm.addEventListener('submit', handleSemesterCalculation);
     }
-    
-    // Initialize course inputs
+
+
     if (rateNumInput) createCourseInputs(rateCoursesContainer, parseInt(rateNumInput.value) || 2, 'rate');
     if (cumulativeNumInput) createCourseInputs(cumulativeCoursesContainer, parseInt(cumulativeNumInput.value) || 2, 'cumulative');
     if (semesterNumInput) createCourseInputs(semesterCoursesContainer, parseInt(semesterNumInput.value) || 2, 'semester');
 }
 
-// ===== COURSE INPUTS CREATION =====
+
 function createCourseInputs(container, numCourses, type) {
     container.innerHTML = '';
     for (let i = 1; i <= numCourses; i++) {
@@ -380,21 +380,21 @@ function createCourseInputs(container, numCourses, type) {
     }
 }
 
-// تعريف المواد والأوزان حسب التخصص (النظام الجديد)
+
 const majorCourses = {
-    CE: [ // هندسة الحاسب
+    CE: [
         { name: "الرياضيات المتقطعة (1112عال)", weight: 0.5 },
         { name: "برمجة الحاسب 1 (1301عال)", weight: 0.5 }
     ],
-    CS: [ // علوم الحاسب
+    CS: [
         { name: "الرياضيات المتقطعة (1112عال)", weight: 0.25 },
         { name: "برمجة الحاسب 1 (1301عال)", weight: 0.75 }
     ],
-    IS: [ // نظم المعلومات
+    IS: [
         { name: "برمجة الحاسب 1 (1301عال)", weight: 0.5 },
         { name: "أساسيات نظم قواعد البيانات (2511نال)", weight: 0.5 }
     ],
-    SE: [ // هندسة البرمجيات
+    SE: [
         { name: "الرياضيات المتقطعة (1112عال)", weight: 0.5 },
         { name: "برمجة الحاسب 1 (1301عال)", weight: 0.5 }
     ]
@@ -412,7 +412,7 @@ const gradeValues = {
     "F": 1
 };
 
-// عند تغيير التخصص، أظهر المواد المطلوبة
+
 const majorSelect = document.getElementById('major');
 const rateCoursesDiv = document.getElementById('rate-courses');
 if (majorSelect && rateCoursesDiv) {
@@ -444,7 +444,7 @@ if (majorSelect && rateCoursesDiv) {
     });
 }
 
-// عدل دالة حساب الريت لتستخدم القيم المختارة
+
 function handleRateCalculation(e) {
     e.preventDefault();
     const major = document.getElementById('major').value;
@@ -454,7 +454,7 @@ function handleRateCalculation(e) {
         showToast('يرجى ملء جميع الحقول المطلوبة', 'error');
         return;
     }
-    // جلب تقديرات المواد
+
     const courses = majorCourses[major];
     const g1 = gradeValues[document.getElementById('rate-course-0').value];
     const w1 = courses[0].weight;
@@ -464,7 +464,7 @@ function handleRateCalculation(e) {
         showToast('يرجى اختيار تقدير لكل مادة', 'error');
         return;
     }
-    // حساب الريت
+
     const result = calculateRate(major, gpa, sa, g1, w1, g2, w2);
     displayRateResult(result);
     saveCalculation({
@@ -556,7 +556,7 @@ function handleScienceCollegeCalculation(e) {
         showToast('يرجى ملء جميع الحقول المطلوبة', 'error');
         return;
     }
-    // حساب معدل كلية العلوم
+
     const result = calculateScienceCollegeRate(gpa, weighted, physics, differential, integral);
     displayScienceCollegeResult(result);
     saveCalculation({
@@ -583,7 +583,7 @@ function handleAppliedCollegeCalculation(e) {
         showToast('يرجى ملء جميع الحقول المطلوبة', 'error');
         return;
     }
-    // حساب معدل الكلية التطبيقية
+
     const result = calculateAppliedCollegeRate(gpa, composite, organicChemistry, biology);
     displayAppliedCollegeResult(result);
     saveCalculation({
@@ -599,10 +599,10 @@ function handleAppliedCollegeCalculation(e) {
     updateAnalytics();
 }
 
-// ===== CALCULATION FUNCTIONS =====
+
 function calculateRate(major, gpa, sa, g1, w1, g2, w2) {
-    // حساب الريت حسب المعادلة الجديدة
-    // RATE = (GPA + SA + (W1*G1) + (W2*G2)) / 3
+
+
     const rate = (gpa + sa + (w1 * g1) + (w2 * g2)) / 3;
     return {
         rate: rate.toFixed(3),
@@ -629,11 +629,11 @@ function calculateCumulativeGPA(prevHours, prevGpa, courses) {
     const prevPoints = prevHours * prevGpa;
     const newHours = courses.reduce((sum, course) => sum + course.hours, 0);
     const newPoints = courses.reduce((sum, course) => sum + (course.grade * course.hours), 0);
-    
+
     const totalHours = prevHours + newHours;
     const totalPoints = prevPoints + newPoints;
     const cumulativeGpa = totalPoints / totalHours;
-    
+
     return {
         cumulativeGpa: cumulativeGpa.toFixed(3),
         prevGpa,
@@ -648,7 +648,7 @@ function calculateSemesterGPA(courses) {
     const totalHours = courses.reduce((sum, course) => sum + course.hours, 0);
     const totalPoints = courses.reduce((sum, course) => sum + (course.grade * course.hours), 0);
     const semesterGpa = totalPoints / totalHours;
-    
+
     return {
         semesterGpa: semesterGpa.toFixed(3),
         totalHours,
@@ -699,12 +699,12 @@ function getGradeDistribution(courses) {
     const distribution = {
         'A+': 0, 'A': 0, 'B+': 0, 'B': 0, 'C+': 0, 'C': 0, 'D+': 0, 'D': 0, 'F': 0
     };
-    
+
     courses.forEach(course => {
         const grade = getLetterGrade(course.grade);
         distribution[grade]++;
     });
-    
+
     return distribution;
 }
 
@@ -720,7 +720,7 @@ function getLetterGrade(numericGrade) {
     return 'F';
 }
 
-// ===== RESULT DISPLAY =====
+
 function displayRateResult(result) {
     const resultContainer = document.getElementById('rate-result');
     resultContainer.innerHTML = `
@@ -798,7 +798,7 @@ function displaySemesterResult(result) {
         `;
     resultContainer.classList.add('show');
 }
-    
+
 function displayScienceCollegeResult(result) {
     const resultContainer = document.getElementById('science-college-result');
     resultContainer.innerHTML = `
@@ -873,7 +873,7 @@ function displayAppliedCollegeResult(result) {
     resultContainer.classList.add('show');
 }
 
-// ===== UTILITY FUNCTIONS =====
+
 function getMajorName(majorCode) {
     const majors = {
         'SE': 'هندسة البرمجيات',
@@ -893,9 +893,9 @@ function saveCalculation(calculation) {
     updateAnalytics();
 }
 
-// ===== ANALYTICS =====
+
 function initCharts() {
-    // Initialize charts when analytics tab is shown
+
     const analyticsTab = document.querySelector('[data-tab="analytics"]');
     if (analyticsTab) {
         analyticsTab.addEventListener('click', () => {
@@ -907,7 +907,7 @@ function initCharts() {
 }
 
 function createCharts() {
-    // Grades distribution chart
+
     const gradesCtx = document.getElementById('grades-chart');
     if (gradesCtx) {
         new Chart(gradesCtx, {
@@ -937,7 +937,7 @@ function createCharts() {
     });
 }
 
-    // Majors comparison chart
+
     const majorsCtx = document.getElementById('majors-chart');
     if (majorsCtx) {
         new Chart(majorsCtx, {
@@ -981,7 +981,7 @@ function createCharts() {
 }
 
 function updateAnalytics() {
-    // جلب الحسابات من localStorage أو المتغير
+
     const calculations = JSON.parse(localStorage.getItem('calculations')) || [];
     let rateSum = 0, gpaSum = 0, rateCount = 0, gpaCount = 0;
     calculations.forEach(calc => {
@@ -1003,13 +1003,13 @@ function updateAnalytics() {
     document.getElementById('total-calculations').innerText = calculations.length;
 }
 
-// ===== TOAST NOTIFICATIONS =====
+
 function showToast(message, type = 'info', duration = 5000) {
     const toast = document.createElement('div');
     toast.className = `toast ${type}`;
-    
+
     const icon = getToastIcon(type);
-    
+
     toast.innerHTML = `
         <div class="toast-icon">
             <i class="${icon}"></i>
@@ -1019,15 +1019,15 @@ function showToast(message, type = 'info', duration = 5000) {
             <p>${message}</p>
         </div>
     `;
-    
+
     toastContainer.appendChild(toast);
-    
-    // Trigger animation
+
+
     setTimeout(() => {
         toast.classList.add('show');
     }, 100);
-    
-    // Auto remove
+
+
     setTimeout(() => {
         toast.classList.remove('show');
         setTimeout(() => {
@@ -1058,18 +1058,18 @@ function getToastTitle(type) {
     return titles[type] || titles.info;
 }
 
-// ===== EVENT LISTENERS =====
+
 function initEventListeners() {
-    // Theme toggle
+
     themeToggle.addEventListener('click', toggleTheme);
-    
-    // Mobile menu
+
+
     initMobileMenu();
-    
-    // Tabs
+
+
     initTabs();
-    
-    // Smooth scrolling for anchor links
+
+
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
             e.preventDefault();
@@ -1083,12 +1083,12 @@ function initEventListeners() {
     });
 });
 
-// ===== ABSENCE LIMIT CALCULATOR =====
+
 function initAbsenceLimitCalculator() {
-    // Get all input fields that affect absence calculation
+
     const inputs = [
         'course-academic-hours',
-        'course-weeks', 
+        'course-weeks',
         'lectures-count',
         'exercises-count',
         'labs-count',
@@ -1096,8 +1096,8 @@ function initAbsenceLimitCalculator() {
         'exercise-hours',
         'lab-hours'
     ];
-    
-    // Add event listeners to all relevant inputs
+
+
     inputs.forEach(inputId => {
         const input = document.getElementById(inputId);
         if (input) {
@@ -1107,15 +1107,15 @@ function initAbsenceLimitCalculator() {
             input.addEventListener('paste', () => setTimeout(updateAbsenceLimit, 100));
         }
     });
-    
-    // Listen to ALL input fields in the form
+
+
     document.addEventListener('input', function(e) {
-        // Check if it's any input field that could affect absence calculation
-        if (e.target.type === 'number' || 
+
+        if (e.target.type === 'number' ||
             e.target.type === 'text' ||
-            e.target.id.includes('course') || 
-            e.target.id.includes('lectures') || 
-            e.target.id.includes('exercises') || 
+            e.target.id.includes('course') ||
+            e.target.id.includes('lectures') ||
+            e.target.id.includes('exercises') ||
             e.target.id.includes('labs') ||
             e.target.id.includes('lecture') ||
             e.target.id.includes('exercise') ||
@@ -1124,18 +1124,18 @@ function initAbsenceLimitCalculator() {
             e.target.id.includes('hours') ||
             e.target.id.includes('weeks') ||
             e.target.id.includes('count')) {
-            console.log('Input detected:', e.target.id, e.target.value); // Debug log
+
             updateAbsenceLimit();
         }
     });
-    
-    // Also listen to any select or dropdown changes
+
+
     document.addEventListener('change', function(e) {
-        if (e.target.type === 'number' || 
+        if (e.target.type === 'number' ||
             e.target.type === 'text' ||
-            e.target.id.includes('course') || 
-            e.target.id.includes('lectures') || 
-            e.target.id.includes('exercises') || 
+            e.target.id.includes('course') ||
+            e.target.id.includes('lectures') ||
+            e.target.id.includes('exercises') ||
             e.target.id.includes('labs') ||
             e.target.id.includes('lecture') ||
             e.target.id.includes('exercise') ||
@@ -1143,20 +1143,20 @@ function initAbsenceLimitCalculator() {
             updateAbsenceLimit();
         }
     });
-    
-    // Listen to dynamic fields that might be added later
+
+
     const observer = new MutationObserver(function(mutations) {
         mutations.forEach(function(mutation) {
             if (mutation.type === 'childList') {
                 mutation.addedNodes.forEach(function(node) {
-                    if (node.nodeType === 1) { // Element node
+                    if (node.nodeType === 1) {
                         const inputs = node.querySelectorAll ? node.querySelectorAll('input, select') : [];
                         inputs.forEach(input => {
-                            if (input.type === 'number' || 
+                            if (input.type === 'number' ||
                                 input.type === 'text' ||
-                                input.id.includes('course') || 
-                                input.id.includes('lectures') || 
-                                input.id.includes('exercises') || 
+                                input.id.includes('course') ||
+                                input.id.includes('lectures') ||
+                                input.id.includes('exercises') ||
                                 input.id.includes('labs') ||
                                 input.id.includes('lecture') ||
                                 input.id.includes('exercise') ||
@@ -1171,113 +1171,92 @@ function initAbsenceLimitCalculator() {
             }
         });
     });
-    
-    // Start observing
+
+
     observer.observe(document.body, {
         childList: true,
         subtree: true
     });
-    
-    // Initial calculation
+
+
     updateAbsenceLimit();
-    
-    // Force update every second to ensure it stays updated
+
+
     setInterval(updateAbsenceLimit, 1000);
-    
-    // Debug: Log all input fields found
-    setTimeout(() => {
-        const allInputs = document.querySelectorAll('input');
-        console.log('All input fields found:', allInputs.length);
-        allInputs.forEach(input => {
-            console.log('Input:', input.id, input.type, input.value);
-        });
-        
-        // Test specific fields
-        const testFields = ['lecture-hours', 'exercise-hours', 'lab-hours', 'lectures-count', 'exercises-count', 'labs-count'];
-        testFields.forEach(fieldId => {
-            const field = document.getElementById(fieldId);
-            if (field) {
-                console.log(`Field ${fieldId} found:`, field.value);
-            } else {
-                console.log(`Field ${fieldId} NOT found`);
-            }
-        });
-    }, 2000);
+
+
 }
 
 function updateAbsenceLimit() {
     try {
-        console.log('updateAbsenceLimit called'); // Debug log
-        
-        // Get form values - check both main form and customization fields
+
+
         const academicHours = parseInt(document.getElementById('course-academic-hours').value) || 0;
         const weeks = parseInt(document.getElementById('course-weeks').value) || 0;
-        
-        // Get lectures count from main form
+
+
         const lecturesCount = parseInt(document.getElementById('lectures-count').value) || 0;
         const exercisesCount = parseInt(document.getElementById('exercises-count').value) || 0;
         const labsCount = parseInt(document.getElementById('labs-count').value) || 0;
-        
-        // Get hours from customization fields
+
+
         const lectureHours = parseInt(document.getElementById('lecture-hours').value) || 0;
         const exerciseHours = parseInt(document.getElementById('exercise-hours').value) || 0;
         const labHours = parseInt(document.getElementById('lab-hours').value) || 0;
-        
-        console.log('Main form values:', { academicHours, weeks, lecturesCount, exercisesCount, labsCount }); // Debug log
-        console.log('Customization values:', { lectureHours, exerciseHours, labHours }); // Debug log
-        
-        // Calculate total weekly hours
-        // Use customization values if available, otherwise use default calculations
+
+
+
+
         let lecturesHours = 0;
         let exercisesHours = 0;
         let labsHours = 0;
-        
-        // For lectures: use customization hours if available, otherwise calculate from count
+
+
         if (lectureHours > 0) {
-            lecturesHours = lectureHours * lecturesCount; // hours per lecture * number of lectures
+            lecturesHours = lectureHours * lecturesCount;
         } else if (lecturesCount > 0) {
-            lecturesHours = lecturesCount * 1.5; // default 1.5 hours per lecture
+            lecturesHours = lecturesCount * 1.5;
         }
-        
-        // For exercises: use customization hours if available, otherwise calculate from count
+
+
         if (exerciseHours > 0) {
-            exercisesHours = exerciseHours * exercisesCount; // hours per exercise * number of exercises
+            exercisesHours = exerciseHours * exercisesCount;
         } else if (exercisesCount > 0) {
-            exercisesHours = exercisesCount * 1; // default 1 hour per exercise
+            exercisesHours = exercisesCount * 1;
         }
-        
-        // For labs: use customization hours if available, otherwise calculate from count
+
+
         if (labHours > 0) {
-            labsHours = labHours * labsCount; // hours per lab * number of labs
+            labsHours = labHours * labsCount;
         } else if (labsCount > 0) {
-            labsHours = labsCount * 2; // default 2 hours per lab
+            labsHours = labsCount * 2;
         }
-        
+
         const totalWeeklyHours = lecturesHours + exercisesHours + labsHours;
-        
-        console.log('Calculated hours:', { lecturesHours, exercisesHours, labsHours, totalWeeklyHours }); // Debug log
-        
-        
+
+
+
+
     } catch (error) {
         console.error('Error updating absence limit:', error);
     }
 }
 
-// Function to get detailed absence breakdown
+
 function getAbsenceBreakdown() {
     const academicHours = parseInt(document.getElementById('course-academic-hours').value) || 0;
     const weeks = parseInt(document.getElementById('course-weeks').value) || 0;
     const lecturesCount = parseInt(document.getElementById('lectures-count').value) || 0;
     const exercisesCount = parseInt(document.getElementById('exercises-count').value) || 0;
     const labsCount = parseInt(document.getElementById('labs-count').value) || 0;
-    
+
     const lecturesHours = lecturesCount * 1.5;
     const exercisesHours = exercisesCount * 1;
     const labsHours = labsCount * 2;
     const totalWeeklyHours = lecturesHours + exercisesHours + labsHours;
     const totalSemesterHours = totalWeeklyHours * weeks;
     const maxAbsenceHours = Math.floor(totalSemesterHours * 0.25);
-    
+
     return {
         lecturesHours,
         exercisesHours,
@@ -1304,28 +1283,28 @@ function getAbsenceBreakdown() {
         }
     };
 }
-    
-    // Add floating animation to cards
+
+
     const floatingCards = document.querySelectorAll('.floating-card-3d');
     floatingCards.forEach((card, index) => {
         card.style.animationDelay = `${index * 2}s`;
     });
-    
-    // Add hover effects to feature cards
+
+
     const featureCards = document.querySelectorAll('.feature-card');
     featureCards.forEach(card => {
         card.addEventListener('mouseenter', () => {
             card.style.transform = 'translateY(-8px) scale(1.02)';
         });
-        
+
         card.addEventListener('mouseleave', () => {
             card.style.transform = 'translateY(0) scale(1)';
         });
     });
 }
 
-// ===== PERFORMANCE OPTIMIZATIONS =====
-// Debounce function for performance
+
+
 function debounce(func, wait) {
     let timeout;
     return function executedFunction(...args) {
@@ -1338,7 +1317,7 @@ function debounce(func, wait) {
     };
 }
 
-// Throttle function for scroll events
+
 function throttle(func, limit) {
     let inThrottle;
     return function() {
@@ -1352,15 +1331,15 @@ function throttle(func, limit) {
     }
 }
 
-// ===== ACCESSIBILITY =====
-// Keyboard navigation
+
+
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
         mobileMenu.classList.remove('active');
     }
 });
 
-// Focus management
+
 document.addEventListener('focusin', (e) => {
     if (e.target.matches('input, select, button, a')) {
         e.target.style.outline = '2px solid var(--primary)';
@@ -1375,7 +1354,7 @@ document.addEventListener('focusout', (e) => {
     }
 });
 
-// ===== SERVICE WORKER (PWA SUPPORT) =====
+
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker.getRegistrations().then(function(registrations) {
         for(let registration of registrations) {
@@ -1389,7 +1368,7 @@ if ('caches' in window) {
     });
 }
 
-// ===== EXPORT FUNCTIONS FOR GLOBAL ACCESS =====
+
 window.RateCalculator = {
     calculateRate,
     calculateCumulativeGPA,
@@ -1400,7 +1379,7 @@ window.RateCalculator = {
 };
 
 function initAnalyticsCharts() {
-    // جلب الحسابات
+
     const calculations = JSON.parse(localStorage.getItem('calculations')) || [];
     let rateSum = 0, rateCount = 0, gpaSum = 0, gpaCount = 0, semesterSum = 0, semesterCount = 0;
     calculations.forEach(calc => {
@@ -1420,7 +1399,7 @@ function initAnalyticsCharts() {
     const avgRate = rateCount ? (rateSum / rateCount).toFixed(2) : 0;
     const avgGpa = gpaCount ? (gpaSum / gpaCount).toFixed(2) : 0;
     const avgSemester = semesterCount ? (semesterSum / semesterCount).toFixed(2) : 0;
-    // رسم عمودي (Bar) فقط
+
     if (rateBarChart) rateBarChart.destroy();
     const barCtx = document.getElementById('rate-bar-chart').getContext('2d');
     rateBarChart = new Chart(barCtx, {
@@ -1431,15 +1410,15 @@ function initAnalyticsCharts() {
                 label: '',
                 data: [avgRate, avgSemester, avgGpa],
                 backgroundColor: [
-                    '#1976d2', // أزرق
-                    '#7c4dff', // بنفسجي
-                    '#ffb300'  // برتقالي
+                    '#1976d2',
+                    '#7c4dff',
+                    '#ffb300'
                 ],
                 borderRadius: 10,
                 barPercentage: 0.45,
                 categoryPercentage: 0.6,
                 borderSkipped: false,
-                // ظل خفيف للأعمدة (عن طريق borderColor و borderWidth)
+
                 borderColor: 'rgba(30,30,60,0.18)',
                 borderWidth: 3
             }]
@@ -1482,13 +1461,13 @@ function initAnalyticsCharts() {
         },
         plugins: window.ChartDataLabels ? [ChartDataLabels] : []
     });
-    // تحديث المتوسطات
+
     document.getElementById('avg-rate').innerText = avgRate;
     document.getElementById('avg-semester').innerText = avgSemester;
     document.getElementById('avg-gpa').innerText = avgGpa;
 }
 
-// استدعاء الرسم عند فتح تبويب التحليلات فقط
+
 const analyticsTabBtn = document.querySelector('[data-tab="analytics"]');
 if (analyticsTabBtn) {
     analyticsTabBtn.addEventListener('click', () => {
@@ -1496,24 +1475,24 @@ if (analyticsTabBtn) {
     });
 }
 
-// دالة تصدير/طباعة النتيجة
+
 function exportResult(btn) {
-    // ابحث عن أقرب result-container
+
     const resultContainer = btn.closest('.result-container');
     if (!resultContainer) return;
 
-    // أنشئ قائمة خيارات منبثقة
+
     let menu = document.createElement('div');
     menu.className = 'export-menu';
     menu.innerHTML = `
         <button onclick="downloadResultImage(this)"><i class='fas fa-image'></i> تحميل كصورة</button>
         <button onclick="printResult(this)"><i class='fas fa-print'></i> طباعة</button>
     `;
-    // احذف أي قائمة سابقة
+
     document.querySelectorAll('.export-menu').forEach(e => e.remove());
-    // أضف القائمة بعد الزر
+
     btn.parentNode.appendChild(menu);
-    // أغلق القائمة عند الضغط خارجها
+
     setTimeout(() => {
         document.addEventListener('click', function handler(e) {
             if (!menu.contains(e.target) && e.target !== btn) {
@@ -1524,7 +1503,7 @@ function exportResult(btn) {
     }, 100);
 }
 
-// تحميل النتيجة كصورة PNG
+
 function downloadResultImage(btn) {
     const resultContainer = btn.closest('.result-container');
     if (!window.html2canvas) {
@@ -1540,7 +1519,7 @@ function downloadResultImage(btn) {
     btn.parentNode.remove();
 }
 
-// طباعة النتيجة
+
 function printResult(btn) {
     const resultContainer = btn.closest('.result-container');
     const printWindow = window.open('', '', 'width=600,height=600');
@@ -1554,42 +1533,40 @@ function printResult(btn) {
     btn.parentNode.remove();
 }
 
-// ===== ABSENCE CALCULATOR =====
+
 let absenceCourses = [];
 
-// Initialize absence calculator
+
 function initAbsenceCalculator() {
-    console.log('Initializing absence calculator...');
-    
-    // Load saved courses from localStorage
+
+
+
     loadSavedCourses();
-    
-    // Load and display courses
+
+
     loadCourses();
-    
-    // Load absence control
+
+
     loadAbsenceControl();
-    
-    // Update completion section - REMOVED
-    // updateCompletionSection();
-    
-    console.log('Absence calculator initialized successfully');
-    console.log('Final absenceCourses:', absenceCourses);
+
+
+
+
+
 }
 
-// Load saved courses from localStorage
+
 function loadSavedCourses() {
     try {
         const savedCourses = localStorage.getItem('absenceCourses');
-        console.log('Saved courses from localStorage:', savedCourses);
-        
+
+
         if (savedCourses) {
             absenceCourses = JSON.parse(savedCourses);
-            console.log('Parsed courses:', absenceCourses);
-            console.log('Number of courses loaded:', absenceCourses.length);
+
         } else {
             absenceCourses = [];
-            console.log('No saved courses found, initializing empty array');
+
         }
     } catch (error) {
         console.error('خطأ في تحميل المواد المحفوظة:', error);
@@ -1597,7 +1574,7 @@ function loadSavedCourses() {
     }
 }
 
-// Clear all saved courses (for debugging)
+
 function clearAllCourses() {
     absenceCourses = [];
     localStorage.removeItem('absenceCourses');
@@ -1605,19 +1582,19 @@ function clearAllCourses() {
 }
 
 
-// Add course directly - SIMPLE VERSION
+
 function addCourseDirectly() {
     try {
-        // Get ONLY basic form values
+
         const courseNameRaw = document.getElementById('course-name').value;
         const courseName = courseNameRaw ? courseNameRaw.trim() : '';
         const academicHours = parseInt(document.getElementById('course-academic-hours').value);
         const weeks = parseInt(document.getElementById('course-weeks').value);
         const lecturesCount = parseInt(document.getElementById('lectures-count').value);
-        
-        // NO VALIDATION - Skip all checks
-        
-        // Create SIMPLE course object with defaults
+
+
+
+
         const newCourse = {
             id: Date.now().toString(),
             name: courseName,
@@ -1647,46 +1624,46 @@ function addCourseDirectly() {
             totalHours: academicHours * weeks,
             createdAt: new Date().toISOString()
         };
-        
-        // Add to array
+
+
         absenceCourses.push(newCourse);
-        
-        // Save to localStorage
+
+
         localStorage.setItem('absenceCourses', JSON.stringify(absenceCourses));
-        
-        // Reload display
+
+
         loadCourses();
         loadAbsenceControl();
-        
-        // Clear ONLY basic form fields
+
+
         document.getElementById('course-name').value = '';
         document.getElementById('course-academic-hours').value = '';
         document.getElementById('course-weeks').value = '';
         document.getElementById('lectures-count').value = '';
-        
-        // Success message
+
+
         showSuccessPopup(`تم إضافة مادة "${courseName}" بنجاح! 🎉`);
-        
-        // Switch tab
+
+
         setTimeout(() => {
             switchTab('absence');
         }, 1000);
-        
+
     } catch (error) {
         alert('حدث خطأ: ' + error.message);
     }
 }
 
-// Emergency add course - ALWAYS WORKS
+
 function addCourseEmergency() {
     try {
-        // Get form values with fallbacks - ONLY basic fields
+
         const courseName = document.getElementById('course-name').value.trim() || 'مادة جديدة';
         const academicHours = parseInt(document.getElementById('course-academic-hours').value) || 3;
         const weeks = parseInt(document.getElementById('course-weeks').value) || 16;
         const lecturesCount = parseInt(document.getElementById('lectures-count').value) || 2;
-        
-        // Create SIMPLE course object with defaults
+
+
         const newCourse = {
             id: Date.now().toString(),
             name: courseName,
@@ -1716,48 +1693,48 @@ function addCourseEmergency() {
             totalHours: academicHours * weeks,
             createdAt: new Date().toISOString()
         };
-        
-        // Add to array
+
+
         absenceCourses.push(newCourse);
-        
-        // Save to localStorage
+
+
         localStorage.setItem('absenceCourses', JSON.stringify(absenceCourses));
-        
-        // Reload display
+
+
         loadCourses();
         loadAbsenceControl();
-        
-        // Clear ONLY basic form fields
+
+
         document.getElementById('course-name').value = '';
         document.getElementById('course-academic-hours').value = '';
         document.getElementById('course-weeks').value = '';
         document.getElementById('lectures-count').value = '';
-        
-        // Success message
+
+
         showSuccessPopup(`تم إضافة مادة "${courseName}" بنجاح! 🎉`);
-        
-        // Switch tab
+
+
         setTimeout(() => {
             switchTab('absence');
         }, 1000);
-        
+
     } catch (error) {
         alert('حدث خطأ: ' + error.message);
     }
 }
 
-// Keep old function for compatibility
+
 function addCourse(e) {
     if (e) e.preventDefault();
     addCourseSimple();
 }
 
-// Customize course after adding - NEW FUNCTION
+
 function customizeCourse(courseId) {
     const course = absenceCourses.find(c => c.id === courseId);
     if (!course) return;
-    
-    // Show customization modal
+
+
     const modal = document.createElement('div');
     modal.className = 'modal-overlay';
     modal.innerHTML = `
@@ -1778,7 +1755,7 @@ function customizeCourse(courseId) {
                         <input type="number" id="custom-lecture-hours" value="${course.lectures.hoursPerSession}" min="0.5" max="4" step="0.5">
                     </div>
                 </div>
-                
+
                 <div class="customization-section">
                     <h4>تخصيص التمارين (اختياري)</h4>
                     <div class="input-group">
@@ -1790,7 +1767,7 @@ function customizeCourse(courseId) {
                         <input type="number" id="custom-exercise-hours" value="${course.exercises.hoursPerSession}" min="0.5" max="4" step="0.5">
                     </div>
                 </div>
-                
+
                 <div class="customization-section">
                     <h4>تخصيص المعامل (اختياري)</h4>
                     <div class="input-group">
@@ -1809,54 +1786,54 @@ function customizeCourse(courseId) {
             </div>
         </div>
     `;
-    
+
     document.body.appendChild(modal);
 }
 
-// Save customization
+
 function saveCustomization(courseId) {
     const course = absenceCourses.find(c => c.id === courseId);
     if (!course) return;
-    
-    // Get customization values
+
+
     const lecturesCount = parseInt(document.getElementById('custom-lectures-count').value) || 1;
     const lectureHours = parseFloat(document.getElementById('custom-lecture-hours').value) || 1.5;
     const exercisesCount = parseInt(document.getElementById('custom-exercises-count').value) || 0;
     const exerciseHours = parseFloat(document.getElementById('custom-exercise-hours').value) || 1;
     const labsCount = parseInt(document.getElementById('custom-labs-count').value) || 0;
     const labHours = parseFloat(document.getElementById('custom-lab-hours').value) || 2;
-    
-    // Update course data
+
+
     course.lectures.count = lecturesCount;
     course.lectures.hoursPerSession = lectureHours;
     course.lectures.totalHours = lecturesCount * lectureHours * course.weeks;
-    
+
     course.exercises.count = exercisesCount;
     course.exercises.hoursPerSession = exerciseHours;
     course.exercises.totalHours = exercisesCount * exerciseHours * course.weeks;
-    
+
     course.labs.count = labsCount;
     course.labs.hoursPerSession = labHours;
     course.labs.totalHours = labsCount * labHours * course.weeks;
-    
-    // Recalculate total hours
+
+
     course.totalHours = course.lectures.totalHours + course.exercises.totalHours + course.labs.totalHours;
-    
-    // Save to localStorage
+
+
     localStorage.setItem('absenceCourses', JSON.stringify(absenceCourses));
-    
-    // Reload display
+
+
     loadCourses();
     loadAbsenceControl();
-    
-    // Close modal
+
+
     closeModal();
-    
-    // Show success message
+
+
     alert(`تم تخصيص مادة "${course.name}" بنجاح! 🎉`);
 }
 
-// Close modal
+
 function closeModal() {
     const modal = document.querySelector('.modal-overlay');
     if (modal) {
@@ -1865,20 +1842,20 @@ function closeModal() {
 }
 
 
-// Add course with required field validation
+
 function addCourseSimple() {
-    // Get form values
+
     const courseName = document.getElementById('course-name').value.trim();
     const academicHours = document.getElementById('course-academic-hours').value;
     const weeks = document.getElementById('course-weeks').value;
     const lecturesCount = document.getElementById('lectures-count').value;
-    
-    // Use default values if fields are empty
+
+
     const finalAcademicHours = academicHours || 3;
     const finalWeeks = weeks || 16;
     const finalLecturesCount = lecturesCount || 2;
-    
-    // Check if course already exists (only if name is provided)
+
+
     if (courseName) {
         const existingCourse = absenceCourses.find(c => c.name.toLowerCase() === courseName.toLowerCase());
         if (existingCourse) {
@@ -1886,16 +1863,16 @@ function addCourseSimple() {
             return;
         }
     }
-    
-    // Collect dynamic fields data for sessions
+
+
     const exercisesCount = parseInt(document.getElementById('exercises-count').value) || 0;
     const labsCount = parseInt(document.getElementById('labs-count').value) || 0;
-    
+
     const lecturesData = collectDynamicFieldsData('lecture', finalLecturesCount);
     const exercisesData = collectDynamicFieldsData('exercise', exercisesCount);
     const labsData = collectDynamicFieldsData('lab', labsCount);
-    
-    // Create course object
+
+
     const course = {
         id: Date.now().toString(),
         name: courseName || 'مادة جديدة',
@@ -1923,70 +1900,68 @@ function addCourseSimple() {
             sessions: labsData
         },
         totalHours: parseInt(finalAcademicHours) * parseInt(finalWeeks),
-        totalAbsencePercentage: 0, // Will be calculated by the function
+        totalAbsencePercentage: 0,
         createdAt: new Date().toISOString()
     };
-    
-    // Calculate weekly absence percentage using the new function
+
+
     course.totalAbsencePercentage = calculateWeeklyAbsencePercentage(course);
-    
-    // Debug: Log the calculated percentage
-    console.log('Calculated total absence percentage:', course.totalAbsencePercentage);
-    console.log('Course object:', course);
-    
-    // Add course
+
+
+
+
     absenceCourses.push(course);
     localStorage.setItem('absenceCourses', JSON.stringify(absenceCourses));
     loadCourses();
     loadAbsenceControl();
-    
-    // Calculate and show course statistics
+
+
     const stats = calculateCourseStats(course);
     const totalSessionsPerWeek = (course.lectures?.count || 0) + (course.exercises?.count || 0) + (course.labs?.count || 0);
     const totalSessionsInSemester = totalSessionsPerWeek * course.weeks;
     const maxAbsenceSessions = Math.floor(totalSessionsInSemester * 0.25);
-    
-    // Show detailed statistics
+
+
     const statsMessage = `
         تم إضافة مادة "${course.name}" بنجاح! 🎉
-        
+
         📊 إحصائيات المادة:
         • إجمالي الساعات: ${course.totalHours} ساعة
         • إجمالي الجلسات: ${totalSessionsInSemester} جلسة
         • نسبة الغياب الأسبوعي: ${course.totalAbsencePercentage ? course.totalAbsencePercentage.toFixed(2) : '0.00'}%
         • الحد الأقصى للغياب: ${maxAbsenceSessions} جلسة
         • يمكنك الغياب ${maxAbsenceSessions} جلسة قبل الحرمان
-        
+
         ⚠️ تذكر: تجاوز ${maxAbsenceSessions} جلسة يؤدي إلى الحرمان من المادة!
     `;
-    
+
     showSuccessPopup(statsMessage);
-    
-    // Clear form
+
+
     document.getElementById('course-name').value = '';
     document.getElementById('course-academic-hours').value = '';
     document.getElementById('course-weeks').value = '';
     document.getElementById('lectures-count').value = '';
     document.getElementById('exercises-count').value = '';
     document.getElementById('labs-count').value = '';
-    
-    // Clear dynamic fields
+
+
     document.getElementById('lectures-fields').innerHTML = '';
     document.getElementById('exercises-fields').innerHTML = '';
     document.getElementById('labs-fields').innerHTML = '';
 }
 
-// Deleted function
 
-// Show success popup
+
+
 function showSuccessPopup(message) {
-    // Create popup overlay
+
     const popup = document.createElement('div');
     popup.className = 'success-popup-overlay';
-    
-    // Format message for multi-line support
+
+
     const formattedMessage = message.replace(/\n/g, '<br>');
-    
+
     popup.innerHTML = `
         <div class="success-popup">
             <div class="success-icon">
@@ -2004,16 +1979,16 @@ function showSuccessPopup(message) {
             </div>
         </div>
     `;
-    
+
     document.body.appendChild(popup);
-    
-    // Auto close after 8 seconds for detailed messages
+
+
     setTimeout(() => {
         closeSuccessPopup();
     }, 8000);
 }
 
-// Close success popup
+
 function closeSuccessPopup() {
     const popup = document.querySelector('.success-popup-overlay');
     if (popup) {
@@ -2022,37 +1997,37 @@ function closeSuccessPopup() {
 }
 
 
-// Clear add course form - SIMPLIFIED
+
 function clearAddCourseForm() {
-    // Clear main form fields
+
     document.getElementById('course-name').value = '';
     document.getElementById('course-academic-hours').value = '';
     document.getElementById('course-weeks').value = '';
     document.getElementById('lectures-count').value = '';
     document.getElementById('exercises-count').value = '';
     document.getElementById('labs-count').value = '';
-    
-    // Hide dynamic containers
+
+
     document.getElementById('lectures-container').style.display = 'none';
     document.getElementById('exercises-container').style.display = 'none';
     document.getElementById('labs-container').style.display = 'none';
-    
-    // Clear dynamic fields
+
+
     document.getElementById('lectures-fields').innerHTML = '';
     document.getElementById('exercises-fields').innerHTML = '';
     document.getElementById('labs-fields').innerHTML = '';
 }
 
-// Generate dynamic lecture fields
+
 function generateLectureFields() {
     const count = parseInt(document.getElementById('lectures-count').value);
     const container = document.getElementById('lectures-container');
     const fieldsContainer = document.getElementById('lectures-fields');
-    
+
     if (count > 0) {
         container.style.display = 'block';
         fieldsContainer.innerHTML = '';
-        
+
         for (let i = 1; i <= count; i++) {
             const fieldDiv = document.createElement('div');
             fieldDiv.className = 'dynamic-field-group';
@@ -2115,29 +2090,29 @@ function generateLectureFields() {
             `;
             fieldsContainer.appendChild(fieldDiv);
         }
-        
-        // Add event listeners for day dropdowns
+
+
         addDayDropdownListeners();
     } else {
         container.style.display = 'none';
         fieldsContainer.innerHTML = '';
     }
-    
-    // Update completion section
-    // console.log('استدعاء updateCompletionSection من generateLectureFields');
-    // updateCompletionSection();
+
+
+
+
 }
 
-// Generate dynamic exercise fields
+
 function generateExerciseFields() {
     const count = parseInt(document.getElementById('exercises-count').value);
     const container = document.getElementById('exercises-container');
     const fieldsContainer = document.getElementById('exercises-fields');
-    
+
     if (count > 0) {
         container.style.display = 'block';
         fieldsContainer.innerHTML = '';
-        
+
         for (let i = 1; i <= count; i++) {
             const fieldDiv = document.createElement('div');
             fieldDiv.className = 'dynamic-field-group';
@@ -2200,29 +2175,29 @@ function generateExerciseFields() {
             `;
             fieldsContainer.appendChild(fieldDiv);
         }
-        
-        // Add event listeners for day dropdowns
+
+
         addDayDropdownListeners();
     } else {
         container.style.display = 'none';
         fieldsContainer.innerHTML = '';
     }
-    
-    // Update completion section
-    // console.log('استدعاء updateCompletionSection من generateExerciseFields');
-    // updateCompletionSection();
+
+
+
+
 }
 
-// Generate dynamic lab fields
+
 function generateLabFields() {
     const count = parseInt(document.getElementById('labs-count').value);
     const container = document.getElementById('labs-container');
     const fieldsContainer = document.getElementById('labs-fields');
-    
+
     if (count > 0) {
         container.style.display = 'block';
         fieldsContainer.innerHTML = '';
-        
+
         for (let i = 1; i <= count; i++) {
             const fieldDiv = document.createElement('div');
             fieldDiv.className = 'dynamic-field-group';
@@ -2285,22 +2260,22 @@ function generateLabFields() {
             `;
             fieldsContainer.appendChild(fieldDiv);
         }
-        
-        // Add event listeners for day dropdowns
+
+
         addDayDropdownListeners();
     } else {
         container.style.display = 'none';
         fieldsContainer.innerHTML = '';
     }
-    
-    // Update completion section
-    // console.log('استدعاء updateCompletionSection من generateLabFields');
-    // updateCompletionSection();
+
+
+
+
 }
 
-// Add event listeners for day and hours dropdowns
+
 function addDayDropdownListeners() {
-    // Close all dropdowns when clicking outside
+
     document.addEventListener('click', function(e) {
         if (!e.target.closest('.day-dropdown-container') && !e.target.closest('.hours-dropdown-container')) {
             document.querySelectorAll('.day-dropdown-menu, .hours-dropdown-menu').forEach(menu => {
@@ -2312,31 +2287,31 @@ function addDayDropdownListeners() {
         }
     });
 
-    // Handle day dropdown triggers
+
     document.querySelectorAll('.day-dropdown-trigger').forEach(trigger => {
         trigger.addEventListener('click', function(e) {
             e.stopPropagation();
             const lecture = this.dataset.lecture;
             const exercise = this.dataset.exercise;
             const lab = this.dataset.lab;
-            
-            // Close all other dropdowns
+
+
             document.querySelectorAll('.day-dropdown-menu, .hours-dropdown-menu').forEach(menu => {
                 if (menu.id !== `${lecture ? 'lecture' : exercise ? 'exercise' : 'lab'}-${lecture || exercise || lab}-menu`) {
                     menu.style.display = 'none';
                 }
             });
-            
+
             document.querySelectorAll('.day-dropdown-icon, .hours-dropdown-icon').forEach(icon => {
                 if (icon !== this.querySelector('.day-dropdown-icon')) {
                     icon.style.transform = 'rotate(0deg)';
                 }
             });
-            
-            // Toggle current dropdown
+
+
             const menu = this.nextElementSibling;
             const icon = this.querySelector('.day-dropdown-icon');
-            
+
             if (menu.style.display === 'none' || menu.style.display === '') {
                 menu.style.display = 'block';
                 icon.style.transform = 'rotate(180deg)';
@@ -2347,31 +2322,31 @@ function addDayDropdownListeners() {
         });
     });
 
-    // Handle hours dropdown triggers
+
     document.querySelectorAll('.hours-dropdown-trigger').forEach(trigger => {
         trigger.addEventListener('click', function(e) {
             e.stopPropagation();
             const lecture = this.dataset.lecture;
             const exercise = this.dataset.exercise;
             const lab = this.dataset.lab;
-            
-            // Close all other dropdowns
+
+
             document.querySelectorAll('.day-dropdown-menu, .hours-dropdown-menu').forEach(menu => {
                 if (menu.id !== `${lecture ? 'lecture' : exercise ? 'exercise' : 'lab'}-${lecture || exercise || lab}-hours-menu`) {
                     menu.style.display = 'none';
                 }
             });
-            
+
             document.querySelectorAll('.day-dropdown-icon, .hours-dropdown-icon').forEach(icon => {
                 if (icon !== this.querySelector('.hours-dropdown-icon')) {
                     icon.style.transform = 'rotate(0deg)';
                 }
             });
-            
-            // Toggle current dropdown
+
+
             const menu = this.nextElementSibling;
             const icon = this.querySelector('.hours-dropdown-icon');
-            
+
             if (menu.style.display === 'none' || menu.style.display === '') {
                 menu.style.display = 'block';
                 icon.style.transform = 'rotate(180deg)';
@@ -2382,7 +2357,7 @@ function addDayDropdownListeners() {
         });
     });
 
-    // Handle day options
+
     document.querySelectorAll('.day-option').forEach(option => {
         option.addEventListener('click', function(e) {
             e.stopPropagation();
@@ -2390,13 +2365,13 @@ function addDayDropdownListeners() {
             const lecture = this.dataset.lecture;
             const exercise = this.dataset.exercise;
             const lab = this.dataset.lab;
-            
-            // Update dropdown text
+
+
             const container = this.closest('.day-dropdown-container');
             const textElement = container.querySelector('.day-dropdown-text');
             textElement.textContent = day;
-            
-            // Update hidden input
+
+
             if (lecture) {
                 document.getElementById(`lecture-${lecture}-day`).value = day;
             } else if (exercise) {
@@ -2404,8 +2379,8 @@ function addDayDropdownListeners() {
             } else if (lab) {
                 document.getElementById(`lab-${lab}-day`).value = day;
             }
-            
-            // Close dropdown
+
+
             const menu = container.querySelector('.day-dropdown-menu');
             const icon = container.querySelector('.day-dropdown-icon');
             menu.style.display = 'none';
@@ -2413,7 +2388,7 @@ function addDayDropdownListeners() {
         });
     });
 
-    // Handle hours options
+
     document.querySelectorAll('.hours-option').forEach(option => {
         option.addEventListener('click', function(e) {
             e.stopPropagation();
@@ -2421,13 +2396,13 @@ function addDayDropdownListeners() {
             const lecture = this.dataset.lecture;
             const exercise = this.dataset.exercise;
             const lab = this.dataset.lab;
-            
-            // Update dropdown text
+
+
             const container = this.closest('.hours-dropdown-container');
             const textElement = container.querySelector('.hours-dropdown-text');
             textElement.textContent = this.textContent;
-            
-            // Update hidden input
+
+
             if (lecture) {
                 document.getElementById(`lecture-${lecture}-hours`).value = hours;
             } else if (exercise) {
@@ -2435,8 +2410,8 @@ function addDayDropdownListeners() {
             } else if (lab) {
                 document.getElementById(`lab-${lab}-hours`).value = hours;
             }
-            
-            // Close dropdown
+
+
             const menu = container.querySelector('.hours-dropdown-menu');
             const icon = container.querySelector('.hours-dropdown-icon');
             menu.style.display = 'none';
@@ -2445,7 +2420,7 @@ function addDayDropdownListeners() {
     });
 }
 
-// Add event listeners for day buttons
+
 function addDayButtonListeners() {
     const dayButtons = document.querySelectorAll('.day-btn');
     dayButtons.forEach(button => {
@@ -2454,16 +2429,16 @@ function addDayButtonListeners() {
             const lecture = this.dataset.lecture;
             const exercise = this.dataset.exercise;
             const lab = this.dataset.lab;
-            
-            // Remove active class from all buttons in the same group
+
+
             const container = this.closest('.day-buttons-container');
             const groupButtons = container.querySelectorAll('.day-btn');
             groupButtons.forEach(btn => btn.classList.remove('active'));
-            
-            // Add active class to clicked button
+
+
             this.classList.add('active');
-            
-            // Update hidden input value
+
+
             if (lecture) {
                 document.getElementById(`lecture-${lecture}-day`).value = day;
             } else if (exercise) {
@@ -2475,25 +2450,25 @@ function addDayButtonListeners() {
     });
 }
 
-// Collect dynamic fields data
+
 function collectDynamicFieldsData(type, count) {
     const data = [];
-    console.log(`جمع بيانات ${type} للعدد ${count}`);
-    
+
+
     for (let i = 1; i <= count; i++) {
         const dayElement = document.getElementById(`${type}-${i}-day`);
         const hoursElement = document.getElementById(`${type}-${i}-hours`);
         const absencePercentageElement = document.getElementById(`${type}-${i}-absence-percentage`);
-        
-        console.log(`العنصر ${i}:`, dayElement, hoursElement, absencePercentageElement);
-        
+
+
+
         if (dayElement && hoursElement) {
             const day = dayElement.value.trim();
             const hours = parseFloat(convertArabicCommaToDot(hoursElement.value));
             const absencePercentage = parseFloat(convertArabicCommaToDot(absencePercentageElement?.value)) || 0;
-            
-            console.log(`القيم ${i}:`, day, hours, absencePercentage);
-            
+
+
+
             if (day && hours > 0) {
                 data.push({
                     id: i,
@@ -2504,7 +2479,7 @@ function collectDynamicFieldsData(type, count) {
                     absenceCount: 0
                 });
             } else {
-                // If no custom data, use default values
+
                 data.push({
                     id: i,
                     name: `${type === 'lecture' ? 'المحاضرة' : type === 'exercise' ? 'التمرين' : 'المعمل'} ${i}`,
@@ -2516,12 +2491,12 @@ function collectDynamicFieldsData(type, count) {
             }
         }
     }
-    
-    console.log(`البيانات المجمعة لـ ${type}:`, data);
+
+
     return data;
 }
 
-// Convert Arabic comma to dot for calculations
+
 function convertArabicCommaToDot(value) {
     if (typeof value === 'string') {
         return value.replace(/،/g, '.');
@@ -2529,11 +2504,11 @@ function convertArabicCommaToDot(value) {
     return value;
 }
 
-// Calculate weekly absence percentage for a course
+
 function calculateWeeklyAbsencePercentage(course) {
     let totalAbsencePercentage = 0;
-    
-    // Calculate from lectures sessions
+
+
     if (course.lectures && course.lectures.sessions) {
         course.lectures.sessions.forEach(session => {
             if (session.absencePercentage && session.absencePercentage > 0) {
@@ -2541,8 +2516,8 @@ function calculateWeeklyAbsencePercentage(course) {
             }
         });
     }
-    
-    // Calculate from exercises sessions
+
+
     if (course.exercises && course.exercises.sessions) {
         course.exercises.sessions.forEach(session => {
             if (session.absencePercentage && session.absencePercentage > 0) {
@@ -2550,8 +2525,8 @@ function calculateWeeklyAbsencePercentage(course) {
             }
         });
     }
-    
-    // Calculate from labs sessions
+
+
     if (course.labs && course.labs.sessions) {
         course.labs.sessions.forEach(session => {
             if (session.absencePercentage && session.absencePercentage > 0) {
@@ -2559,61 +2534,61 @@ function calculateWeeklyAbsencePercentage(course) {
             }
         });
     }
-    
+
     return totalAbsencePercentage;
 }
 
-// Update weekly absence percentage for all courses
+
 function updateAllCoursesWeeklyAbsencePercentage() {
     absenceCourses.forEach(course => {
         const weeklyPercentage = calculateWeeklyAbsencePercentage(course);
         course.totalAbsencePercentage = weeklyPercentage;
     });
-    
-    // Save updated data
+
+
     localStorage.setItem('absenceCourses', JSON.stringify(absenceCourses));
-    
-    // Reload display
+
+
     loadCourses();
     loadAbsenceControl();
 }
 
-// Calculate total absence count based on percentage and total sessions
+
 function calculateTotalAbsenceCount(sessionsData, weeks) {
     let totalAbsenceCount = 0;
-    
+
     sessionsData.forEach(session => {
-        // Calculate total sessions for this session type
-        const totalSessionsForThisType = weeks; // Each session happens once per week
-        // Convert percentage to actual count
+
+        const totalSessionsForThisType = weeks;
+
         const absenceCount = Math.floor((session.absencePercentage / 100) * totalSessionsForThisType);
         totalAbsenceCount += absenceCount;
     });
-    
+
     return totalAbsenceCount;
 }
 
-// Calculate remaining absence hours and sessions
+
 function calculateRemainingAbsence(sessionsData, weeks) {
-    // Calculate total sessions per week
+
     const totalSessionsPerWeek = sessionsData.length;
     const totalSessionsInSemester = totalSessionsPerWeek * weeks;
-    
-    // Calculate total absence count
+
+
     const totalAbsenceCount = calculateTotalAbsenceCount(sessionsData, weeks);
-    
-    // Calculate maximum allowed absence (25% of total sessions)
+
+
     const maxAllowedAbsence = Math.floor(totalSessionsInSemester * 0.25);
-    
-    // Calculate remaining absence sessions
+
+
     const remainingAbsenceSessions = Math.max(0, maxAllowedAbsence - totalAbsenceCount);
-    
-    // Calculate current absence percentage
+
+
     const currentAbsencePercentage = totalSessionsInSemester > 0 ? (totalAbsenceCount / totalSessionsInSemester) * 100 : 0;
-    
-    // Check if banned (exceeded 25%)
+
+
     const isBanned = currentAbsencePercentage > 25.01;
-    
+
     return {
         totalSessionsPerWeek,
         totalSessionsInSemester,
@@ -2626,27 +2601,27 @@ function calculateRemainingAbsence(sessionsData, weeks) {
     };
 }
 
-// Calculate individual type limits
+
 function calculateIndividualLimits(sessionsData, weeks, typeName) {
-    // Calculate total sessions per week for this type
+
     const totalSessionsPerWeek = sessionsData.length;
     const totalSessionsInSemester = totalSessionsPerWeek * weeks;
-    
-    // Calculate total absence count for this type
+
+
     const totalAbsenceCount = calculateTotalAbsenceCount(sessionsData, weeks);
-    
-    // Calculate maximum allowed absence (25% of total sessions)
+
+
     const maxAllowedAbsence = Math.floor(totalSessionsInSemester * 0.25);
-    
-    // Calculate remaining absence sessions
+
+
     const remainingAbsenceSessions = Math.max(0, maxAllowedAbsence - totalAbsenceCount);
-    
-    // Calculate current absence percentage
+
+
     const currentAbsencePercentage = totalSessionsInSemester > 0 ? (totalAbsenceCount / totalSessionsInSemester) * 100 : 0;
-    
-    // Check if banned (exceeded 25%)
+
+
     const isBanned = currentAbsencePercentage > 25.01;
-    
+
     return {
         type: typeName,
         totalSessionsPerWeek,
@@ -2660,16 +2635,16 @@ function calculateIndividualLimits(sessionsData, weeks, typeName) {
     };
 }
 
-// Load and display courses
+
 function loadCourses() {
     const coursesList = document.getElementById('courses-list');
     if (!coursesList) {
         console.error('عنصر courses-list غير موجود');
         return;
     }
-    
-    console.log('تحميل المواد، العدد:', absenceCourses.length);
-    
+
+
+
     if (absenceCourses.length === 0) {
         coursesList.innerHTML = `
             <div class="empty-state">
@@ -2680,15 +2655,15 @@ function loadCourses() {
         `;
         return;
     }
-    
+
     coursesList.innerHTML = '';
     absenceCourses.forEach(course => {
-        // استخدام النظام المتكامل الجديد لحساب الإحصائيات
+
         const stats = calculateIntegratedStats(course);
                const statusIcon = stats.status === 'danger' ? '🔴' : stats.status === 'warning' ? '🔴' : stats.status === 'safe-yellow' ? '🟡' : '🟢';
                const statusClass = stats.status === 'danger' ? 'danger' : stats.status === 'warning' ? 'danger' : stats.status === 'safe-yellow' ? 'warning' : 'safe';
-        
-        // حساب عدد جلسات الغياب الفعلية
+
+
         let totalAbsenceSessions = 0;
         if (course.lectures && course.lectures.sessions) {
             course.lectures.sessions.forEach(session => {
@@ -2705,7 +2680,7 @@ function loadCourses() {
                 totalAbsenceSessions += session.absenceCount || 0;
             });
         }
-        
+
         const courseElement = document.createElement('div');
         courseElement.className = `course-item ${statusClass}`;
         courseElement.innerHTML = `
@@ -2733,10 +2708,10 @@ function loadCourses() {
                             <span class="type-label">المحاضرات:</span>
                             <span class="type-value">${course.lectures?.absenceHours || 0}/${course.lectures?.totalHours || 0} ساعة</span>
                             <div class="session-details">
-                                ${course.lectures.sessions && course.lectures.sessions.length > 0 ? 
-                                    course.lectures.sessions.map(session => 
+                                ${course.lectures.sessions && course.lectures.sessions.length > 0 ?
+                                    course.lectures.sessions.map(session =>
                                         `<small>${session.day || session.name}: ${session.hours}س (غياب: ${session.absenceCount || 0})</small>`
-                                    ).join(' • ') : 
+                                    ).join(' • ') :
                                     `<small>محاضرات عادية: ${course.lectures.hoursPerSession}س</small>`
                                 }
                             </div>
@@ -2747,10 +2722,10 @@ function loadCourses() {
                             <span class="type-label">التمارين:</span>
                             <span class="type-value">${course.exercises?.absenceHours || 0}/${course.exercises?.totalHours || 0} ساعة</span>
                             <div class="session-details">
-                                ${course.exercises.sessions && course.exercises.sessions.length > 0 ? 
-                                    course.exercises.sessions.map(session => 
+                                ${course.exercises.sessions && course.exercises.sessions.length > 0 ?
+                                    course.exercises.sessions.map(session =>
                                         `<small>${session.day || session.name}: ${session.hours}س (غياب: ${session.absenceCount || 0})</small>`
-                                    ).join(' • ') : 
+                                    ).join(' • ') :
                                     `<small>تمارين عادية: ${course.exercises.hoursPerSession}س</small>`
                                 }
                             </div>
@@ -2761,10 +2736,10 @@ function loadCourses() {
                             <span class="type-label">المعامل:</span>
                             <span class="type-value">${course.labs?.absenceHours || 0}/${course.labs?.totalHours || 0} ساعة</span>
                             <div class="session-details">
-                                ${course.labs.sessions && course.labs.sessions.length > 0 ? 
-                                    course.labs.sessions.map(session => 
+                                ${course.labs.sessions && course.labs.sessions.length > 0 ?
+                                    course.labs.sessions.map(session =>
                                         `<small>${session.day || session.name}: ${session.hours}س (غياب: ${session.absenceCount || 0})</small>`
-                                    ).join(' • ') : 
+                                    ).join(' • ') :
                                     `<small>معامل عادية: ${course.labs.hoursPerSession}س</small>`
                                 }
                             </div>
@@ -2804,43 +2779,43 @@ function loadCourses() {
         `;
         coursesList.appendChild(courseElement);
     });
-    
+
     console.log('تم عرض المواد بنجاح');
 }
 
-// Calculate course statistics
+
 function calculateCourseStats(course) {
-    // Calculate total sessions per week
+
     const totalSessionsPerWeek = (course.lectures?.count || 0) + (course.exercises?.count || 0) + (course.labs?.count || 0);
-    
-    // Calculate total sessions in semester
+
+
     const totalSessionsInSemester = totalSessionsPerWeek * course.weeks;
-    
-    // Calculate maximum allowed absences in semester (25% of total sessions)
+
+
     const maxAbsenceSessions = Math.floor(totalSessionsInSemester * 0.25);
-    
-    // Current absence hours (from user input)
+
+
     const totalAbsenceHours = (course.lectures?.absenceHours || 0) + (course.exercises?.absenceHours || 0) + (course.labs?.absenceHours || 0);
-    
-    // Convert absence hours to sessions (assuming each session has average hours)
+
+
     const averageHoursPerSession = course.totalHours / totalSessionsInSemester;
     const actualAbsenceSessions = Math.floor(totalAbsenceHours / averageHoursPerSession);
-    
-    // Calculate remaining absences (in sessions)
+
+
     const remainingAbsences = Math.max(0, maxAbsenceSessions - actualAbsenceSessions);
-    
-    // Calculate current absence percentage
+
+
     const currentAbsencePercentage = totalSessionsInSemester > 0 ? (actualAbsenceSessions / totalSessionsInSemester) * 100 : 0;
-    
+
     let status = 'safe';
     if (currentAbsencePercentage > 25.01) {
         status = 'danger';
-    } else if (currentAbsencePercentage >= 18.75) { // 75% of 25%
+    } else if (currentAbsencePercentage >= 18.75) {
         status = 'warning';
     }
-    
+
     const percentage = maxAbsenceSessions > 0 ? (actualAbsenceSessions / maxAbsenceSessions) * 100 : 0;
-    
+
     return {
         maxAbsenceHours: maxAbsenceSessions,
         remainingHours: remainingAbsences,
@@ -2853,22 +2828,22 @@ function calculateCourseStats(course) {
     };
 }
 
-// Edit course absence
+
 function editCourseAbsence(courseId) {
     const course = absenceCourses.find(c => c.id === courseId);
     if (!course) return;
-    
+
     const stats = calculateCourseStats(course);
     const totalAbsenceHours = (course.lectures?.absenceHours || 0) + (course.exercises?.absenceHours || 0) + (course.labs?.absenceHours || 0);
     const absencePercentage = ((totalAbsenceHours / course.totalHours) * 100).toFixed(1);
-    
-    // Create detailed absence editing modal
+
+
     openDetailedAbsenceModal(course, stats);
 }
 
-// Open detailed absence editing modal
+
 function openDetailedAbsenceModal(course, stats) {
-    // Create modal HTML
+
     const modalHTML = `
         <div id="detailed-absence-modal" class="modal" style="display: flex;">
             <div class="modal-card" style="max-width: 800px;">
@@ -2900,7 +2875,7 @@ function openDetailedAbsenceModal(course, stats) {
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="warning-card ${stats.status === 'danger' ? 'danger' : stats.status === 'warning' ? 'warning' : 'success'}">
                             <div class="warning-icon">
                                 ${stats.status === 'danger' ? '🚫' : stats.status === 'warning' ? '⚠️' : '✅'}
@@ -2911,7 +2886,7 @@ function openDetailedAbsenceModal(course, stats) {
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="absence-inputs">
                         <h4>تخصيص الغياب لكل نوع</h4>
                         ${course.lectures.count > 0 ? `
@@ -2924,7 +2899,7 @@ function openDetailedAbsenceModal(course, stats) {
                                 <span class="absence-percentage" id="lectures-percentage">${((course.lectures?.absenceHours || 0) / (course.lectures?.totalHours || 1) * 100).toFixed(1)}%</span>
                             </div>
                         ` : ''}
-                        
+
                         ${course.exercises.count > 0 ? `
                             <div class="absence-type-input">
                                 <label for="exercises-absence-input">
@@ -2935,7 +2910,7 @@ function openDetailedAbsenceModal(course, stats) {
                                 <span class="absence-percentage" id="exercises-percentage">${((course.exercises?.absenceHours || 0) / (course.exercises?.totalHours || 1) * 100).toFixed(1)}%</span>
                             </div>
                         ` : ''}
-                        
+
                         ${course.labs.count > 0 ? `
                             <div class="absence-type-input">
                                 <label for="labs-absence-input">
@@ -2961,62 +2936,62 @@ function openDetailedAbsenceModal(course, stats) {
             </div>
         </div>
     `;
-    
-    // Remove existing modal if any
+
+
     const existingModal = document.getElementById('detailed-absence-modal');
     if (existingModal) {
         existingModal.remove();
     }
-    
-    // Add modal to page
+
+
     document.body.insertAdjacentHTML('beforeend', modalHTML);
-    
-    // Add event listeners
+
+
     const modal = document.getElementById('detailed-absence-modal');
     const cancelBtn = document.getElementById('cancel-detailed-absence');
     const saveBtn = document.getElementById('save-detailed-absence');
-    
-    // Cancel button
+
+
     cancelBtn.addEventListener('click', () => {
         modal.remove();
     });
-    
-    // Save button
+
+
     saveBtn.addEventListener('click', () => {
         saveDetailedAbsence(course);
         modal.remove();
     });
-    
-    // Close on outside click
+
+
     modal.addEventListener('click', (e) => {
         if (e.target === modal) {
             modal.remove();
         }
     });
-    
-    // Add real-time percentage updates
+
+
     addRealTimePercentageUpdates(course);
 }
 
-// Add real-time percentage updates
+
 function addRealTimePercentageUpdates(course) {
     const inputs = [
         { input: 'lectures-absence-input', percentage: 'lectures-percentage', total: course.lectures.totalHours },
         { input: 'exercises-absence-input', percentage: 'exercises-percentage', total: course.exercises.totalHours },
         { input: 'labs-absence-input', percentage: 'labs-percentage', total: course.labs.totalHours }
     ];
-    
+
     inputs.forEach(({ input, percentage, total }) => {
         const inputElement = document.getElementById(input);
         const percentageElement = document.getElementById(percentage);
-        
+
         if (inputElement && percentageElement) {
             inputElement.addEventListener('input', function() {
                 const value = parseFloat(this.value) || 0;
                 const percent = ((value / total) * 100).toFixed(1);
                 percentageElement.textContent = percent + '%';
-                
-                // Update color based on percentage
+
+
                 if (percent > 25) {
                     percentageElement.className = 'absence-percentage danger';
                 } else if (percent > 18.75) {
@@ -3029,95 +3004,94 @@ function addRealTimePercentageUpdates(course) {
     });
 }
 
-// Save detailed absence
+
 function saveDetailedAbsence(course) {
     const lecturesInput = document.getElementById('lectures-absence-input');
     const exercisesInput = document.getElementById('exercises-absence-input');
     const labsInput = document.getElementById('labs-absence-input');
-    
+
     if (lecturesInput && course.lectures) {
         course.lectures.absenceHours = parseFloat(lecturesInput.value) || 0;
     }
-    
+
     if (exercisesInput && course.exercises) {
         course.exercises.absenceHours = parseFloat(exercisesInput.value) || 0;
     }
-    
+
     if (labsInput && course.labs) {
         course.labs.absenceHours = parseFloat(labsInput.value) || 0;
     }
-    
+
     saveCourses();
     loadCourses();
-    
+
     const stats = calculateCourseStats(course);
     const totalAbsenceHours = (course.lectures?.absenceHours || 0) + (course.exercises?.absenceHours || 0) + (course.labs?.absenceHours || 0);
     const absencePercentage = ((totalAbsenceHours / course.totalHours) * 100).toFixed(1);
-    
+
     let message = `تم تحديث الغياب بنجاح! 📊\nالغياب الحالي: ${totalAbsenceHours} ساعة (${absencePercentage}%)`;
-    
+
     if (stats.status === 'danger') {
         message += '\n⚠️ تحذير: تجاوزت الحد المسموح!';
     } else if (stats.status === 'warning') {
         message += '\n⚠️ تحذير: قريب من الحد المسموح!';
     }
-    
+
     showToast(message, stats.status === 'danger' ? 'error' : stats.status === 'warning' ? 'warning' : 'success');
 }
 
 
-// Delete course
+
 function deleteCourse(courseId) {
     const course = absenceCourses.find(c => c.id === courseId);
     if (!course) return;
-    
+
     if (confirm(`هل أنت متأكد من حذف مادة "${course.name}"؟\n\nسيتم حذفها من:\n- المواد المسجلة\n- تحكم الغياب\n- جميع الإحصائيات`)) {
-        // Remove from absenceCourses
+
         absenceCourses = absenceCourses.filter(c => c.id !== courseId);
-        
-        // Save updated data
+
+
         localStorage.setItem('absenceCourses', JSON.stringify(absenceCourses));
-        
-        // Refresh all sections
+
+
         loadCourses();
         loadAbsenceControl();
-        
-        // Show success message
+
+
         showToast(`تم حذف مادة "${course.name}" بنجاح! 🗑️`, 'success');
-        
+
         console.log(`Course "${course.name}" deleted successfully`);
     }
 }
 
-// Save courses to localStorage
+
 function saveCourses() {
-    console.log('حفظ المواد:', absenceCourses);
     localStorage.setItem('absenceCourses', JSON.stringify(absenceCourses));
-    console.log('تم حفظ المواد في localStorage');
+
 }
 
 
-// Update completion section - REMOVED
+
 function updateCompletionSection() {
-    // This function has been removed as per user request
-    // The completion section and related functionality are no longer needed
+
+
     return;
 }
 
-// Complete customization and proceed to add course
 
 
 
 
-// منع zoom عند double tap على أزرار العداد - حل جذري
+
+
 (function() {
     let lastTouchEnd = 0;
     let touchStartTime = 0;
-    
+
     document.addEventListener('touchend', function(event) {
         const now = Date.now();
         const target = event.target.closest('.new-absence-counter-btn');
-        
+
         if (target) {
             if (now - lastTouchEnd <= 300) {
                 event.preventDefault();
@@ -3129,7 +3103,7 @@ function updateCompletionSection() {
         }
     }, { passive: false, capture: true });
 
-    // منع gesture zoom على الأزرار
+
     ['gesturestart', 'gesturechange', 'gestureend'].forEach(function(eventName) {
         document.addEventListener(eventName, function(e) {
             if (e.target.closest('.new-absence-counter-btn')) {
@@ -3138,8 +3112,8 @@ function updateCompletionSection() {
             }
         }, { passive: false });
     });
-    
-    // منع double tap zoom على الأزرار
+
+
     document.addEventListener('touchstart', function(e) {
         if (e.target.closest('.new-absence-counter-btn')) {
             const now = Date.now();
@@ -3152,24 +3126,24 @@ function updateCompletionSection() {
     }, { passive: false, capture: true });
 })();
 
-// Initialize absence calculator when DOM is loaded
+
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize all calculators
+
     setTimeout(() => {
         initAbsenceCalculator();
         initAbsenceLimitCalculator();
-        
-        // Update weekly absence percentage for all existing courses
+
+
         updateAllCoursesWeeklyAbsencePercentage();
-        
-        // Add event listener for add course form
+
+
         const addCourseForm = document.getElementById('add-course-form');
         if (addCourseForm) {
-            // Removed event listener
+
             console.log('Form event listener added');
         }
-        
-        // Add click event listener to the button as well
+
+
         const addCourseBtn = document.getElementById('add-course-btn');
         if (addCourseBtn) {
             addCourseBtn.addEventListener('click', function(e) {
@@ -3178,35 +3152,35 @@ document.addEventListener('DOMContentLoaded', function() {
             });
             console.log('Button event listener added');
         }
-        
-    // Add event listeners for input changes to update completion section
+
+
     const inputs = ['lectures-count', 'exercises-count', 'labs-count', 'course-weeks', 'lecture-hours', 'exercise-hours', 'lab-hours'];
     inputs.forEach(inputId => {
         const input = document.getElementById(inputId);
         if (input) {
             input.addEventListener('input', function(e) {
-                // Convert Arabic comma to dot on input for numeric fields
+
                 if (e.target.value.includes('،')) {
                     e.target.value = e.target.value.replace(/،/g, '.');
                 }
                 console.log('تغيير في الحقل:', inputId, 'القيمة:', e.target.value);
-                // updateCompletionSection();
+
             });
             input.addEventListener('change', function() {
-                // updateCompletionSection();
+
             });
         }
     });
-        
-        // Add event listeners for absence input fields
+
+
         const absenceInputs = ['lecture-absence-hours', 'exercise-absence-hours', 'lab-absence-hours'];
         absenceInputs.forEach(inputId => {
             const input = document.getElementById(inputId);
             if (input) {
                 input.addEventListener('input', updateAbsenceCalculations);
                 input.addEventListener('change', updateAbsenceCalculations);
-                
-                // Convert Arabic comma to dot on input
+
+
                 input.addEventListener('input', function(e) {
                     if (e.target.value.includes('،')) {
                         e.target.value = e.target.value.replace(/،/g, '.');
@@ -3214,19 +3188,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             }
         });
-        
-        // Add event listeners for absence percentage fields
+
+
         const lecturesCount = parseInt(document.getElementById('lectures-count').value) || 0;
         const exercisesCount = parseInt(document.getElementById('exercises-count').value) || 0;
         const labsCount = parseInt(document.getElementById('labs-count').value) || 0;
-        
+
         for (let i = 1; i <= lecturesCount; i++) {
             const absencePercentageElement = document.getElementById(`lecture-${i}-absence-percentage`);
             if (absencePercentageElement) {
                 absencePercentageElement.addEventListener('input', updateCompletionSection);
                 absencePercentageElement.addEventListener('change', updateCompletionSection);
-                
-                // Convert Arabic comma to dot on input
+
+
                 absencePercentageElement.addEventListener('input', function(e) {
                     if (e.target.value.includes('،')) {
                         e.target.value = e.target.value.replace(/،/g, '.');
@@ -3234,14 +3208,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             }
         }
-        
+
         for (let i = 1; i <= exercisesCount; i++) {
             const absencePercentageElement = document.getElementById(`exercise-${i}-absence-percentage`);
             if (absencePercentageElement) {
                 absencePercentageElement.addEventListener('input', updateCompletionSection);
                 absencePercentageElement.addEventListener('change', updateCompletionSection);
-                
-                // Convert Arabic comma to dot on input
+
+
                 absencePercentageElement.addEventListener('input', function(e) {
                     if (e.target.value.includes('،')) {
                         e.target.value = e.target.value.replace(/،/g, '.');
@@ -3249,14 +3223,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             }
         }
-        
+
         for (let i = 1; i <= labsCount; i++) {
             const absencePercentageElement = document.getElementById(`lab-${i}-absence-percentage`);
             if (absencePercentageElement) {
                 absencePercentageElement.addEventListener('input', updateCompletionSection);
                 absencePercentageElement.addEventListener('change', updateCompletionSection);
-                
-                // Convert Arabic comma to dot on input
+
+
                 absencePercentageElement.addEventListener('input', function(e) {
                     if (e.target.value.includes('،')) {
                         e.target.value = e.target.value.replace(/،/g, '.');
@@ -3267,20 +3241,20 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 100);
 });
 
-// ===== ABSENCE CONTROL FUNCTIONS =====
 
-// Load absence control for all courses
+
+
 function loadAbsenceControl() {
     console.log('Loading absence control...');
     console.log('Current courses:', absenceCourses);
     console.log('Courses length:', absenceCourses.length);
-    
+
     const absenceControlList = document.getElementById('absence-control-list');
     if (!absenceControlList) {
         console.error('عنصر absence-control-list غير موجود');
         return;
     }
-    
+
     if (absenceCourses.length === 0) {
         console.log('No courses found, showing empty state');
         absenceControlList.innerHTML = `
@@ -3295,7 +3269,7 @@ function loadAbsenceControl() {
         `;
         return;
     }
-    
+
     console.log('Creating control items for', absenceCourses.length, 'courses');
     absenceControlList.innerHTML = '';
     absenceCourses.forEach(course => {
@@ -3303,13 +3277,13 @@ function loadAbsenceControl() {
         const controlItem = createAbsenceControlItem(course);
         absenceControlList.appendChild(controlItem);
     });
-    
-    // Add event listeners for session absence inputs
+
+
     addSessionAbsenceListeners();
     console.log('Absence control loaded successfully');
 }
 
-// Create sessions table for detailed absence control
+
 function createSessionsTable(course) {
     let tableHTML = `
         <div class="sessions-table-header">
@@ -3319,13 +3293,13 @@ function createSessionsTable(course) {
             <div class="session-header-cell">الغياب الحالي</div>
         </div>
     `;
-    
-    // Add lectures sessions
+
+
     if (course.lectures && course.lectures.sessions && course.lectures.sessions.length > 0) {
         course.lectures.sessions.forEach((session, index) => {
-            const maxAbsences = Math.floor(course.weeks * 0.25); // 25% of total weeks
+            const maxAbsences = Math.floor(course.weeks * 0.25);
             const currentAbsences = session.absenceCount || 0;
-            
+
             tableHTML += `
                 <div class="session-row">
                     <div class="session-cell session-name">${session.day || session.name}</div>
@@ -3344,13 +3318,13 @@ function createSessionsTable(course) {
             `;
         });
     }
-    
-    // Add exercises sessions
+
+
     if (course.exercises && course.exercises.sessions && course.exercises.sessions.length > 0) {
         course.exercises.sessions.forEach((session, index) => {
             const maxAbsences = Math.floor(course.weeks * 0.25);
             const currentAbsences = session.absenceCount || 0;
-            
+
             tableHTML += `
                 <div class="session-row">
                     <div class="session-cell session-name">${session.day || session.name}</div>
@@ -3369,13 +3343,13 @@ function createSessionsTable(course) {
             `;
         });
     }
-    
-    // Add labs sessions
+
+
     if (course.labs && course.labs.sessions && course.labs.sessions.length > 0) {
         course.labs.sessions.forEach((session, index) => {
             const maxAbsences = Math.floor(course.weeks * 0.25);
             const currentAbsences = session.absenceCount || 0;
-            
+
             tableHTML += `
                 <div class="session-row">
                     <div class="session-cell session-name">${session.day || session.name}</div>
@@ -3394,11 +3368,11 @@ function createSessionsTable(course) {
             `;
         });
     }
-    
+
     return tableHTML;
 }
 
-// Add event listeners for session absence inputs
+
 function addSessionAbsenceListeners() {
     const sessionInputs = document.querySelectorAll('.session-absence-input');
     sessionInputs.forEach(input => {
@@ -3411,88 +3385,88 @@ function addSessionAbsenceListeners() {
     });
 }
 
-// النظام المتكامل الجديد - تحديث الغياب الفوري
+
 function updateSessionAbsence(input) {
     const courseId = input.dataset.courseId;
     const sessionType = input.dataset.sessionType;
     const sessionIndex = parseInt(input.dataset.sessionIndex);
     const absenceCount = parseInt(input.value) || 0;
-    
-    // البحث عن المادة
+
+
     const course = absenceCourses.find(c => c.id === courseId);
     if (!course) return;
-    
-    // تحديث عدد الغياب
+
+
     if (course[sessionType] && course[sessionType].sessions && course[sessionType].sessions[sessionIndex]) {
         course[sessionType].sessions[sessionIndex].absenceCount = absenceCount;
-        
-        // حفظ البيانات
+
+
         localStorage.setItem('absenceCourses', JSON.stringify(absenceCourses));
-        
-        // تحديث جميع الخانات فوراً
+
+
         updateAllStatsIntegrated(courseId);
-        
-        // تحديث قسم المقررات المسجلة أيضاً
+
+
         updateRegisteredCoursesDisplay();
-        
+
         console.log(`تم تحديث الغياب: ${sessionType} جلسة ${sessionIndex} = ${absenceCount}`);
     }
 }
 
-// تحديث جميع الإحصائيات المتكاملة
+
 function updateAllStatsIntegrated(courseId) {
     const course = absenceCourses.find(c => c.id === courseId);
     if (!course) return;
-    
-    // حساب الإحصائيات الجديدة
+
+
     const stats = calculateIntegratedStats(course);
-    
-    // تحديث الخانات في الواجهة
+
+
     updateStatsDisplayIntegrated(courseId, stats);
-    
-    // تحديث شريط التقدم
+
+
     updateProgressBarIntegrated(courseId, stats);
-    
-    // تحديث الحالة
+
+
     updateStatusDisplayIntegrated(courseId, stats);
 }
 
-// حساب الإحصائيات المتكاملة
+
 function calculateIntegratedStats(course) {
     let totalAbsenceHours = 0;
     let totalSessionsPerWeek = 0;
     let totalWeeks = course.weeks;
-    
-    // حساب من المحاضرات
+
+
     if (course.lectures && course.lectures.sessions) {
         course.lectures.sessions.forEach(session => {
             totalAbsenceHours += (session.absenceCount || 0) * session.hours;
             totalSessionsPerWeek += 1;
         });
     }
-    
-    // حساب من التمارين
+
+
     if (course.exercises && course.exercises.sessions) {
         course.exercises.sessions.forEach(session => {
             totalAbsenceHours += (session.absenceCount || 0) * session.hours;
             totalSessionsPerWeek += 1;
         });
     }
-    
-    // حساب من المعامل
+
+
     if (course.labs && course.labs.sessions) {
         course.labs.sessions.forEach(session => {
             totalAbsenceHours += (session.absenceCount || 0) * session.hours;
             totalSessionsPerWeek += 1;
         });
     }
-    
-    // الحسابات النهائية
+
+
     const totalSessionsInSemester = totalSessionsPerWeek * totalWeeks;
     const totalHoursInSemester = totalSessionsPerWeek * totalWeeks * 1.5;
     const maxAbsenceSessions = Math.floor(totalSessionsInSemester * 0.25);
-    
-    // حساب عدد جلسات الغياب الفعلية (ليس الساعات)
+
+
     let usedAbsenceSessions = 0;
     if (course.lectures && course.lectures.sessions) {
         course.lectures.sessions.forEach(session => {
@@ -3509,22 +3483,22 @@ function calculateIntegratedStats(course) {
             usedAbsenceSessions += session.absenceCount || 0;
         });
     }
-    
+
     const remainingAbsenceSessions = Math.max(0, maxAbsenceSessions - usedAbsenceSessions);
     const absencePercentage = totalSessionsInSemester > 0 ? (usedAbsenceSessions / totalSessionsInSemester) * 100 : 0;
-    
-    // تحديد الحالة
+
+
     let status = 'safe';
     if (absencePercentage >= 25.00) {
-        status = 'danger'; // حرمان من 25.00% فما فوق
+        status = 'danger';
     } else if (absencePercentage >= 20) {
-        status = 'warning'; // تحذير أحمر من 20% إلى أقل من 25%
+        status = 'warning';
     } else if (absencePercentage >= 11) {
-        status = 'safe-yellow'; // آمن أصفر من 11% إلى 19%
+        status = 'safe-yellow';
     } else {
-        status = 'safe'; // آمن أخضر من 0% إلى 10%
+        status = 'safe';
     }
-    
+
     return {
         totalHoursInSemester,
         totalSessionsInSemester,
@@ -3536,70 +3510,70 @@ function calculateIntegratedStats(course) {
     };
 }
 
-// تحديث عرض الإحصائيات المتكاملة
+
 function updateStatsDisplayIntegrated(courseId, stats) {
     const controlItem = document.querySelector(`input[data-course-id="${courseId}"]`)?.closest('.absence-control-item');
     if (!controlItem) return;
-    
+
     const statElements = controlItem.querySelectorAll('.absence-stat-value');
     if (statElements.length >= 5) {
-        // إجمالي الساعات
+
         statElements[0].textContent = stats.totalHoursInSemester;
-        
-        // الحد الأقصى
+
+
         statElements[1].textContent = stats.maxAbsenceSessions;
-        
-        // المستخدم
+
+
         statElements[2].textContent = stats.usedAbsenceSessions;
         statElements[2].className = `absence-stat-value ${stats.status}`;
-        
-        // المتبقي
+
+
         statElements[3].textContent = stats.remainingAbsenceSessions;
         statElements[3].className = `absence-stat-value ${stats.status}`;
-        
-        // النسبة
+
+
         statElements[4].textContent = `${stats.absencePercentage.toFixed(2)}%`;
         statElements[4].className = `absence-stat-value ${stats.status}`;
     }
 }
 
-// تحديث شريط التقدم المتكامل
+
 function updateProgressBarIntegrated(courseId, stats) {
     const controlItem = document.querySelector(`input[data-course-id="${courseId}"]`)?.closest('.absence-control-item');
     if (!controlItem) return;
-    
+
     const progressBar = controlItem.querySelector('.absence-progress-fill');
     if (progressBar) {
-        // حساب نسبة التعبئة بناءً على النسبة الفعلية
+
         const fillPercentage = Math.min(stats.absencePercentage, 100);
         progressBar.style.width = `${fillPercentage}%`;
-        
-        // تحديث اللون حسب المستوى
+
+
         progressBar.className = 'absence-progress-fill';
         if (stats.absencePercentage >= 25.00) {
-            progressBar.classList.add('danger'); // حرمان من 25.00% فما فوق
+            progressBar.classList.add('danger');
         } else if (stats.absencePercentage >= 20) {
-            progressBar.classList.add('warning'); // أحمر من 20% إلى أقل من 25%
+            progressBar.classList.add('warning');
         } else if (stats.absencePercentage >= 11) {
-            progressBar.classList.add('safe-yellow'); // أصفر من 11% إلى 19%
+            progressBar.classList.add('safe-yellow');
         } else {
-            progressBar.classList.add('safe'); // أخضر من 0% إلى 10%
+            progressBar.classList.add('safe');
         }
-        
+
         console.log(`تم تحديث شريط التقدم: ${fillPercentage.toFixed(2)}% - اللون: ${progressBar.className}`);
     }
 }
 
-// تحديث عرض الحالة المتكاملة
+
 function updateStatusDisplayIntegrated(courseId, stats) {
     const controlItem = document.querySelector(`input[data-course-id="${courseId}"]`)?.closest('.absence-control-item');
     if (!controlItem) return;
-    
+
     const statusElement = controlItem.querySelector('.absence-control-status');
     if (statusElement) {
         let statusText = 'آمن';
         if (stats.status === 'danger') {
-            // التحقق إذا كانت 25.00 بالضبط
+
             if (Math.abs(stats.absencePercentage - 25.00) < 0.01) {
                 statusText = 'خلصت غياباتك';
             } else {
@@ -3608,63 +3582,63 @@ function updateStatusDisplayIntegrated(courseId, stats) {
         } else if (stats.status === 'warning') {
             statusText = 'تحذير!';
         }
-        
+
         statusElement.className = `absence-control-status ${stats.status}`;
         statusElement.textContent = statusText;
     }
 }
 
-// دالة تحديث قيمة الغياب
+
 function updateAbsenceValue(courseId, sessionType, sessionIndex, value) {
     console.log('Updating absence value:', courseId, sessionType, sessionIndex, value);
-    
-    // تحديث البيانات في النظام
+
+
     const course = absenceCourses.find(c => c.id === courseId);
     if (!course) {
         console.error('Course not found:', courseId);
         return;
     }
-    
-    // تحديث عدد الغياب
+
+
     if (course[sessionType] && course[sessionType].sessions && course[sessionType].sessions[sessionIndex]) {
         course[sessionType].sessions[sessionIndex].absenceCount = parseInt(value);
-        
-        // حفظ البيانات
+
+
         localStorage.setItem('absenceCourses', JSON.stringify(absenceCourses));
-        
-        // تحديث جميع الخانات فوراً
+
+
         updateAllStatsIntegrated(courseId);
-        
-        // تحديث قسم المقررات المسجلة أيضاً
+
+
         updateRegisteredCoursesDisplay();
-        
+
         console.log(`تم تحديث الغياب: ${sessionType} جلسة ${sessionIndex} = ${value}`);
     }
 }
 
-// تحديث عرض المقررات المسجلة بناءً على بيانات الغياب
+
 function updateRegisteredCoursesDisplay() {
     const coursesContainer = document.getElementById('courses-container');
     if (!coursesContainer) return;
-    
-    // إعادة تحميل المقررات مع البيانات المحدثة
+
+
     loadCourses();
-    
+
     console.log('تم تحديث عرض المقررات المسجلة بناءً على بيانات الغياب');
 }
 
-// تم استبدال هذه الدالة بالنظام المتكامل الجديد
 
-// Create absence control item for a course
+
+
 function createAbsenceControlItem(course) {
     console.log('Creating absence control item for course:', course.name);
     console.log('Course data:', course);
-    
-    // Calculate totals
+
+
     let totalSessionsPerWeek = 0;
     let totalWeeks = course.weeks;
-    
-    // Count sessions per week
+
+
     if (course.lectures && course.lectures.sessions) {
         totalSessionsPerWeek += course.lectures.sessions.length;
         console.log('Lectures sessions:', course.lectures.sessions.length);
@@ -3677,14 +3651,14 @@ function createAbsenceControlItem(course) {
         totalSessionsPerWeek += course.labs.sessions.length;
         console.log('Labs sessions:', course.labs.sessions.length);
     }
-    
+
     console.log('Total sessions per week:', totalSessionsPerWeek);
-    
+
     const totalSessionsInSemester = totalSessionsPerWeek * totalWeeks;
     const totalHoursInSemester = totalSessionsPerWeek * totalWeeks * (course.lectures?.hoursPerSession || 1.5);
     const maxAbsenceSessions = Math.floor(totalSessionsInSemester * 0.25);
-    
-    // Calculate current absence
+
+
     let totalAbsenceHours = 0;
     if (course.lectures && course.lectures.sessions) {
         course.lectures.sessions.forEach(session => {
@@ -3701,8 +3675,8 @@ function createAbsenceControlItem(course) {
             totalAbsenceHours += (session.absenceCount || 0) * session.hours;
         });
     }
-    
-    // حساب عدد جلسات الغياب الفعلية (ليس الساعات)
+
+
     let usedAbsenceSessions = 0;
     if (course.lectures && course.lectures.sessions) {
         course.lectures.sessions.forEach(session => {
@@ -3719,26 +3693,26 @@ function createAbsenceControlItem(course) {
             usedAbsenceSessions += session.absenceCount || 0;
         });
     }
-    
+
     const remainingAbsenceSessions = Math.max(0, maxAbsenceSessions - usedAbsenceSessions);
     const absencePercentage = totalSessionsInSemester > 0 ? (usedAbsenceSessions / totalSessionsInSemester) * 100 : 0;
-    
-    // Determine status
+
+
     let status = 'safe';
     if (absencePercentage >= 25.00) {
-        status = 'danger'; // حرمان من 25.00% فما فوق
+        status = 'danger';
     } else if (absencePercentage >= 20) {
-        status = 'warning'; // تحذير أحمر من 20% إلى أقل من 25%
+        status = 'warning';
     } else if (absencePercentage >= 11) {
-        status = 'safe-yellow'; // آمن أصفر من 11% إلى 19%
+        status = 'safe-yellow';
     } else {
-        status = 'safe'; // آمن أخضر من 0% إلى 10%
+        status = 'safe';
     }
-    
-    // تحديد نص الحالة
+
+
     let statusText = 'آمن';
     if (status === 'danger') {
-        // التحقق إذا كانت 25.00 بالضبط
+
         if (Math.abs(absencePercentage - 25.00) < 0.01) {
             statusText = 'خلصت غياباتك';
         } else {
@@ -3747,7 +3721,7 @@ function createAbsenceControlItem(course) {
     } else if (status === 'warning') {
         statusText = 'تحذير!';
     }
-    
+
     const controlItem = document.createElement('div');
     controlItem.className = 'absence-control-item';
     controlItem.innerHTML = `
@@ -3755,7 +3729,7 @@ function createAbsenceControlItem(course) {
             <h5 class="absence-control-title">${course.name}</h5>
             <span class="absence-control-status ${status}">${statusText}</span>
         </div>
-        
+
         <div class="absence-control-inputs">
             <div class="absence-sessions-table">
                 <h6 class="sessions-table-title">جدول الجلسات والغياب</h6>
@@ -3764,7 +3738,7 @@ function createAbsenceControlItem(course) {
                 </div>
             </div>
         </div>
-        
+
         <div class="absence-summary-card">
             <h6 class="absence-summary-title">ملخص الغياب</h6>
             <div class="absence-summary-stats">
@@ -3793,7 +3767,7 @@ function createAbsenceControlItem(course) {
                 <div class="absence-progress-fill ${status}" style="width: ${Math.min(absencePercentage, 100)}%"></div>
             </div>
         </div>
-        
+
         <div class="absence-control-actions">
             <button class="absence-control-btn primary" onclick="updateCourseAbsence('${course.id}')">
                 <i class="fas fa-save"></i> حفظ التغييرات
@@ -3806,46 +3780,46 @@ function createAbsenceControlItem(course) {
             </button>
         </div>
     `;
-    
-    // إضافة مستمعات الأحداث للنظام المتكامل
+
+
     const inputs = controlItem.querySelectorAll('input[type="number"]');
     inputs.forEach(input => {
         input.addEventListener('input', () => updateSessionAbsence(input));
     });
-    
-    // تحديث الإحصائيات مرة واحدة عند الإنشاء
+
+
     setTimeout(() => {
         updateAllStatsIntegrated(course.id);
     }, 100);
-    
+
     console.log('Absence control item created successfully for:', course.name);
     console.log('Control item HTML length:', controlItem.innerHTML.length);
-    
+
     return controlItem;
 }
 
-// Update course absence data
+
 function updateCourseAbsence(courseId) {
     const course = absenceCourses.find(c => c.id === courseId);
     if (!course) return;
-    
-    // Save to localStorage
+
+
     saveCourses();
-    
-    // Reload courses list
+
+
     loadCourses();
-    
-    // Show success message
+
+
     showToast(`تم تحديث غياب مادة "${course.name}" بنجاح! 📊`, 'success');
 }
 
 
-// Reset course absence data
+
 function resetCourseAbsence(courseId) {
     const course = absenceCourses.find(c => c.id === courseId);
     if (!course) return;
-    
-    // Reset absence count for all sessions
+
+
     if (course.lectures && course.lectures.sessions) {
         course.lectures.sessions.forEach(session => {
             session.absenceCount = 0;
@@ -3861,18 +3835,18 @@ function resetCourseAbsence(courseId) {
             session.absenceCount = 0;
         });
     }
-    
-    // Save to localStorage
+
+
     localStorage.setItem('absenceCourses', JSON.stringify(absenceCourses));
-    
-    // Reload absence control
+
+
     loadAbsenceControl();
-    
-    // Show success message
+
+
     showToast(`تم إعادة تعيين غياب مادة "${course.name}" بنجاح! 🔄`, 'success');
 }
 
-// إضافة رسالة تأكيد النظام المتكامل
+
 setTimeout(() => {
     console.log('🔥 النظام المتكامل جاهز للاستخدام!');
     console.log('✅ الخانات ستتحدث تلقائياً عند إضافة الغياب');
@@ -3888,43 +3862,43 @@ setTimeout(() => {
     console.log('   🔴 25.01%+: حرمان (أحمر)');
 }, 2000);
 
-// ===== NEW ABSENCE CALCULATOR =====
+
 let newAbsenceCourses = JSON.parse(localStorage.getItem('newAbsenceCourses')) || [];
 
-// Track shown alerts to prevent duplicate popups
+
 let shownAlerts = JSON.parse(localStorage.getItem('absenceShownAlerts')) || {};
 
-// Function to clear all alerts (for testing)
+
 window.clearAbsenceAlerts = function() {
     shownAlerts = {};
     localStorage.removeItem('absenceShownAlerts');
     console.log('تم حذف جميع التنبيهات');
 };
 
-// Initialize new absence calculator
+
 function initNewAbsenceCalculator() {
     const form = document.getElementById('new-absence-form');
     if (form) {
         form.addEventListener('submit', handleNewAbsenceFormSubmit);
     }
-    
-    // Initialize hours dropdown (1 to 20)
+
+
     initializeHoursDropdown();
-    
+
     renderNewAbsenceCourses();
 }
 
-// Initialize hours dropdown with options from 1 to 20
+
 function initializeHoursDropdown() {
     const hoursSelect = document.getElementById('new-course-hours-per-week');
     if (!hoursSelect) return;
-    
-    // Clear existing options except the first one
+
+
     while (hoursSelect.options.length > 1) {
         hoursSelect.remove(1);
     }
-    
-    // Add options from 1 to 20
+
+
     for (let i = 1; i <= 20; i++) {
         const option = document.createElement('option');
         option.value = i;
@@ -3933,26 +3907,26 @@ function initializeHoursDropdown() {
     }
 }
 
-// Handle form submission
+
 function handleNewAbsenceFormSubmit(e) {
     e.preventDefault();
-    
+
     const courseName = document.getElementById('new-course-name').value.trim();
     const hoursPerWeek = parseFloat(document.getElementById('new-course-hours-per-week').value);
-    
+
     if (!courseName || !hoursPerWeek || hoursPerWeek <= 0) {
         showToast('يرجى إدخال جميع البيانات بشكل صحيح', 'error');
         return;
     }
-    
-    // Calculate absence percentage per hour
-    // نسبة غياب الساعة الواحدة = 6.25 ÷ عدد الساعات الأسبوعية
-    // هذه المعادلة تعطي نسبة الغياب لكل ساعة غياب من إجمالي المقرر
-    // مثال: مادة 4 ساعات → 6.25 ÷ 4 = 1.5625%
-    // مثال: مادة 6 ساعات → 6.25 ÷ 6 = 1.04167%
+
+
+
+
+
+
     const absencePercentagePerHour = 6.25 / hoursPerWeek;
-    
-    // Create course object
+
+
     const course = {
         id: Date.now().toString(),
         name: courseName,
@@ -3961,28 +3935,28 @@ function handleNewAbsenceFormSubmit(e) {
         currentAbsenceHours: 0,
         createdAt: new Date().toISOString()
     };
-    
-    // Add to array
+
+
     newAbsenceCourses.push(course);
-    
-    // Save to localStorage
+
+
     localStorage.setItem('newAbsenceCourses', JSON.stringify(newAbsenceCourses));
-    
-    // Clear form
+
+
     document.getElementById('new-absence-form').reset();
-    
-    // Render courses
+
+
     renderNewAbsenceCourses();
-    
-    // Show success message
+
+
     showToast(`تم إضافة المادة "${courseName}" بنجاح! ✅`, 'success');
 }
 
-// Render all courses
+
 function renderNewAbsenceCourses() {
     const container = document.getElementById('new-absence-courses-list');
     if (!container) return;
-    
+
     if (newAbsenceCourses.length === 0) {
         container.innerHTML = `
             <div class="empty-state">
@@ -3993,21 +3967,21 @@ function renderNewAbsenceCourses() {
         `;
         return;
     }
-    
+
     container.innerHTML = newAbsenceCourses.map(course => createCourseCard(course)).join('');
-    
-    // Add event listeners and check alerts on first render
+
+
     newAbsenceCourses.forEach(course => {
-        // Delete button
+
         const deleteBtn = document.getElementById(`delete-course-${course.id}`);
         if (deleteBtn) {
             deleteBtn.addEventListener('click', () => deleteCourse(course.id));
         }
-        
-        // Counter buttons
+
+
         const minusBtn = document.getElementById(`minus-btn-${course.id}`);
         const plusBtn = document.getElementById(`plus-btn-${course.id}`);
-        
+
         if (minusBtn) {
             let touchStartTime = 0;
             const handleMinus = (e) => {
@@ -4049,23 +4023,23 @@ function renderNewAbsenceCourses() {
     });
 }
 
-// Create course card HTML
+
 function createCourseCard(course) {
-    // Calculate values
-    const totalHours = course.hoursPerWeek * 16; // Assuming 16 weeks semester
-    const absenceLimit = totalHours * 0.25; // 25% of total hours
+
+    const totalHours = course.hoursPerWeek * 16;
+    const absenceLimit = totalHours * 0.25;
     const remainingHours = Math.max(0, absenceLimit - course.currentAbsenceHours);
-    
-    // Calculate current absence percentage
+
+
     const absencePercentage = totalHours > 0 ? (course.currentAbsenceHours / totalHours) * 100 : 0;
-    
-    // Determine status based on new rules
+
+
     let statusClass = 'safe';
     let statusText = 'في أمان';
-    
+
     if (absencePercentage >= 25.00) {
         statusClass = 'danger';
-        // التحقق إذا كانت 25.00 بالضبط
+
         if (Math.abs(absencePercentage - 25.00) < 0.01) {
             statusText = 'خلصت غياباتك';
         } else {
@@ -4081,11 +4055,11 @@ function createCourseCard(course) {
         statusClass = 'safe';
         statusText = 'في أمان';
     }
-    
-    // Progress bar percentage (should be actual percentage, not scaled)
+
+
     const progressPercentage = Math.min(100, absencePercentage);
-    const markerPosition = 75; // 25% marker from right in RTL (75% from left)
-    
+    const markerPosition = 75;
+
     return `
         <div class="new-absence-course-card">
             <div class="new-absence-course-header">
@@ -4096,7 +4070,7 @@ function createCourseCard(course) {
                     <i class="fas fa-trash"></i>
                 </button>
             </div>
-            
+
             <div class="new-absence-percentage-section">
                 <div class="new-absence-percentage-label">نسبة الغياب من إجمالي المقرر</div>
                 <div class="new-absence-percentage-row">
@@ -4116,7 +4090,7 @@ function createCourseCard(course) {
                     <div class="new-absence-progress-marker" style="right: 25%"></div>
                 </div>
             </div>
-            
+
             <div class="new-absence-counter-section">
                 <div class="new-absence-counter-title">ساعات غيابك الحالية</div>
                 <div class="new-absence-counter-subtitle">عدل ساعات غيابك</div>
@@ -4130,7 +4104,7 @@ function createCourseCard(course) {
                     </button>
                 </div>
             </div>
-            
+
             <div class="new-absence-summary-section">
                 <div class="new-absence-summary-card">
                     <div class="new-absence-summary-label">إجمالي الساعات</div>
@@ -4158,88 +4132,88 @@ function createCourseCard(course) {
     `;
 }
 
-// Track if alert is currently showing to prevent duplicates
+
 let currentAlertShowing = false;
 let absenceAlertTimer = null;
 
-// Show absence alert popup
-// دالة تشغيل الإشعارات الصوتية عند الخطورة
+
+
 function playAbsenceAlertSound(alertType) {
     try {
         const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        
-        let frequency = 400; // تردد الصوت الأساسي
-        let duration = 0.2; // مدة الصوت بالثواني
-        let beeps = 1; // عدد النغمات
-        
-        // تحديد نوع الصوت حسب مستوى الخطورة
+
+        let frequency = 400;
+        let duration = 0.2;
+        let beeps = 1;
+
+
         if (alertType === '25' || alertType === 'danger') {
-            // صوت خطير (حرمان) - نغمات عالية متتالية
+
             frequency = 600;
             duration = 0.15;
             beeps = 3;
         } else if (alertType === '20' || alertType === 'warning-high') {
-            // صوت تحذير قوي (20-25%)
+
             frequency = 500;
             duration = 0.2;
             beeps = 2;
         } else if (alertType === '10' || alertType === 'warning') {
-            // صوت تحذير خفيف (10-20%)
+
             frequency = 400;
             duration = 0.25;
             beeps = 1;
         }
-        
-        // تشغيل النغمات
+
+
         for (let i = 0; i < beeps; i++) {
             setTimeout(() => {
                 const oscillator = audioContext.createOscillator();
                 const gainNode = audioContext.createGain();
-                
+
                 oscillator.connect(gainNode);
                 gainNode.connect(audioContext.destination);
-                
+
                 oscillator.frequency.value = frequency;
                 oscillator.type = 'sine';
-                
-                // تطبيق envelope للتأثير الطبيعي
+
+
                 const now = audioContext.currentTime;
                 gainNode.gain.setValueAtTime(0, now);
                 gainNode.gain.linearRampToValueAtTime(0.3, now + 0.01);
                 gainNode.gain.exponentialRampToValueAtTime(0.01, now + duration);
-                
+
                 oscillator.start(now);
                 oscillator.stop(now + duration);
-            }, i * (duration * 1000 + 50)); // تأخير بين النغمات
+            }, i * (duration * 1000 + 50));
         }
     } catch (error) {
-        // إذا فشل Web Audio API، استخدم صوت بديل بسيط
+
         console.log('Web Audio API not available, using fallback sound');
-        // يمكن إضافة ملف صوتي بديل هنا لاحقاً
+
     }
 }
 
 function showAbsenceAlert(courseName, percentage, alertType) {
-    // Prevent showing multiple alerts at the same time
+
     if (currentAlertShowing) {
         return;
     }
-    
+
     currentAlertShowing = true;
-    
-    // تشغيل صوت التنبيه
+
+
     playAbsenceAlertSound(alertType);
-    
-    // Clear any existing timer
+
+
     if (absenceAlertTimer) {
         clearTimeout(absenceAlertTimer);
     }
-    
-    // Determine message and icon based on alert type
+
+
     let message = '';
     let icon = '';
     let popupClass = '';
-    
+
     if (alertType === '10') {
         message = 'انتبه لغيابك';
         icon = 'fa-exclamation-triangle';
@@ -4253,8 +4227,8 @@ function showAbsenceAlert(courseName, percentage, alertType) {
         icon = 'fa-exclamation-triangle';
         popupClass = 'danger';
     }
-    
-    // Create popup HTML
+
+
     const popupHTML = `
         <div class="absence-alert-overlay" id="absence-alert-overlay">
             <div class="absence-alert-popup ${popupClass}">
@@ -4275,36 +4249,36 @@ function showAbsenceAlert(courseName, percentage, alertType) {
             </div>
         </div>
     `;
-    
-    // Remove any existing alert first
+
+
     const existingAlert = document.getElementById('absence-alert-overlay');
     if (existingAlert) {
         existingAlert.remove();
     }
-    
-    // Add to body
+
+
     document.body.insertAdjacentHTML('beforeend', popupHTML);
-    
-    // Prevent closing on overlay click - user must click "فهمت" button
-    // Only auto-close after timer
+
+
+
     const overlay = document.getElementById('absence-alert-overlay');
     if (overlay) {
-        // Prevent clicks on popup from closing it
+
         const popup = overlay.querySelector('.absence-alert-popup');
         if (popup) {
             popup.addEventListener('click', function(e) {
                 e.stopPropagation();
             });
         }
-        
-        // Auto close after 11 seconds
+
+
         absenceAlertTimer = setTimeout(() => {
             closeAbsenceAlert();
         }, 5000);
     }
 }
 
-// Close absence alert (make it global for onclick handler)
+
 window.closeAbsenceAlert = function() {
     const overlay = document.getElementById('absence-alert-overlay');
     if (overlay) {
@@ -4314,48 +4288,48 @@ window.closeAbsenceAlert = function() {
             currentAlertShowing = false;
         }, 300);
     }
-    
-    // Clear timer
+
+
     if (absenceAlertTimer) {
         clearTimeout(absenceAlertTimer);
         absenceAlertTimer = null;
     }
 };
 
-// Check and show alerts based on absence percentage (for initial load)
+
 function checkAbsenceAlerts(courseId, oldPercentage = null) {
     const course = newAbsenceCourses.find(c => c.id === courseId);
     if (!course) return;
-    
-    // Calculate current absence percentage
-    const totalHours = course.hoursPerWeek * 16; // Assuming 16 weeks semester
+
+
+    const totalHours = course.hoursPerWeek * 16;
     const absencePercentage = totalHours > 0 ? (course.currentAbsenceHours / totalHours) * 100 : 0;
-    
-    // Round to 3 decimal places for accurate comparison
+
+
     const roundedPercentage = Math.round(absencePercentage * 1000) / 1000;
-    
-    // Only check on initial load (when oldPercentage is null)
+
+
     if (oldPercentage !== null) return;
-    
-    // Check for 25% threshold (highest priority) - check if >= 25%
+
+
     if (roundedPercentage >= 25) {
         const alertKey = `${course.name}_25`;
         if (!shownAlerts[alertKey]) {
             showAbsenceAlert(course.name, absencePercentage, '25');
-            return; // Don't show other alerts if at 25%
+            return;
         }
     }
-    
-    // Check for 20% threshold (only if not already at 25%) - check if >= 20%
+
+
     if (roundedPercentage >= 20 && roundedPercentage < 25) {
         const alertKey = `${course.name}_20`;
         if (!shownAlerts[alertKey]) {
             showAbsenceAlert(course.name, absencePercentage, '20');
-            return; // Don't show 10% alert if at 20%
+            return;
         }
     }
-    
-    // Check for 10% threshold (only if not already shown) - check if >= 10%
+
+
     if (roundedPercentage >= 10 && roundedPercentage < 20) {
         const alertKey = `${course.name}_10`;
         if (!shownAlerts[alertKey]) {
@@ -4365,59 +4339,59 @@ function checkAbsenceAlerts(courseId, oldPercentage = null) {
     }
 }
 
-// Update absence hours
+
 function updateAbsenceHours(courseId, change) {
     const course = newAbsenceCourses.find(c => c.id === courseId);
     if (!course) return;
-    
-    // Store old value for comparison
+
+
     const oldValue = course.currentAbsenceHours;
     const newValue = Math.max(0, course.currentAbsenceHours + change);
     course.currentAbsenceHours = newValue;
-    
-    // Calculate percentages
+
+
     const totalHours = course.hoursPerWeek * 16;
     const oldPercentage = totalHours > 0 ? (oldValue / totalHours) * 100 : 0;
     const newPercentage = totalHours > 0 ? (newValue / totalHours) * 100 : 0;
-    
-    // Round percentages for accurate comparison (3 decimal places)
+
+
     const oldPercentageRounded = Math.round(oldPercentage * 1000) / 1000;
     const newPercentageRounded = Math.round(newPercentage * 1000) / 1000;
-    
-    // Save to localStorage
+
+
     localStorage.setItem('newAbsenceCourses', JSON.stringify(newAbsenceCourses));
-    
-    // Check for danger states and play sound when crossing thresholds (only when increasing)
+
+
     if (change > 0) {
-        // فقط عند زيادة الغياب
+
         if (newPercentage >= 25.00 && oldPercentage >= 25.00) {
-            // بالفعل فوق 25% وتحديث آخر يزيد الغياب - صوت خطير مستمر
+
             playAbsenceAlertSound('danger');
         }
-        // الصوت عند عبور العتبات (10%, 20%, 25%) سيتم تشغيله في showAbsenceAlert
+
     }
-    
-    // Re-render courses first
+
+
     renderNewAbsenceCourses();
-    
-    // Check for alerts when changing (increase or decrease)
-    // Show alert whenever we cross a threshold (10%, 20%, 25%)
+
+
+
     setTimeout(() => {
-        // Get fresh course data after render
+
         const currentCourse = newAbsenceCourses.find(c => c.id === courseId);
         if (!currentCourse) return;
-        
-        // Calculate current percentage
+
+
         const currentTotalHours = currentCourse.hoursPerWeek * 16;
         const currentAbsencePercent = currentTotalHours > 0 ? (currentCourse.currentAbsenceHours / currentTotalHours) * 100 : 0;
         const currentPercentRounded = Math.round(currentAbsencePercent * 1000) / 1000;
-        
-        // Check if we crossed thresholds by comparing old and new percentages
+
+
         const crossed25 = oldPercentageRounded < 25 && currentPercentRounded >= 25;
         const crossed20 = oldPercentageRounded < 20 && currentPercentRounded >= 20 && currentPercentRounded < 25;
         const crossed10 = oldPercentageRounded < 10 && currentPercentRounded >= 10 && currentPercentRounded < 20;
-        
-        // Show alerts whenever we cross a threshold (every time, not just once)
+
+
         if (crossed25) {
             showAbsenceAlert(currentCourse.name, currentAbsencePercent, '25');
         } else if (crossed20) {
@@ -4426,8 +4400,8 @@ function updateAbsenceHours(courseId, change) {
             showAbsenceAlert(currentCourse.name, currentAbsencePercent, '10');
         }
     }, 400);
-    
-    // Add shake animation when increasing
+
+
     if (change > 0) {
         setTimeout(() => {
             const counterValue = document.getElementById(`counter-value-${courseId}`);
@@ -4441,92 +4415,92 @@ function updateAbsenceHours(courseId, change) {
     }
 }
 
-// Delete course
+
 function deleteCourse(courseId) {
     if (!confirm('هل أنت متأكد من حذف هذه المادة؟')) return;
-    
+
     newAbsenceCourses = newAbsenceCourses.filter(c => c.id !== courseId);
-    
-    // Save to localStorage
+
+
     localStorage.setItem('newAbsenceCourses', JSON.stringify(newAbsenceCourses));
-    
-    // Re-render courses
+
+
     renderNewAbsenceCourses();
-    
-    // Show success message
+
+
     showToast('تم حذف المادة بنجاح! 🗑️', 'success');
 }
 
 
-// Initialize when DOM is ready
+
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initNewAbsenceCalculator);
 } else {
     initNewAbsenceCalculator();
 }
 
-// ============================================
-// نظام البحث والاختيار الذكي للمواد
-// ============================================
 
-// إنشاء حقل البحث والاختيار الذكي
+
+
+
+
 function createCourseSearchField() {
-    // انتظر حتى تحميل البيانات
+
     if (typeof universityCourses === 'undefined' || !Array.isArray(universityCourses)) {
         console.log('⏳ جاري تحميل البيانات...');
         setTimeout(createCourseSearchField, 500);
         return;
     }
-    
-    // انتظر قليلاً للتأكد من تحميل الـ DOM
+
+
     if (!document.querySelector('.new-absence-form-section')) {
         console.log('⏳ جاري تحميل النموذج...');
         setTimeout(createCourseSearchField, 500);
         return;
     }
-    
+
     const formSection = document.querySelector('.new-absence-form-section');
     const coursesDatabase = universityCourses;
-    
+
     console.log(`✅ تحميل ${coursesDatabase.length} مادة من قاعدة البيانات`);
-    
+
     if (!formSection) return;
-    
-    // التحقق من عدم وجود حقل البحث مسبقاً
+
+
     if (document.getElementById('course-search')) return;
-    
+
     const searchHTML = `
         <div class="form-group" style="position: relative; margin-bottom: 1.5rem;">
             <label for="course-search" style="
-                display: flex; 
-                align-items: center; 
-                gap: 0.5rem; 
-                margin-bottom: 0.5rem; 
-                font-weight: 600; 
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                margin-bottom: 0.5rem;
+                font-weight: 600;
                 color: var(--text-primary);
                 font-size: 1rem;
             ">
                 <i class="fas fa-search" style="color: #667eea;"></i>
                 <span> البحث</span>
                 <span style="
-                    color: var(--text-muted); 
-                    font-size: 0.85rem; 
+                    color: var(--text-muted);
+                    font-size: 0.85rem;
                     font-weight: 400;
                     background: var(--bg-secondary);
                     padding: 2px 8px;
                     border-radius: 12px;
                 ">(${coursesDatabase.length} مادة)</span>
             </label>
-            <input 
-                type="text" 
-                id="course-search" 
+            <input
+                type="text"
+                id="course-search"
                 placeholder="ابحث عن المادة... (مثال: برمجة، رياضيات، قواعد البيانات)"
                 style="
-                    width: 100%; 
-                    padding: 14px 16px; 
-                    border: 2px solid var(--border-light); 
-                    border-radius: 12px; 
-                    font-size: 1rem; 
+                    width: 100%;
+                    padding: 14px 16px;
+                    border: 2px solid var(--border-light);
+                    border-radius: 12px;
+                    font-size: 1rem;
                     font-family: var(--font-primary);
                     transition: all 0.3s ease;
                     background: var(--bg-secondary);
@@ -4551,51 +4525,51 @@ function createCourseSearchField() {
             "></div>
         </div>
     `;
-    
-    // إدراج حقل البحث قبل "اسم المادة"
+
+
     const courseNameLabel = formSection.querySelector('label[for="new-course-name"]');
     if (courseNameLabel) {
         courseNameLabel.parentElement.insertAdjacentHTML('beforebegin', searchHTML);
     } else {
         formSection.insertAdjacentHTML('afterbegin', searchHTML);
     }
-    
-    // إضافة أحداث البحث
+
+
     setupCourseSearchEvents(coursesDatabase);
 }
 
-// إعداد أحداث البحث
+
 function setupCourseSearchEvents(coursesDatabase) {
     const searchInput = document.getElementById('course-search');
     const suggestionsDiv = document.getElementById('course-suggestions');
-    
+
     if (!searchInput || !suggestionsDiv) return;
-    
+
     searchInput.addEventListener('input', function() {
         const query = this.value.trim().toLowerCase();
-        
+
         if (query.length === 0) {
             suggestionsDiv.style.display = 'none';
             return;
         }
-        
-        const filtered = coursesDatabase.filter(course => 
-            course.courseName.toLowerCase().includes(query) || 
+
+        const filtered = coursesDatabase.filter(course =>
+            course.courseName.toLowerCase().includes(query) ||
             course.courseCode.toLowerCase().includes(query) ||
             course.major.toLowerCase().includes(query)
         );
-        
+
         if (filtered.length === 0) {
             suggestionsDiv.innerHTML = `
                 <div style="
-                    padding: 30px 20px; 
-                    text-align: center; 
+                    padding: 30px 20px;
+                    text-align: center;
                     color: var(--text-muted);
                 ">
                     <i class="fas fa-search" style="
-                        font-size: 2.5rem; 
-                        margin-bottom: 15px; 
-                        display: block; 
+                        font-size: 2.5rem;
+                        margin-bottom: 15px;
+                        display: block;
                         opacity: 0.4;
                     "></i>
                     <p style="font-size: 1rem; margin: 0;">لم يتم العثور على مادة</p>
@@ -4604,7 +4578,7 @@ function setupCourseSearchEvents(coursesDatabase) {
             suggestionsDiv.style.display = 'block';
             return;
         }
-        
+
 
         suggestionsDiv.innerHTML = filtered.slice(0, 12).map((course, index) => `
             <div class="suggestion-item" style="
@@ -4618,17 +4592,17 @@ function setupCourseSearchEvents(coursesDatabase) {
             " data-index="${index}" data-course='${JSON.stringify(course).replace(/'/g, "&apos;")}'>
                 <div style="flex: 1;">
                     <div style="
-                        font-weight: 600; 
-                        color: var(--text-primary); 
+                        font-weight: 600;
+                        color: var(--text-primary);
                         margin-bottom: 6px;
                         font-size: 1rem;
                     ">
                         ${course.courseName}
                     </div>
                     <div style="
-                        display: flex; 
-                        gap: 16px; 
-                        font-size: 0.85rem; 
+                        display: flex;
+                        gap: 16px;
+                        font-size: 0.85rem;
                         color: var(--text-muted);
                     ">
                         <span>
@@ -4641,10 +4615,10 @@ function setupCourseSearchEvents(coursesDatabase) {
                 </div>
                 <span style="
                     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                    color: white; 
-                    padding: 8px 16px; 
-                    border-radius: 20px; 
-                    font-size: 0.9rem; 
+                    color: white;
+                    padding: 8px 16px;
+                    border-radius: 20px;
+                    font-size: 0.9rem;
                     font-weight: 700;
                     white-space: nowrap;
                     margin-right: 15px;
@@ -4656,36 +4630,36 @@ function setupCourseSearchEvents(coursesDatabase) {
                 </span>
             </div>
         `).join('');
-        
+
         suggestionsDiv.style.display = 'block';
-        
-        // إضافة أحداث الاختيار
+
+
         document.querySelectorAll('.suggestion-item').forEach(item => {
             item.addEventListener('click', function() {
                 const course = JSON.parse(this.getAttribute('data-course'));
                 selectCourse(course);
             });
-            
+
             item.addEventListener('mouseenter', function() {
                 this.style.background = 'var(--bg-secondary)';
                 this.style.transform = 'translateX(-8px)';
             });
-            
+
             item.addEventListener('mouseleave', function() {
                 this.style.background = 'transparent';
                 this.style.transform = 'translateX(0)';
             });
         });
     });
-    
-    // إغلاق الاقتراحات عند النقر خارجها
+
+
     document.addEventListener('click', function(e) {
         if (e.target !== searchInput && !e.target.closest('.suggestion-item')) {
             suggestionsDiv.style.display = 'none';
         }
     });
-    
-    // إغلاق عند الضغط على Escape
+
+
     searchInput.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {
             suggestionsDiv.style.display = 'none';
@@ -4693,24 +4667,24 @@ function setupCourseSearchEvents(coursesDatabase) {
     });
 }
 
-// اختيار مادة من القائمة
+
 function selectCourse(course) {
     const searchInput = document.getElementById('course-search');
     document.getElementById('course-suggestions').style.display = 'none';
-    
-    // ملء الحقول تلقائياً
+
+
     const courseNameField = document.getElementById('new-course-name');
     const hoursField = document.getElementById('new-course-hours-per-week');
-    
+
     if (courseNameField) courseNameField.value = course.courseName;
     if (hoursField) hoursField.value = course.hours;
-    
-    // إضافة المادة تلقائياً
+
+
     setTimeout(() => {
-        // حساب نسبة الغياب لكل ساعة
+
         const absencePercentagePerHour = 6.25 / course.hours;
-        
-        // إنشاء كائن المادة
+
+
         const newCourse = {
             id: Date.now().toString(),
             name: course.courseName,
@@ -4719,26 +4693,26 @@ function selectCourse(course) {
             currentAbsenceHours: 0,
             createdAt: new Date().toISOString()
         };
-        
-        // إضافة إلى المصفوفة
+
+
         newAbsenceCourses.push(newCourse);
-        
-        // حفظ في localStorage
+
+
         localStorage.setItem('newAbsenceCourses', JSON.stringify(newAbsenceCourses));
-        
-        // عرض المواد
+
+
         renderNewAbsenceCourses();
-        
-        // تنظيف النموذج وحقل البحث
+
+
         document.getElementById('new-absence-form').reset();
         searchInput.value = '';
-        
-        // إظهار إشعار النجاح
+
+
         showSuccessNotification(`✅ تمت إضافة: ${course.courseName}`);
     }, 100);
 }
 
-// إشعار النجاح
+
 function showSuccessNotification(message) {
     const notification = document.createElement('div');
     notification.style.cssText = `
@@ -4760,14 +4734,14 @@ function showSuccessNotification(message) {
     `;
     notification.innerHTML = message;
     document.body.appendChild(notification);
-    
+
     setTimeout(() => {
         notification.style.animation = 'slideOut 0.3s ease';
         setTimeout(() => notification.remove(), 300);
     }, 3000);
 }
 
-// حساب ساعات الأسبوع
+
 function getWeeklyHours() {
     const lecturesCount = Number(document.getElementById('lectures-count')?.value) || 0;
     const lectureHour = Number(document.getElementById('lecture-hours')?.value) || 0;
@@ -4784,7 +4758,7 @@ function getWeeklyHours() {
     return lecturesHours + exercisesHours + labsHours;
 }
 
-// تحديث صندوق الغياب
+
 function updateAbsenceBox() {
     const weeklyHours = getWeeklyHours();
     const weeks = Number(document.getElementById('course-weeks')?.value) || 0;
@@ -4801,19 +4775,19 @@ function updateAbsenceBox() {
     if (absencePercentageEl) absencePercentageEl.textContent = absencePercentage;
 }
 
-// إنشاء خيارات الساعات
+
 function populateHoursSelect() {
     const select = document.getElementById('new-course-hours-per-week');
     if (!select) return;
-    
+
     const hours = [0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5, 7, 8];
-    
-    select.innerHTML = '<option value="">-- اختر عدد الساعات --</option>' + 
+
+    select.innerHTML = '<option value="">-- اختر عدد الساعات --</option>' +
         hours.map(h => `<option value="${h}">${h} ساعة</option>`).join('');
 }
 
-// إضافة الكود عند تحميل الصفحة
-// تحديث عند تغيير الحقول
+
+
 ['new-course-name', 'new-course-hours-per-week', 'course-weeks', 'lectures-count', 'lecture-hours', 'exercises-count', 'exercise-hours', 'labs-count', 'lab-hours'].forEach(id => {
     const el = document.getElementById(id);
     if (el) {
@@ -4822,10 +4796,10 @@ function populateHoursSelect() {
     }
 });
 
-// تحديث كل ثانية
+
 setInterval(updateAbsenceBox, 1000);
 
-// أنيميشن Slide
+
 const slideStyle = document.createElement('style');
 slideStyle.textContent = `
     @keyframes slideIn {
@@ -4838,7 +4812,7 @@ slideStyle.textContent = `
             opacity: 1;
         }
     }
-    
+
     @keyframes slideOut {
         from {
             transform: translateX(0);
