@@ -1,0 +1,723 @@
+// ===== GLOBAL VARIABLES =====
+let currentTheme = localStorage.getItem('theme') || 'light';
+let calculations = JSON.parse(localStorage.getItem('calculations')) || [];
+let currentTab = 'rate';
+let summaryBarChart = null;
+let rateGradePie = null;
+let rateBarChart = null;
+
+// ===== DOM ELEMENTS =====
+const loadingScreen = document.getElementById('loading-screen');
+const themeToggle = document.getElementById('theme-toggle');
+const menuToggle = document.getElementById('menu-toggle');
+const mobileMenu = document.getElementById('mobile-menu');
+const closeMenu = document.getElementById('close-menu');
+const tabBtns = document.querySelectorAll('.tab-btn');
+const tabContents = document.querySelectorAll('.tab-content');
+const toastContainer = document.getElementById('toast-container');
+const themeSwitcher = document.getElementById('theme-switcher');
+const themes = ['theme-dark', 'theme-light', 'theme-colorful'];
+let currentThemeIdx = 0;
+
+// ===== INITIALIZATION =====
+document.addEventListener('DOMContentLoaded', function() {
+    initializeApp();
+    // زر ابدأ الآن ينزل المستخدم إلى قسم الريت مع تعويض الترويسة
+    const ctaBtn = document.querySelector('.cta-btn');
+    if (ctaBtn) {
+        ctaBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const target = document.getElementById('rate');
+            if (target) {
+                const navbar = document.querySelector('.navbar');
+                const navHeight = navbar ? navbar.offsetHeight : 0;
+                const extraOffset = 150; // مسافة إضافية ليظهر النموذج في منتصف الشاشة
+                const targetPos = target.getBoundingClientRect().top + window.pageYOffset - navHeight - extraOffset;
+                window.scrollTo({ top: targetPos, behavior: 'smooth' });
+            }
+        });
+    }
+});
+
+function initializeApp() {
+    // Show loading screen
+    setTimeout(() => {
+        loadingScreen.classList.add('hidden');
+        setTimeout(() => {
+            loadingScreen.style.display = 'none';
+        }, 500);
+    }, 2000);
+
+    // Initialize theme
+    setTheme(currentTheme);
+    
+    // Initialize particles
+    initParticles();
+    
+    // Initialize charts
+    initCharts();
+    
+    // Initialize event listeners
+    initEventListeners();
+    
+    // Initialize forms
+    initForms();
+    
+    // Initialize course search (after a delay to ensure DOM is ready)
+    setTimeout(() => {
+        createCourseSearchField();
+        setupCourseSearchEvents();
+    }, 1000);
+    
+    // Update analytics
+    updateAnalytics();
+    
+    // Show welcome toast
+    showToast('مرحباً بك في حاسبة الريت الذكية! 🚀', 'info');
+}
+
+// ===== THEME MANAGEMENT =====
+function setTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    currentTheme = theme;
+    localStorage.setItem('theme', theme);
+    
+    // Update theme toggle icon
+        const icon = themeToggle.querySelector('i');
+    icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+}
+
+function toggleTheme() {
+    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+    setTheme(newTheme);
+    showToast(`تم تبديل المظهر إلى ${newTheme === 'dark' ? 'الوضع المظلم' : 'الوضع الفاتح'}`, 'success');
+}
+
+function applyTheme(idx) {
+    document.body.classList.remove(...themes);
+    document.body.classList.add(themes[idx]);
+    localStorage.setItem('theme', themes[idx]);
+}
+
+if (themeSwitcher) {
+    themeSwitcher.addEventListener('click', function() {
+        currentThemeIdx = (currentThemeIdx + 1) % themes.length;
+        applyTheme(currentThemeIdx);
+    });
+}
+
+// عند تحميل الصفحة، طبّق آخر ثيم محفوظ
+const savedTheme = localStorage.getItem('theme');
+if (savedTheme && themes.includes(savedTheme)) {
+    document.body.classList.add(savedTheme);
+    currentThemeIdx = themes.indexOf(savedTheme);
+} else {
+    document.body.classList.add('theme-dark');
+    currentThemeIdx = 0;
+}
+
+// ===== PARTICLES BACKGROUND =====
+function initParticles() {
+    if (typeof particlesJS !== 'undefined') {
+        particlesJS('particles-js', {
+            particles: {
+                number: {
+                    value: 80,
+                    density: {
+                        enable: true,
+                        value_area: 800
+                    }
+                },
+                color: {
+                    value: '#ffffff'
+                },
+                shape: {
+                    type: 'circle',
+                    stroke: {
+                        width: 0,
+                        color: '#000000'
+                    }
+                },
+                opacity: {
+                    value: 0.5,
+                    random: false,
+                    anim: {
+                        enable: false,
+                        speed: 1,
+                        opacity_min: 0.1,
+                        sync: false
+                    }
+                },
+                size: {
+                    value: 3,
+                    random: true,
+                    anim: {
+                        enable: false,
+                        speed: 40,
+                        size_min: 0.1,
+                        sync: false
+                    }
+                },
+                line_linked: {
+                    enable: true,
+                    distance: 150,
+                    color: '#ffffff',
+                    opacity: 0.4,
+                    width: 1
+                },
+                move: {
+                    enable: true,
+                    speed: 6,
+                    direction: 'none',
+                    random: false,
+                    straight: false,
+                    out_mode: 'out',
+                    bounce: false,
+                    attract: {
+                        enable: false,
+                        rotateX: 600,
+                        rotateY: 1200
+                    }
+                }
+            },
+            interactivity: {
+                detect_on: 'canvas',
+                events: {
+                    onhover: {
+                        enable: true,
+                        mode: 'repulse'
+                    },
+                    onclick: {
+                        enable: true,
+                        mode: 'push'
+                    },
+                    resize: true
+                },
+                modes: {
+                    grab: {
+                        distance: 400,
+                        line_linked: {
+                            opacity: 1
+                        }
+                    },
+                    bubble: {
+                        distance: 400,
+                        size: 40,
+                        duration: 2,
+                        opacity: 8,
+                        speed: 3
+                    },
+                    repulse: {
+                        distance: 200,
+                        duration: 0.4
+                    },
+                    push: {
+                        particles_nb: 4
+                    },
+                    remove: {
+                        particles_nb: 2
+                    }
+                }
+            },
+            retina_detect: true
+        });
+    }
+}
+
+// ===== TAB SYSTEM =====
+function initTabs() {
+    tabBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const tabId = btn.dataset.tab;
+            switchTab(tabId);
+        });
+    });
+}
+
+function switchTab(tabId) {
+    // Remove active class from all tabs and contents
+    tabBtns.forEach(btn => btn.classList.remove('active'));
+    tabContents.forEach(content => content.classList.remove('active'));
+    
+    // Add active class to selected tab and content
+    document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
+    document.getElementById(tabId).classList.add('active');
+    
+    currentTab = tabId;
+    
+    // Update mobile menu if open
+    if (mobileMenu.classList.contains('active')) {
+        mobileMenu.classList.remove('active');
+    }
+}
+
+// ===== MOBILE MENU =====
+function initMobileMenu() {
+    menuToggle.addEventListener('click', () => {
+        mobileMenu.classList.add('active');
+    });
+    
+    closeMenu.addEventListener('click', () => {
+        mobileMenu.classList.remove('active');
+    });
+    
+    // Close menu when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!mobileMenu.contains(e.target) && !menuToggle.contains(e.target)) {
+            mobileMenu.classList.remove('active');
+        }
+    });
+    
+    // Menu item clicks
+    document.querySelectorAll('.menu-item').forEach(item => {
+        item.addEventListener('click', (e) => {
+            e.preventDefault();
+            const href = item.getAttribute('href');
+            const tabId = href.substring(1);
+            switchTab(tabId);
+        });
+    });
+}
+
+// ===== FORM INITIALIZATION =====
+function initForms() {
+    // Rate calculator form
+    const rateForm = document.getElementById('rate-form');
+    const rateNumInput = document.getElementById('rate-num');
+    const rateCoursesContainer = document.getElementById('rate-courses');
+    
+    if (rateNumInput) {
+        rateNumInput.addEventListener('change', () => {
+            createCourseInputs(rateCoursesContainer, parseInt(rateNumInput.value), 'rate');
+        });
+    }
+    
+    if (rateForm) {
+        rateForm.addEventListener('submit', handleRateCalculation);
+    }
+    
+    // Science College calculator form
+    const scienceCollegeForm = document.getElementById('science-college-form');
+    if (scienceCollegeForm) {
+        scienceCollegeForm.addEventListener('submit', handleScienceCollegeCalculation);
+    }
+    
+    // Applied College calculator form
+    const appliedCollegeForm = document.getElementById('applied-college-form');
+    if (appliedCollegeForm) {
+        appliedCollegeForm.addEventListener('submit', handleAppliedCollegeCalculation);
+    }
+    
+    // Cumulative GPA form
+    const cumulativeForm = document.getElementById('cumulative-form');
+    const cumulativeNumInput = document.getElementById('cumulative-num');
+    const cumulativeCoursesContainer = document.getElementById('cumulative-courses');
+    
+    if (cumulativeNumInput) {
+        cumulativeNumInput.addEventListener('change', () => {
+            createCourseInputs(cumulativeCoursesContainer, parseInt(cumulativeNumInput.value), 'cumulative');
+        });
+    }
+    
+    if (cumulativeForm) {
+        cumulativeForm.addEventListener('submit', handleCumulativeCalculation);
+    }
+    
+    // Semester GPA form
+    const semesterForm = document.getElementById('semester-form');
+    const semesterNumInput = document.getElementById('semester-num');
+    const semesterCoursesContainer = document.getElementById('semester-courses');
+    
+    if (semesterNumInput) {
+        semesterNumInput.addEventListener('change', () => {
+            createCourseInputs(semesterCoursesContainer, parseInt(semesterNumInput.value), 'semester');
+        });
+    }
+    
+    if (semesterForm) {
+        semesterForm.addEventListener('submit', handleSemesterCalculation);
+    }
+    
+    // Initialize course inputs
+    if (rateNumInput) createCourseInputs(rateCoursesContainer, parseInt(rateNumInput.value) || 2, 'rate');
+    if (cumulativeNumInput) createCourseInputs(cumulativeCoursesContainer, parseInt(cumulativeNumInput.value) || 2, 'cumulative');
+    if (semesterNumInput) createCourseInputs(semesterCoursesContainer, parseInt(semesterNumInput.value) || 2, 'semester');
+}
+
+// ===== COURSE INPUTS CREATION =====
+function createCourseInputs(container, numCourses, type) {
+    container.innerHTML = '';
+    for (let i = 1; i <= numCourses; i++) {
+        const courseItem = document.createElement('div');
+        courseItem.className = 'course-item';
+        courseItem.innerHTML = `
+            <div class="course-header">
+                <span class="course-name">المادة ${i}</span>
+            </div>
+            <div class="course-inputs">
+                <div class="form-group">
+                    <label>عدد الساعات</label>
+                    <input type="number" id="${type}-course-${i}-hours" min="1" max="10" step="1" required>
+                </div>
+                <div class="form-group">
+                    <label>اختر التقدير</label>
+                    <select id="${type}-course-${i}-grade" required>
+                        <option value="">-- اختر التقدير --</option>
+                        <option value="A+">A+</option>
+                        <option value="A">A</option>
+                        <option value="B+">B+</option>
+                        <option value="B">B</option>
+                        <option value="C+">C+</option>
+                        <option value="C">C</option>
+                        <option value="D+">D+</option>
+                        <option value="D">D</option>
+                        <option value="F">F</option>
+                    </select>
+                </div>
+            </div>
+        `;
+        container.appendChild(courseItem);
+    }
+}
+
+// تعريف المواد والأوزان حسب التخصص (النظام الجديد)
+const majorCourses = {
+    CE: [ // هندسة الحاسب
+        { name: "الرياضيات المتقطعة (1112عال)", weight: 0.5 },
+        { name: "برمجة الحاسب 1 (1301عال)", weight: 0.5 }
+    ],
+    CS: [ // علوم الحاسب
+        { name: "الرياضيات المتقطعة (1112عال)", weight: 0.25 },
+        { name: "برمجة الحاسب 1 (1301عال)", weight: 0.75 }
+    ],
+    IS: [ // نظم المعلومات
+        { name: "برمجة الحاسب 1 (1301عال)", weight: 0.5 },
+        { name: "أساسيات نظم قواعد البيانات (2511نال)", weight: 0.5 }
+    ],
+    SE: [ // هندسة البرمجيات
+        { name: "الرياضيات المتقطعة (1112عال)", weight: 0.5 },
+        { name: "برمجة الحاسب 1 (1301عال)", weight: 0.5 }
+    ]
+};
+
+const gradeValues = {
+    "A+": 5,
+    "A": 4.75,
+    "B+": 4.5,
+    "B": 4,
+    "C+": 3.5,
+    "C": 3,
+    "D+": 2.5,
+    "D": 2,
+    "F": 1
+};
+
+// عند تغيير التخصص، أظهر المواد المطلوبة
+const majorSelect = document.getElementById('major');
+const rateCoursesDiv = document.getElementById('rate-courses');
+if (majorSelect && rateCoursesDiv) {
+    majorSelect.addEventListener('change', function() {
+        const major = majorSelect.value;
+        rateCoursesDiv.innerHTML = '';
+        if (major && majorCourses[major]) {
+            majorCourses[major].forEach((course, idx) => {
+                const courseDiv = document.createElement('div');
+                courseDiv.className = 'form-group';
+                courseDiv.innerHTML = `
+                    <label for="rate-course-${idx}">${course.name}</label>
+                    <select id="rate-course-${idx}" required>
+                            <option value="">-- اختر التقدير --</option>
+                        <option value="A+">A+</option>
+                        <option value="A">A</option>
+                        <option value="B+">B+</option>
+                        <option value="B">B</option>
+                        <option value="C+">C+</option>
+                        <option value="C">C</option>
+                        <option value="D+">D+</option>
+                        <option value="D">D</option>
+                        <option value="F">F</option>
+                        </select>
+                `;
+                rateCoursesDiv.appendChild(courseDiv);
+            });
+        }
+    });
+}
+
+// عدل دالة حساب الريت لتستخدم القيم المختارة
+function handleRateCalculation(e) {
+    e.preventDefault();
+    const major = document.getElementById('major').value;
+    const gpa = parseFloat(document.getElementById('rate-gpa').value);
+    const sa = parseFloat(document.getElementById('rate-sa').value);
+    if (!major || isNaN(gpa) || isNaN(sa)) {
+        showToast('يرجى ملء جميع الحقول المطلوبة', 'error');
+        return;
+    }
+    // جلب تقديرات المواد
+    const courses = majorCourses[major];
+    const g1 = gradeValues[document.getElementById('rate-course-0').value];
+    const w1 = courses[0].weight;
+    const g2 = gradeValues[document.getElementById('rate-course-1').value];
+    const w2 = courses[1].weight;
+    if (g1 === undefined || g2 === undefined) {
+        showToast('يرجى اختيار تقدير لكل مادة', 'error');
+        return;
+    }
+    // حساب الريت
+    const result = calculateRate(major, gpa, sa, g1, w1, g2, w2);
+    displayRateResult(result);
+    saveCalculation({
+        type: 'rate',
+        major,
+        gpa,
+        sa,
+        g1,
+        w1,
+        g2,
+        w2,
+        result,
+        timestamp: new Date().toISOString()
+    });
+    showToast('تم حساب الريت بنجاح! 🎉', 'success');
+    updateAnalytics();
+}
+
+function handleCumulativeCalculation(e) {
+    e.preventDefault();
+    const prevHours = parseFloat(document.getElementById('prev-hours').value);
+    const prevGpa = parseFloat(document.getElementById('prev-gpa').value);
+    if (isNaN(prevHours) || isNaN(prevGpa)) {
+        showToast('يرجى ملء جميع الحقول المطلوبة', 'error');
+        return;
+    }
+    const courseInputs = document.querySelectorAll('#cumulative-courses .course-item');
+    const courses = [];
+    courseInputs.forEach((course, index) => {
+        const hours = parseFloat(course.querySelector(`#cumulative-course-${index + 1}-hours`).value);
+        const grade = gradeValues[course.querySelector(`#cumulative-course-${index + 1}-grade`).value];
+        if (!isNaN(hours) && grade !== undefined) {
+            courses.push({ hours, grade });
+        }
+    });
+    if (courses.length === 0) {
+        showToast('يرجى إدخال بيانات المواد', 'error');
+        return;
+    }
+    const result = calculateCumulativeGPA(prevHours, prevGpa, courses);
+    displayCumulativeResult(result);
+    saveCalculation({
+        type: 'cumulative',
+        prevHours,
+        prevGpa,
+        courses,
+        result,
+        timestamp: new Date().toISOString()
+    });
+    showToast('تم حساب المعدل التراكمي بنجاح! 📊', 'success');
+    updateAnalytics();
+}
+
+function handleSemesterCalculation(e) {
+    e.preventDefault();
+    const courseInputs = document.querySelectorAll('#semester-courses .course-item');
+    const courses = [];
+    courseInputs.forEach((course, index) => {
+        const hours = parseFloat(course.querySelector(`#semester-course-${index + 1}-hours`).value);
+        const grade = gradeValues[course.querySelector(`#semester-course-${index + 1}-grade`).value];
+        if (!isNaN(hours) && grade !== undefined) {
+            courses.push({ hours, grade });
+        }
+    });
+    if (courses.length === 0) {
+        showToast('يرجى إدخال بيانات المواد', 'error');
+        return;
+    }
+    const result = calculateSemesterGPA(courses);
+    displaySemesterResult(result);
+    saveCalculation({
+        type: 'semester',
+        courses,
+        result,
+        timestamp: new Date().toISOString()
+    });
+    showToast('تم حساب المعدل الفصلي بنجاح! 🎓', 'success');
+    updateAnalytics();
+}
+
+function handleScienceCollegeCalculation(e) {
+    e.preventDefault();
+    const gpa = parseFloat(document.getElementById('sc-gpa').value);
+    const weighted = parseFloat(document.getElementById('sc-weighted').value);
+    const physics = gradeValues[document.getElementById('sc-physics').value];
+    const differential = gradeValues[document.getElementById('sc-differential').value];
+    const integral = gradeValues[document.getElementById('sc-integral').value];
+    if (isNaN(gpa) || isNaN(weighted) || physics === undefined || differential === undefined || integral === undefined) {
+        showToast('يرجى ملء جميع الحقول المطلوبة', 'error');
+        return;
+    }
+    // حساب معدل كلية العلوم
+    const result = calculateScienceCollegeRate(gpa, weighted, physics, differential, integral);
+    displayScienceCollegeResult(result);
+    saveCalculation({
+        type: 'science-college',
+        gpa,
+        weighted,
+        physics,
+        differential,
+        integral,
+        result,
+        timestamp: new Date().toISOString()
+    });
+    showToast('تم حساب معدل تخصيص كلية العلوم بنجاح! 🧪', 'success');
+    updateAnalytics();
+}
+
+function handleAppliedCollegeCalculation(e) {
+    e.preventDefault();
+    const gpa = parseFloat(document.getElementById('ac-gpa').value);
+    const composite = parseFloat(document.getElementById('ac-composite').value);
+    const organicChemistry = gradeValues[document.getElementById('ac-organic-chemistry').value];
+    const biology = gradeValues[document.getElementById('ac-biology').value];
+    if (isNaN(gpa) || isNaN(composite) || organicChemistry === undefined || biology === undefined) {
+        showToast('يرجى ملء جميع الحقول المطلوبة', 'error');
+        return;
+    }
+    // حساب معدل الكلية التطبيقية
+    const result = calculateAppliedCollegeRate(gpa, composite, organicChemistry, biology);
+    displayAppliedCollegeResult(result);
+    saveCalculation({
+        type: 'applied-college',
+        gpa,
+        composite,
+        organicChemistry,
+        biology,
+        result,
+        timestamp: new Date().toISOString()
+    });
+    showToast('تم حساب معدل تخصيص الكلية التطبيقية بنجاح! 🔬', 'success');
+    updateAnalytics();
+}
+
+// ===== CALCULATION FUNCTIONS =====
+function calculateRate(major, gpa, sa, g1, w1, g2, w2) {
+    // حساب الريت حسب المعادلة الجديدة
+    // RATE = (GPA + SA + (W1*G1) + (W2*G2)) / 3
+    const rate = (gpa + sa + (w1 * g1) + (w2 * g2)) / 3;
+    return {
+        rate: rate.toFixed(3),
+        gpa,
+        sa,
+        g1,
+        w1,
+        g2,
+        w2,
+        breakdown: {
+            gpa: gpa.toFixed(3),
+            sa: sa.toFixed(3),
+            g1: g1.toFixed(3),
+            w1: w1.toFixed(2),
+            g2: g2.toFixed(3),
+            w2: w2.toFixed(2),
+            g1w1: (g1*w1).toFixed(3),
+            g2w2: (g2*w2).toFixed(3)
+        }
+    };
+}
+
+function calculateCumulativeGPA(prevHours, prevGpa, courses) {
+    const prevPoints = prevHours * prevGpa;
+    const newHours = courses.reduce((sum, course) => sum + course.hours, 0);
+    const newPoints = courses.reduce((sum, course) => sum + (course.grade * course.hours), 0);
+    
+    const totalHours = prevHours + newHours;
+    const totalPoints = prevPoints + newPoints;
+    const cumulativeGpa = totalPoints / totalHours;
+    
+    return {
+        cumulativeGpa: cumulativeGpa.toFixed(3),
+        prevGpa,
+        newGpa: (newPoints / newHours).toFixed(3),
+        totalHours,
+        newHours,
+        courses
+    };
+}
+
+function calculateSemesterGPA(courses) {
+    const totalHours = courses.reduce((sum, course) => sum + course.hours, 0);
+    const totalPoints = courses.reduce((sum, course) => sum + (course.grade * course.hours), 0);
+    const semesterGpa = totalPoints / totalHours;
+    
+    return {
+        semesterGpa: semesterGpa.toFixed(3),
+        totalHours,
+        courses,
+        gradeDistribution: getGradeDistribution(courses)
+    };
+}
+
+function calculateScienceCollegeRate(gpa, weighted, physics, differential, integral) {
+    const weighted5 = weighted / 20;
+    const finalRate = (gpa * 0.5) + (weighted5 * 0.3) + (physics * 0.1) + (differential * 0.05) + (integral * 0.05);
+    return {
+        finalRate: finalRate.toFixed(2),
+        gpa: gpa,
+        weighted: weighted,
+        physics: physics,
+        differential: differential,
+        integral: integral,
+        breakdown: {
+            gpaContribution: (gpa * 0.5).toFixed(3),
+            weightedContribution: (weighted5 * 0.3).toFixed(3),
+            physicsContribution: (physics * 0.1).toFixed(3),
+            differentialContribution: (differential * 0.05).toFixed(3),
+            integralContribution: (integral * 0.05).toFixed(3)
+        }
+    };
+}
+
+function calculateAppliedCollegeRate(gpa, composite, organicChemistry, biology) {
+    const composite5 = composite / 20;
+    const finalRate = (gpa * 0.5) + (composite5 * 0.3) + (organicChemistry * 0.1) + (biology * 0.1);
+    return {
+        finalRate: finalRate.toFixed(2),
+        gpa: gpa,
+        composite: composite,
+        organicChemistry: organicChemistry,
+        biology: biology,
+        breakdown: {
+            gpaContribution: (gpa * 0.5).toFixed(3),
+            compositeContribution: (composite5 * 0.3).toFixed(3),
+            organicChemistryContribution: (organicChemistry * 0.1).toFixed(3),
+            biologyContribution: (biology * 0.1).toFixed(3)
+        }
+    };
+}
+
+function getGradeDistribution(courses) {
+    const distribution = {
+        'A+': 0, 'A': 0, 'B+': 0, 'B': 0, 'C+': 0, 'C': 0, 'D+': 0, 'D': 0, 'F': 0
+    };
+    
+    courses.forEach(course => {
+        const grade = getLetterGrade(course.grade);
+        distribution[grade]++;
+    });
+    
+    return distribution;
+}
+
+function getLetterGrade(numericGrade) {
+    if (numericGrade >= 4.5) return 'A+';
+    if (numericGrade >= 4.0) return 'A';
+    if (numericGrade >= 3.5) return 'B+';
+    if (numericGrade >= 3.0) return 'B';
+    if (numericGrade >= 2.5) return 'C+';
+    if (numericGrade >= 2.0) return 'C';
+    if (numericGrade >= 1.5) return 'D+';
+    if (numericGrade >= 1.0) return 'D';
+    return 'F';
+}
+
+// ===== RESULT DISPLAY =====n

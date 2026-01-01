@@ -1,0 +1,182 @@
+/* ============================================
+   تصميم تاب جدولي
+   ============================================ */
+
+.schedule-info {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xl);
+}
+
+.info-section {
+    background: var(--bg-secondary);
+    border-radius: var(--radius-lg);
+    padding: var(--space-xl);
+    display: flex;
+    gap: var(--space-lg);
+    transition: all var(--transition-normal);
+}
+
+[data-theme="dark"] .info-section {
+    background: var(--bg-tertiary);
+}
+
+.info-section:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.info-icon {
+    flex-shrink: 0;
+    width: 60px;
+    height: 60px;
+    background: var(--gradient-primary);
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.5rem;
+}
+
+.info-content {
+    flex: 1;
+}
+
+.info-content h4 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: var(--space-md);
+}
+
+.info-content p {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    line-height: 1.8;
+    margin: 0;
+}
+
+.features-list,
+.steps-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+}
+
+.steps-list {
+    list-style: decimal;
+    padding-right: var(--space-lg);
+}
+
+.features-list li {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    font-size: 1rem;
+    color: var(--text-secondary);
+    padding: var(--space-sm) 0;
+}
+
+.features-list li i {
+    color: var(--success);
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.steps-list li {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    padding: var(--space-sm) 0;
+    line-height: 1.6;
+}
+
+.schedule-cta {
+    display: flex;
+    justify-content: center;
+    margin-top: var(--space-xl);
+    padding-top: var(--space-xl);
+    border-top: 2px dashed var(--border-light);
+}
+
+.schedule-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-md);
+    background: var(--gradient-primary);
+    color: white;
+    padding: var(--space-lg) var(--space-2xl);
+    border-radius: var(--radius-xl);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1.125rem;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: var(--shadow-lg);
+    position: relative;
+    overflow: hidden;
+}
+
+.schedule-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transition: width 0.5s, height 0.5s;
+    transform: translate(-50%, -50%);
+}
+
+.schedule-btn:hover::before {
+    width: 400px;
+    height: 400px;
+}
+
+.schedule-btn:hover {
+    transform: translateY(-4px) scale(1.05);
+    box-shadow: 0 20px 40px rgba(99, 102, 241, 0.4);
+}
+
+.schedule-btn:active {
+    transform: translateY(-2px) scale(1.02);
+}
+
+.schedule-btn i {
+    font-size: 1.2rem;
+    animation: bounce 2s ease-in-out infinite;
+}
+
+@keyframes bounce {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    50% {
+        transform: translateX(5px);
+    }
+}
+
+/* استجابة للجوال */
+@media (max-width: 768px) {
+    .info-section {
+        flex-direction: column;
+        text-align: center;
+        padding: var(--space-lg);
+    }
+
+    .info-icon {
+        margin: 0 auto;
+    }
+
+    .schedule-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
