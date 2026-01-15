@@ -1,0 +1,1248 @@
+/* ============================================
+   حاسبة المعدل التراكمي والفصلي - تصميم جديد متطور
+   ============================================ */
+
+/* الحاوية الرئيسية للجدول */
+.gpa-table-container {
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    background: var(--bg-card);
+    border-radius: var(--radius-2xl);
+    box-shadow: var(--shadow-xl);
+    overflow: hidden;
+    border: 2px solid var(--primary);
+}
+
+/* عنوان الجدول الرئيسي */
+.gpa-table-header {
+    background: var(--gradient-primary);
+    color: white;
+    padding: var(--space-lg) var(--space-xl);
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* قسم الإعدادات العلوية */
+.gpa-settings-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: var(--space-lg);
+    padding: var(--space-lg) var(--space-xl);
+    background: var(--bg-secondary);
+    border-bottom: 2px solid var(--border-light);
+    align-items: end;
+}
+
+.gpa-setting-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+}
+
+.gpa-setting-label {
+    background: var(--gradient-primary);
+    color: white;
+    padding: var(--space-sm) var(--space-md);
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.gpa-setting-input {
+    width: 100%;
+    padding: var(--space-md);
+    border: 2px solid var(--border-medium);
+    border-radius: var(--radius-lg);
+    font-size: 1rem;
+    font-weight: 600;
+    text-align: center;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    transition: all 0.3s ease;
+}
+
+.gpa-setting-input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+}
+
+/* قسم اختيار نوع المعدل */
+.gpa-type-selector {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+}
+
+.gpa-type-label {
+    background: var(--gradient-primary);
+    color: white;
+    padding: var(--space-sm) var(--space-md);
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+.gpa-type-options {
+    display: flex;
+    gap: var(--space-lg);
+    justify-content: center;
+    align-items: center;
+    padding: var(--space-md);
+    background: var(--bg-primary);
+    border-radius: var(--radius-lg);
+    border: 2px solid var(--border-medium);
+}
+
+.gpa-type-option {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--text-primary);
+    transition: all 0.3s ease;
+}
+
+.gpa-type-option input[type="radio"] {
+    width: 22px;
+    height: 22px;
+    accent-color: var(--primary);
+    cursor: pointer;
+}
+
+.gpa-type-option:hover {
+    color: var(--primary);
+}
+
+/* قائمة اختيار الإعدادات */
+.gpa-setting-select {
+    width: 100%;
+    padding: var(--space-md);
+    border: 2px solid var(--border-medium);
+    border-radius: var(--radius-lg);
+    font-size: 1rem;
+    font-weight: 600;
+    text-align: center;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236366f1' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: left 12px center;
+    padding-left: 30px;
+}
+
+.gpa-setting-select:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+}
+
+.gpa-setting-select:hover {
+    border-color: var(--primary);
+}
+
+/* رأس الجدول - 4 أعمدة بدلاً من 5 */
+.gpa-table-columns-header {
+    display: grid;
+    grid-template-columns: 50px 2fr 120px 120px;
+    gap: var(--space-sm);
+    padding: var(--space-md) var(--space-xl);
+    background: var(--bg-tertiary);
+    border-bottom: 2px solid var(--border-light);
+    font-weight: 700;
+    color: var(--text-primary);
+    text-align: center;
+    font-size: 0.95rem;
+}
+
+.gpa-column-header {
+    padding: var(--space-sm);
+}
+
+/* صفوف المواد */
+.gpa-courses-body {
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.gpa-course-row {
+    display: grid;
+    grid-template-columns: 50px 2fr 120px 120px;
+    gap: var(--space-sm);
+    padding: var(--space-sm) var(--space-xl);
+    border-bottom: 1px solid var(--border-light);
+    align-items: center;
+    transition: background-color 0.2s ease;
+}
+
+.gpa-course-row:hover {
+    background: var(--bg-secondary);
+}
+
+.gpa-course-row:nth-child(even) {
+    background: rgba(99, 102, 241, 0.03);
+}
+
+.gpa-course-row:nth-child(even):hover {
+    background: var(--bg-secondary);
+}
+
+/* خانة الاختيار (checkbox) */
+.gpa-checkbox-cell {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.gpa-course-checkbox {
+    width: 24px;
+    height: 24px;
+    accent-color: var(--primary);
+    cursor: pointer;
+    border-radius: var(--radius-sm);
+}
+
+.gpa-course-checkbox:checked {
+    background: var(--primary);
+}
+
+/* اسم المادة */
+.gpa-course-name-cell {
+    text-align: right;
+}
+
+.gpa-course-name-input {
+    width: 100%;
+    padding: var(--space-sm) var(--space-md);
+    border: 2px solid var(--border-light);
+    border-radius: var(--radius-md);
+    font-size: 0.95rem;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    transition: all 0.3s ease;
+    text-align: right;
+}
+
+.gpa-course-name-input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.gpa-course-name-input::placeholder {
+    color: var(--text-muted);
+}
+
+/* خلايا الإدخال */
+.gpa-input-cell {
+    display: flex;
+    justify-content: center;
+}
+
+.gpa-input-field {
+    width: 100%;
+    max-width: 90px;
+    padding: var(--space-sm);
+    border: 2px solid var(--border-light);
+    border-radius: var(--radius-md);
+    font-size: 0.95rem;
+    text-align: center;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    transition: all 0.3s ease;
+}
+
+.gpa-input-field:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+/* قوائم الاختيار المنسدلة */
+.gpa-select-field {
+    width: 100%;
+    max-width: 100px;
+    padding: var(--space-sm);
+    border: 2px solid var(--border-light);
+    border-radius: var(--radius-md);
+    font-size: 0.9rem;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236366f1' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: left 8px center;
+    padding-left: 24px;
+}
+
+.gpa-select-field:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+/* خلية التقدير */
+.gpa-grade-cell {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--primary);
+    min-height: 38px;
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(139, 92, 246, 0.08) 100%);
+    border-radius: var(--radius-md);
+    border: 2px solid rgba(99, 102, 241, 0.2);
+}
+
+/* قسم النتائج */
+.gpa-results-section {
+    background: var(--bg-secondary);
+    border-top: 3px solid var(--primary);
+}
+
+.gpa-results-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    border-bottom: 2px solid var(--border-light);
+}
+
+.gpa-results-row:last-child {
+    border-bottom: none;
+}
+
+.gpa-result-header-cell {
+    background: var(--gradient-primary);
+    color: white;
+    padding: var(--space-md) var(--space-lg);
+    font-weight: 700;
+    font-size: 0.95rem;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.gpa-result-value-cell {
+    background: var(--bg-primary);
+    padding: var(--space-md) var(--space-lg);
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--text-primary);
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-left: 1px solid var(--border-light);
+}
+
+/* صف تقدير المعدل التراكمي */
+.gpa-cumulative-row {
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+}
+
+.gpa-cumulative-header {
+    background: var(--gradient-primary);
+    color: white;
+    padding: var(--space-md) var(--space-lg);
+    font-weight: 700;
+    font-size: 1rem;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.gpa-cumulative-value {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+    padding: var(--space-md) var(--space-lg);
+    font-weight: 800;
+    font-size: 1.25rem;
+    color: var(--primary);
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-md);
+}
+
+.gpa-grade-badge {
+    background: var(--gradient-primary);
+    color: white;
+    padding: var(--space-xs) var(--space-md);
+    border-radius: var(--radius-full);
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+/* حاوية النتائج الرئيسية */
+.gpa-results-wrapper {
+    display: grid;
+    grid-template-columns: 1fr 250px;
+    gap: 0;
+}
+
+.gpa-results-main {
+    flex: 1;
+}
+
+/* قسم التحليل البصري */
+.gpa-visual-analysis {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(139, 92, 246, 0.12) 100%);
+    padding: var(--space-lg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-md);
+    border-right: 2px solid rgba(99, 102, 241, 0.2);
+}
+
+/* مقياس التقدم الدائري */
+.gpa-progress-ring {
+    position: relative;
+    width: 100px;
+    height: 100px;
+}
+
+.gpa-progress-ring svg {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+}
+
+.gpa-progress-ring .ring-bg {
+    fill: none;
+    stroke: rgba(99, 102, 241, 0.15);
+    stroke-width: 8;
+}
+
+.gpa-progress-ring .ring-progress {
+    fill: none;
+    stroke: url(#gpa-gradient);
+    stroke: var(--primary);
+    stroke-width: 8;
+    stroke-linecap: round;
+    stroke-dasharray: 327;
+    stroke-dashoffset: 327;
+    transition: stroke-dashoffset 1s ease-out;
+}
+
+.gpa-progress-ring .ring-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.gpa-progress-ring .ring-value {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--primary);
+    line-height: 1;
+}
+
+.gpa-progress-ring .ring-label {
+    display: block;
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    margin-top: 2px;
+}
+
+/* ملخص الأداء */
+.gpa-performance-summary {
+    text-align: center;
+}
+
+.gpa-performance-summary .performance-icon {
+    font-size: 1.5rem;
+    margin-bottom: var(--space-xs);
+}
+
+.gpa-performance-summary .performance-text {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1.4;
+}
+
+/* نصيحة سريعة */
+.gpa-quick-tip {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    padding: var(--space-sm) var(--space-md);
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    width: 100%;
+}
+
+.gpa-quick-tip i {
+    color: #b45309;
+    font-size: 0.9rem;
+}
+
+.gpa-quick-tip span {
+    font-size: 0.7rem;
+    color: #92400e;
+    font-weight: 500;
+    line-height: 1.3;
+}
+
+/* زر الحساب */
+.gpa-calculate-btn {
+    width: 100%;
+    padding: var(--space-lg) var(--space-xl);
+    background: var(--gradient-primary);
+    color: white;
+    border: none;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-md);
+}
+
+.gpa-calculate-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(99, 102, 241, 0.35);
+}
+
+.gpa-calculate-btn:active {
+    transform: translateY(0);
+}
+
+.gpa-calculate-btn i {
+    font-size: 1.2rem;
+}
+
+/* أزرار الإجراءات */
+.gpa-actions-row {
+    display: flex;
+    gap: var(--space-md);
+    padding: var(--space-lg) var(--space-xl);
+    background: var(--bg-tertiary);
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.gpa-action-btn {
+    padding: var(--space-md) var(--space-xl);
+    border: 2px solid var(--primary);
+    border-radius: var(--radius-lg);
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    background: var(--bg-primary);
+    color: var(--primary);
+}
+
+.gpa-action-btn:hover {
+    background: var(--primary);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.gpa-action-btn.primary {
+    background: var(--gradient-primary);
+    color: white;
+    border: none;
+}
+
+.gpa-action-btn.primary:hover {
+    box-shadow: 0 8px 25px rgba(99, 102, 241, 0.35);
+}
+
+/* ============================================
+   التصميم المتجاوب
+   ============================================ */
+
+/* شاشات الأجهزة اللوحية */
+@media (max-width: 1024px) {
+    .gpa-settings-row {
+        grid-template-columns: 1fr 1fr;
+        gap: var(--space-md);
+    }
+
+    .gpa-type-selector {
+        grid-column: 1 / -1;
+    }
+
+    .gpa-table-columns-header,
+    .gpa-course-row {
+        grid-template-columns: 40px 1.5fr 80px 100px 100px;
+        padding: var(--space-sm) var(--space-md);
+        gap: var(--space-xs);
+    }
+
+    .gpa-results-row {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .gpa-result-header-cell,
+    .gpa-result-value-cell {
+        padding: var(--space-sm) var(--space-md);
+        font-size: 0.9rem;
+    }
+}
+
+/* شاشات الهواتف المتوسطة */
+@media (max-width: 768px) {
+    .gpa-table-container {
+        border-radius: var(--radius-xl);
+        margin: 0 var(--space-sm);
+    }
+
+    .gpa-table-header {
+        font-size: 1.2rem;
+        padding: var(--space-md);
+    }
+
+    .gpa-settings-row {
+        grid-template-columns: 1fr;
+        padding: var(--space-md);
+        gap: var(--space-md);
+    }
+
+    .gpa-setting-label,
+    .gpa-type-label {
+        font-size: 0.85rem;
+        padding: var(--space-xs) var(--space-sm);
+    }
+
+    .gpa-table-columns-header {
+        display: none;
+    }
+
+    .gpa-course-row {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-sm);
+        padding: var(--space-md);
+        border: 1px solid var(--border-light);
+        margin: var(--space-sm) var(--space-md);
+        border-radius: var(--radius-lg);
+        background: var(--bg-primary);
+        box-shadow: var(--shadow-sm);
+    }
+
+    .gpa-course-row:hover {
+        box-shadow: var(--shadow-md);
+    }
+
+    .gpa-checkbox-cell {
+        position: absolute;
+        top: var(--space-sm);
+        left: var(--space-sm);
+    }
+
+    .gpa-course-row {
+        position: relative;
+        padding-top: var(--space-xl);
+    }
+
+    .gpa-course-name-cell,
+    .gpa-input-cell {
+        width: 100%;
+    }
+
+    .gpa-course-name-input,
+    .gpa-input-field,
+    .gpa-select-field {
+        max-width: none;
+        width: 100%;
+    }
+
+    .gpa-input-cell::before {
+        content: attr(data-label);
+        display: block;
+        font-size: 0.8rem;
+        color: var(--text-secondary);
+        margin-bottom: var(--space-xs);
+        font-weight: 600;
+    }
+
+    .gpa-grade-cell {
+        width: 100%;
+        padding: var(--space-sm);
+    }
+
+    .gpa-grade-cell::before {
+        content: "التقدير: ";
+        font-weight: 600;
+        color: var(--text-secondary);
+    }
+
+    .gpa-results-row {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0;
+    }
+
+    .gpa-result-header-cell {
+        padding: var(--space-sm) var(--space-xs);
+        font-size: 0.75rem;
+        border-bottom: none;
+    }
+
+    .gpa-result-value-cell {
+        border-left: none;
+        border-bottom: none;
+        padding: var(--space-sm) var(--space-xs);
+        font-size: 1rem;
+    }
+
+    .gpa-cumulative-row {
+        grid-template-columns: 1fr;
+    }
+
+    .gpa-cumulative-header {
+        padding: var(--space-sm);
+        font-size: 0.9rem;
+    }
+
+    .gpa-cumulative-value {
+        flex-direction: row;
+        gap: var(--space-md);
+        padding: var(--space-md);
+        font-size: 1.3rem;
+    }
+
+    .gpa-grade-badge {
+        font-size: 0.8rem;
+        padding: var(--space-xs) var(--space-sm);
+    }
+
+    /* التحليل البصري على الجوال */
+    .gpa-results-wrapper {
+        grid-template-columns: 1fr;
+    }
+
+    .gpa-visual-analysis {
+        border-right: none;
+        border-top: 2px solid rgba(99, 102, 241, 0.2);
+        padding: var(--space-md);
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: space-around;
+    }
+
+    .gpa-progress-ring {
+        width: 80px;
+        height: 80px;
+    }
+
+    .gpa-progress-ring .ring-value {
+        font-size: 1.2rem;
+    }
+
+    .gpa-performance-summary {
+        flex: 1;
+        min-width: 120px;
+    }
+
+    .gpa-performance-summary .performance-icon {
+        font-size: 1.2rem;
+    }
+
+    .gpa-performance-summary .performance-text {
+        font-size: 0.75rem;
+    }
+
+    .gpa-quick-tip {
+        width: 100%;
+        margin-top: var(--space-sm);
+    }
+
+    .gpa-actions-row {
+        flex-direction: column;
+        padding: var(--space-md);
+    }
+
+    .gpa-action-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* شاشات الهواتف الصغيرة */
+@media (max-width: 480px) {
+    .gpa-table-container {
+        margin: 0;
+        border-radius: var(--radius-lg);
+    }
+
+    .gpa-table-header {
+        font-size: 1rem;
+        padding: var(--space-sm) var(--space-md);
+    }
+
+    .gpa-type-options {
+        flex-direction: column;
+        gap: var(--space-sm);
+    }
+
+    .gpa-course-row {
+        margin: var(--space-xs) var(--space-sm);
+        padding: var(--space-sm);
+    }
+
+    .gpa-setting-input,
+    .gpa-course-name-input,
+    .gpa-input-field,
+    .gpa-select-field {
+        font-size: 0.9rem;
+        padding: var(--space-sm);
+    }
+
+    .gpa-calculate-btn {
+        font-size: 1rem;
+        padding: var(--space-md);
+    }
+
+    .gpa-result-header-cell,
+    .gpa-result-value-cell {
+        font-size: 0.85rem;
+        padding: var(--space-sm);
+    }
+
+    .gpa-cumulative-value {
+        font-size: 1.1rem;
+    }
+}
+
+/* ============================================
+   الوضع الداكن
+   ============================================ */
+[data-theme="dark"] .gpa-table-container {
+    background: var(--bg-card);
+    border-color: var(--primary);
+}
+
+[data-theme="dark"] .gpa-settings-row {
+    background: var(--bg-secondary);
+}
+
+[data-theme="dark"] .gpa-setting-input,
+[data-theme="dark"] .gpa-course-name-input,
+[data-theme="dark"] .gpa-input-field,
+[data-theme="dark"] .gpa-select-field {
+    background: var(--bg-tertiary);
+    border-color: var(--border-medium);
+}
+
+[data-theme="dark"] .gpa-type-options {
+    background: var(--bg-tertiary);
+    border-color: var(--border-medium);
+}
+
+[data-theme="dark"] .gpa-table-columns-header {
+    background: var(--bg-tertiary);
+}
+
+[data-theme="dark"] .gpa-course-row:nth-child(even) {
+    background: rgba(99, 102, 241, 0.05);
+}
+
+[data-theme="dark"] .gpa-course-row:hover {
+    background: var(--bg-tertiary);
+}
+
+[data-theme="dark"] .gpa-grade-cell {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(139, 92, 246, 0.15) 100%);
+    border-color: rgba(99, 102, 241, 0.3);
+}
+
+[data-theme="dark"] .gpa-results-section {
+    background: var(--bg-secondary);
+}
+
+[data-theme="dark"] .gpa-result-value-cell {
+    background: var(--bg-tertiary);
+}
+
+[data-theme="dark"] .gpa-cumulative-value {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(139, 92, 246, 0.15) 100%);
+}
+
+[data-theme="dark"] .gpa-actions-row {
+    background: var(--bg-secondary);
+}
+
+[data-theme="dark"] .gpa-action-btn {
+    background: var(--bg-tertiary);
+}
+
+/* ============================================
+   تأثيرات الحركة والتفاعل
+   ============================================ */
+
+.gpa-course-row {
+    animation: fadeInUp 0.3s ease forwards;
+    opacity: 0;
+}
+
+.gpa-course-row:nth-child(1) {
+    animation-delay: 0.05s;
+}
+
+.gpa-course-row:nth-child(2) {
+    animation-delay: 0.1s;
+}
+
+.gpa-course-row:nth-child(3) {
+    animation-delay: 0.15s;
+}
+
+.gpa-course-row:nth-child(4) {
+    animation-delay: 0.2s;
+}
+
+.gpa-course-row:nth-child(5) {
+    animation-delay: 0.25s;
+}
+
+.gpa-course-row:nth-child(6) {
+    animation-delay: 0.3s;
+}
+
+.gpa-course-row:nth-child(7) {
+    animation-delay: 0.35s;
+}
+
+.gpa-course-row:nth-child(8) {
+    animation-delay: 0.4s;
+}
+
+.gpa-course-row:nth-child(9) {
+    animation-delay: 0.45s;
+}
+
+.gpa-course-row:nth-child(10) {
+    animation-delay: 0.5s;
+}
+
+.gpa-course-row:nth-child(11) {
+    animation-delay: 0.55s;
+}
+
+.gpa-course-row:nth-child(12) {
+    animation-delay: 0.6s;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* تأثير النتيجة */
+.gpa-result-value-cell.highlight {
+    animation: pulseHighlight 0.5s ease;
+}
+
+@keyframes pulseHighlight {
+    0% {
+        background: var(--primary);
+        color: white;
+        transform: scale(1.05);
+    }
+
+    100% {
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        transform: scale(1);
+    }
+}
+
+/* ============================================
+   عناصر إضافية
+   ============================================ */
+
+/* رقم الصف */
+.gpa-row-number {
+    font-weight: 700;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+/* عرض اسم المادة الافتراضي */
+.gpa-course-name-input::placeholder {
+    font-style: italic;
+    color: var(--text-muted);
+}
+
+/* scrollbar مخصص */
+.gpa-courses-body::-webkit-scrollbar {
+    width: 8px;
+}
+
+.gpa-courses-body::-webkit-scrollbar-track {
+    background: var(--bg-secondary);
+    border-radius: var(--radius-full);
+}
+
+.gpa-courses-body::-webkit-scrollbar-thumb {
+    background: var(--primary);
+    border-radius: var(--radius-full);
+}
+
+.gpa-courses-body::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-dark);
+}
+
+/* ============================================
+   حقل الإدخال مع زر القائمة المنسدلة
+   ============================================ */
+
+.gpa-input-with-btn {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    position: relative;
+}
+
+.gpa-input-with-btn .gpa-setting-input {
+    border-radius: var(--radius-lg) 0 0 var(--radius-lg);
+    border-left: none;
+    flex: 1;
+}
+
+.gpa-dropdown-btn {
+    width: 42px;
+    height: 100%;
+    min-height: 46px;
+    background: var(--gradient-primary);
+    color: white;
+    border: 2px solid var(--primary);
+    border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+
+.gpa-dropdown-btn:hover {
+    background: var(--primary-dark);
+    transform: scale(1.05);
+}
+
+.gpa-dropdown-btn i {
+    font-size: 0.85rem;
+    transition: transform 0.3s ease;
+}
+
+.gpa-dropdown-btn.active i {
+    transform: rotate(180deg);
+}
+
+/* القائمة المنسدلة للساعات */
+.gpa-dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--bg-card);
+    border: 2px solid var(--primary);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-xl);
+    max-height: 250px;
+    overflow-y: auto;
+    z-index: 1000;
+    display: none;
+    margin-top: 4px;
+}
+
+.gpa-dropdown-menu.show {
+    display: block;
+    animation: slideDown 0.2s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.gpa-dropdown-item {
+    padding: var(--space-sm) var(--space-md);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+    font-weight: 600;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.gpa-dropdown-item:last-child {
+    border-bottom: none;
+}
+
+.gpa-dropdown-item:hover {
+    background: var(--primary);
+    color: white;
+}
+
+.gpa-dropdown-item.selected {
+    background: rgba(99, 102, 241, 0.15);
+    color: var(--primary);
+}
+
+/* ============================================
+   قسم اختيار عدد المواد
+   ============================================ */
+
+.gpa-courses-selector {
+    display: flex;
+    align-items: center;
+    gap: var(--space-lg);
+    padding: var(--space-md) var(--space-xl);
+    background: var(--bg-tertiary);
+    border-bottom: 2px solid var(--border-light);
+    flex-wrap: wrap;
+}
+
+.gpa-courses-label {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    font-weight: 700;
+    color: var(--text-primary);
+    font-size: 1rem;
+    white-space: nowrap;
+}
+
+.gpa-courses-label i {
+    color: var(--primary);
+    font-size: 1.1rem;
+}
+
+.gpa-courses-options {
+    display: flex;
+    gap: var(--space-xs);
+    flex-wrap: wrap;
+    flex: 1;
+}
+
+.gpa-course-count-btn {
+    width: 40px;
+    height: 40px;
+    border: 2px solid var(--border-medium);
+    border-radius: var(--radius-md);
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.gpa-course-count-btn:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+    transform: translateY(-2px);
+}
+
+.gpa-course-count-btn.active {
+    background: var(--gradient-primary);
+    color: white;
+    border-color: var(--primary);
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+
+/* تجاوب قسم اختيار عدد المواد */
+@media (max-width: 768px) {
+    .gpa-courses-selector {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-md);
+        padding: var(--space-md);
+    }
+
+    .gpa-courses-options {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .gpa-course-count-btn {
+        width: 36px;
+        height: 36px;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .gpa-course-count-btn {
+        width: 32px;
+        height: 32px;
+        font-size: 0.85rem;
+    }
+
+    .gpa-courses-label {
+        font-size: 0.9rem;
+    }
+}
+
+/* الوضع الداكن للعناصر الجديدة */
+[data-theme="dark"] .gpa-dropdown-menu {
+    background: var(--bg-secondary);
+    border-color: var(--primary);
+}
+
+[data-theme="dark"] .gpa-dropdown-item:hover {
+    background: var(--primary);
+}
+
+[data-theme="dark"] .gpa-courses-selector {
+    background: var(--bg-secondary);
+}
+
+[data-theme="dark"] .gpa-course-count-btn {
+    background: var(--bg-tertiary);
+    border-color: var(--border-medium);
+}
+
+[data-theme="dark"] .gpa-course-count-btn:hover {
+    border-color: var(--primary);
+}

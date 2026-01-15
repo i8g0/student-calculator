@@ -35,6 +35,7 @@
 
     <link rel="stylesheet" href="styles.css?v=10">
     <link rel="stylesheet" href="schedule-styles.css">
+    <link rel="stylesheet" href="gpa-calculator-styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet"
         crossorigin="anonymous" referrerpolicy="no-referrer">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
@@ -402,11 +403,7 @@
             </a>
             <a href="#cumulative" class="menu-item">
                 <i class="fas fa-chart-line"></i>
-                <span>المعدل التراكمي</span>
-            </a>
-            <a href="#semester" class="menu-item">
-                <i class="fas fa-graduation-cap"></i>
-                <span>المعدل الفصلي</span>
+                <span>المعدل</span>
             </a>
             <a href="#analytics" class="menu-item">
                 <i class="fas fa-chart-pie"></i>
@@ -459,11 +456,7 @@
                         </button>
                         <button class="tab-btn" data-tab="cumulative">
                             <i class="fas fa-chart-line"></i>
-                            <span>المعدل التراكمي</span>
-                        </button>
-                        <button class="tab-btn" data-tab="semester">
-                            <i class="fas fa-graduation-cap"></i>
-                            <span>المعدل الفصلي</span>
+                            <span>المعدل</span>
                         </button>
                         <button class="tab-btn" data-tab="analytics">
                             <i class="fas fa-chart-pie"></i>
@@ -846,53 +839,123 @@
                     </div>
 
                     <div id="cumulative" class="tab-content">
-                        <div class="calculator-card">
-                            <div class="card-header">
-                                <div class="header-icon">
-                                    <i class="fas fa-chart-line"></i>
+                        <div class="gpa-table-container">
+                            <!-- عنوان الجدول الرئيسي -->
+                            <div class="gpa-table-header">
+                                <i class="fas fa-chart-line"></i>
+                                حساب المعدل
+                            </div>
+
+                            <!-- قسم الإعدادات العلوية -->
+                            <div class="gpa-settings-row">
+                                <!-- نوع المعدل -->
+                                <div class="gpa-type-selector">
+                                    <div class="gpa-type-label">نوع المعدل (GPA)</div>
+                                    <div class="gpa-type-options">
+                                        <label class="gpa-type-option">
+                                            <input type="radio" name="gpa-type" value="5" checked>
+                                            <span>من 5</span>
+                                        </label>
+                                        <label class="gpa-type-option">
+                                            <input type="radio" name="gpa-type" value="4">
+                                            <span>من 4</span>
+                                        </label>
+                                    </div>
                                 </div>
-                                <div class="header-content">
-                                    <h3>حاسبة المعدل التراكمي</h3>
-                                    <p>احسب معدلك التراكمي مع المواد الجديدة</p>
+
+                                <!-- عدد الساعات السابقة مع زر اختيار -->
+                                <div class="gpa-setting-group">
+                                    <div class="gpa-setting-label">عدد الساعات السابقة</div>
+                                    <div class="gpa-input-with-btn">
+                                        <input type="number" class="gpa-setting-input" id="gpa-prev-hours" min="0"
+                                            max="160" step="1" placeholder="0" value="">
+                                        <button type="button" class="gpa-dropdown-btn" id="gpa-hours-dropdown-btn"
+                                            title="اختر من القائمة">
+                                            <i class="fas fa-chevron-down"></i>
+                                        </button>
+                                        <div class="gpa-dropdown-menu" id="gpa-hours-dropdown">
+                                            <!-- سيتم إنشاء الخيارات بواسطة JavaScript -->
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- المعدل السابق -->
+                                <div class="gpa-setting-group">
+                                    <div class="gpa-setting-label">المعدل السابق</div>
+                                    <input type="number" class="gpa-setting-input" id="gpa-prev-gpa" min="0" max="5"
+                                        step="0.01" placeholder="0.00" value="">
                                 </div>
                             </div>
-                            <div class="card-body">
-                                <form id="cumulative-form" class="calculator-form">
-                                    <div class="form-row">
-                                        <div class="form-group">
-                                            <label for="prev-hours">
-                                                <i class="fas fa-clock"></i>
-                                                عدد الساعات السابقة
-                                            </label>
-                                            <input type="number" id="prev-hours" min="0" step="0.5" required>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="prev-gpa">
-                                                <i class="fas fa-chart-bar"></i>
-                                                المعدل السابق (من 5)
-                                            </label>
-                                            <input type="number" id="prev-gpa" min="0" max="5" step="0.01" required>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="cumulative-num">
-                                            <i class="fas fa-plus"></i>
-                                            عدد المواد الجديدة
-                                        </label>
-                                        <input type="number" id="cumulative-num" min="1" max="10" value="2" required>
-                                    </div>
-                                    <div id="cumulative-courses" class="courses-container"></div>
-                                    <button type="submit" class="submit-btn">
-                                        <i class="fas fa-calculator"></i>
-                                        <span>احسب المعدل التراكمي</span>
-                                    </button>
-                                </form>
-                                <div id="cumulative-result" class="result-container">
-                                    <div class="result-value">
-                                        <button class="export-btn" onclick="exportResult(this)"><i
-                                                class="fas fa-download"></i> تصدير/طباعة</button>
+
+                            <!-- اختيار عدد المواد -->
+                            <div class="gpa-courses-selector">
+                                <div class="gpa-courses-label">
+                                    <i class="fas fa-list-ol"></i>
+                                    عدد المواد:
+                                </div>
+                                <div class="gpa-courses-options" id="gpa-courses-options">
+                                    <!-- أزرار اختيار عدد المواد من 1 إلى 12 -->
+                                </div>
+                            </div>
+
+                            <!-- رأس الجدول -->
+                            <div class="gpa-table-columns-header">
+                                <div class="gpa-column-header"><i class="fas fa-check"></i></div>
+                                <div class="gpa-column-header">اسم المادة</div>
+                                <div class="gpa-column-header">الدرجة</div>
+                                <div class="gpa-column-header">عدد الساعات</div>
+                                <div class="gpa-column-header">التقدير</div>
+                            </div>
+
+                            <!-- صفوف المواد -->
+                            <div class="gpa-courses-body" id="gpa-courses-container">
+                                <!-- سيتم إنشاء الصفوف بواسطة JavaScript -->
+                            </div>
+
+                            <!-- زر الحساب -->
+                            <button type="button" class="gpa-calculate-btn" id="gpa-calculate-btn">
+                                <i class="fas fa-calculator"></i>
+                                <span>احسب المعدل</span>
+                            </button>
+
+                            <!-- قسم النتائج -->
+                            <div class="gpa-results-section" id="gpa-results-section" style="display: none;">
+                                <!-- صف نتائج المعدل -->
+                                <div class="gpa-results-row" style="background: var(--bg-tertiary);">
+                                    <div class="gpa-result-header-cell">عدد الساعات</div>
+                                    <div class="gpa-result-header-cell">النقاط</div>
+                                    <div class="gpa-result-header-cell">المعدل</div>
+                                </div>
+                                <div class="gpa-results-row">
+                                    <div class="gpa-result-value-cell" id="gpa-semester-hours">-</div>
+                                    <div class="gpa-result-value-cell" id="gpa-semester-points">-</div>
+                                    <div class="gpa-result-value-cell" id="gpa-semester-gpa">-</div>
+                                </div>
+
+                                <!-- صف المعدل التراكمي -->
+                                <div class="gpa-cumulative-row">
+                                    <div class="gpa-cumulative-header">المعدل التراكمي</div>
+                                    <div class="gpa-cumulative-value" id="gpa-cumulative-result">
+                                        <span id="gpa-cumulative-gpa">-</span>
+                                        <span class="gpa-grade-badge" id="gpa-cumulative-grade">-</span>
                                     </div>
                                 </div>
+                            </div>
+
+                            <!-- أزرار الإجراءات -->
+                            <div class="gpa-actions-row">
+                                <button type="button" class="gpa-action-btn" id="gpa-reset-btn">
+                                    <i class="fas fa-redo"></i>
+                                    <span>مسح الكل</span>
+                                </button>
+                                <button type="button" class="gpa-action-btn" id="gpa-add-row-btn">
+                                    <i class="fas fa-plus"></i>
+                                    <span>إضافة مادة</span>
+                                </button>
+                                <button type="button" class="gpa-action-btn primary" id="gpa-export-btn">
+                                    <i class="fas fa-download"></i>
+                                    <span>تصدير / طباعة</span>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -905,30 +968,31 @@
                                 </div>
                                 <div class="header-content">
                                     <h3>حاسبة المعدل الفصلي</h3>
-                                    <p>احسب معدل الفصل الحالي</p>
+                                    <p>تم دمج حاسبة المعدل الفصلي مع حاسبة المعدل التراكمي في أداة واحدة شاملة</p>
                                 </div>
                             </div>
-                            <div class="card-body">
-                                <form id="semester-form" class="calculator-form">
-                                    <div class="form-group">
-                                        <label for="semester-num">
-                                            <i class="fas fa-list"></i>
-                                            عدد المواد في الفصل
-                                        </label>
-                                        <input type="number" id="semester-num" min="1" max="10" value="2" required>
-                                    </div>
-                                    <div id="semester-courses" class="courses-container"></div>
-                                    <button type="submit" class="submit-btn">
-                                        <i class="fas fa-calculator"></i>
-                                        <span>احسب المعدل الفصلي</span>
-                                    </button>
-                                </form>
-                                <div id="semester-result" class="result-container">
-                                    <div class="result-value">
-                                        <button class="export-btn" onclick="exportResult(this)"><i
-                                                class="fas fa-download"></i> تصدير/طباعة</button>
-                                    </div>
+                            <div class="card-body" style="text-align: center; padding: var(--space-3xl);">
+                                <div style="margin-bottom: var(--space-xl);">
+                                    <i class="fas fa-info-circle"
+                                        style="font-size: 4rem; color: var(--primary); margin-bottom: var(--space-lg);"></i>
+                                    <h4
+                                        style="font-size: 1.5rem; color: var(--text-primary); margin-bottom: var(--space-md);">
+                                        تم تحديث الحاسبة!</h4>
+                                    <p
+                                        style="color: var(--text-secondary); font-size: 1.1rem; line-height: 1.8; max-width: 500px; margin: 0 auto;">
+                                        الآن يمكنك حساب <strong>المعدل الفصلي</strong> و <strong>المعدل
+                                            التراكمي</strong> معاً في حاسبة واحدة متطورة.
+                                        <br><br>
+                                        فقط اترك حقول "الساعات السابقة" و "النقاط السابقة" فارغة لحساب المعدل الفصلي
+                                        فقط.
+                                    </p>
                                 </div>
+                                <a href="#cumulative" class="submit-btn"
+                                    style="display: inline-flex; max-width: 300px; margin: 0 auto;"
+                                    onclick="document.querySelector('[data-tab=cumulative]').click();">
+                                    <i class="fas fa-arrow-left"></i>
+                                    <span>انتقل للحاسبة الجديدة</span>
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -1084,7 +1148,8 @@
 
     <script src="data.js"></script>
     <script src="scroll-effects.js"></script>
-    <script src="script.js?v=33"></script>
+    <script src="gpa-calculator.js"></script>
+    <script src="script.js?v=34"></script>
 </body>
 
 </html>
