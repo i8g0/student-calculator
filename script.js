@@ -1864,7 +1864,7 @@ function addCourseSimple() {
 
 
     const finalAcademicHours = academicHours || 3;
-    const finalWeeks = weeks || 16;
+    const finalWeeks = weeks || 15;
     const finalLecturesCount = lecturesCount || 2;
 
 
