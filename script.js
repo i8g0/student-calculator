@@ -4038,7 +4038,7 @@ function renderNewAbsenceCourses() {
 
 function createCourseCard(course) {
 
-    const totalHours = course.hoursPerWeek * 16;
+    const totalHours = course.hoursPerWeek * 15;
     const absenceLimit = totalHours * 0.25;
     const remainingHours = Math.max(0, absenceLimit - course.currentAbsenceHours);
 
@@ -4314,7 +4314,7 @@ function checkAbsenceAlerts(courseId, oldPercentage = null) {
     if (!course) return;
 
 
-    const totalHours = course.hoursPerWeek * 16;
+    const totalHours = course.hoursPerWeek * 15;
     const absencePercentage = totalHours > 0 ? (course.currentAbsenceHours / totalHours) * 100 : 0;
 
 
@@ -4362,7 +4362,7 @@ function updateAbsenceHours(courseId, change) {
     course.currentAbsenceHours = newValue;
 
 
-    const totalHours = course.hoursPerWeek * 16;
+    const totalHours = course.hoursPerWeek * 15;
     const oldPercentage = totalHours > 0 ? (oldValue / totalHours) * 100 : 0;
     const newPercentage = totalHours > 0 ? (newValue / totalHours) * 100 : 0;
 
@@ -4394,7 +4394,7 @@ function updateAbsenceHours(courseId, change) {
         if (!currentCourse) return;
 
 
-        const currentTotalHours = currentCourse.hoursPerWeek * 16;
+        const currentTotalHours = currentCourse.hoursPerWeek * 15;
         const currentAbsencePercent = currentTotalHours > 0 ? (currentCourse.currentAbsenceHours / currentTotalHours) * 100 : 0;
         const currentPercentRounded = Math.round(currentAbsencePercent * 1000) / 1000;
 
@@ -4694,7 +4694,7 @@ function selectCourse(course) {
 
     setTimeout(() => {
 
-        const absencePercentagePerHour = 6.25 / course.hours;
+        const absencePercentagePerHour = 6.67 / course.hours;
 
 
         const newCourse = {
