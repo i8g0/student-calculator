@@ -3936,7 +3936,10 @@ function handleNewAbsenceFormSubmit(e) {
 
 
 
-    const absencePercentagePerHour = 6.25 / hoursPerWeek;
+    // حساب نسبة غياب الساعة الواحدة: (1 / مجموع الساعات) × 100
+    // مجموع الساعات = ساعات الأسبوع × 15 أسبوع
+    const totalHoursInSemester = hoursPerWeek * 15;
+    const absencePercentagePerHour = 100 / totalHoursInSemester;
 
 
     const course = {
