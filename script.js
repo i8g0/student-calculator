@@ -77,7 +77,35 @@ function initializeApp() {
     initScrollProgress();
     initParallax();
 
-    showToast('مرحباً بك في حاسبة الريت الذكية! 🚀', 'info');
+    initMotivationalQuotes();
+}
+
+function initMotivationalQuotes() {
+    const quotes = [
+        "المعدل ليس مجرد أرقام، بل هو مقياس لالتزامك وصبرك وسعيك المستمر نحو التميز. استمر في المحاولة ولا تستسلم! 💪",
+        "الغياب البسيط قد يتراكم ويحرمك من متعة الفهم والدرجات الكاملة. احرص على حضورك، فالحاضر يصنع المستقبل. 🎓",
+        "الأهداف الكبيرة تبدأ بخطوات صغيرة ومستمرة. تنظيمك لجدولك الدراسي اليوم هو أول خطوات التفوق. 📅",
+        "كل ساعة تقضيها في التعلم والتطوير هي استثمار حقيقي في نفسك. لا تبخل على مستقبلك بالجهد والتركيز. 🧠",
+        "عندما تشعر بالتعب، تذكر روعة لحظة الوصول والنجاح. تعب اليوم سيزول ويبقى الأثر الجميل والإنجاز العظيم. 🏆",
+        "الفشل ليس نهاية الطريق، بل هو فرصة لتبدأ من جديد بذكاء أكبر وتجربة أثرى. تفاءل وواصل كفاحك. 🌟",
+        "تنظيم الوقت هو نصف النجاح. ساعة واحدة من التخطيط المسبق توفر عليك ساعات من العشوائية والقلق والتوتر. ⏳",
+        "أنت قادر على تحقيق المستحيل، طالما أنك تؤمن بنفسك وتستمر في السعي والدعاء. ثق بقدراتك اللامحدودة! ⚡",
+        "الالتزام هو الجسر الذي يربط بين أهدافك وإنجازاتك. كن ملتزماً ومنضبطاً، وستصل حتماً إلى قمتك. 🎯"
+    ];
+
+    // النصيحة الأولى القوية جداً التي تظهر عند الدخول مباشرة
+    const firstStrongQuote = "سر النجاح هو البدء الآن! خطوتك البسيطة والملتزمة اليوم تبني مستقبلك العظيم غداً. لا تؤجل شغفك وأحلامك، ابدأ بكتابة قصة نجاحك اليوم! 🚀";
+
+    setTimeout(() => {
+        showToast(firstStrongQuote, 'motivation', 8000);
+    }, 3500); // تظهر بعد 3.5 ثوانٍ من فتح الصفحة
+
+    // عرض نصيحة عشوائية كل 5 دقائق
+    setInterval(() => {
+        const randomIndex = Math.floor(Math.random() * quotes.length);
+        const selectedQuote = quotes[randomIndex];
+        showToast(selectedQuote, 'motivation', 7000);
+    }, 300000); // 300,000 مللي ثانية = 5 دقائق
 }
 
 
@@ -1055,7 +1083,8 @@ function getToastIcon(type) {
         success: 'fas fa-check',
         error: 'fas fa-times',
         warning: 'fas fa-exclamation-triangle',
-        info: 'fas fa-info'
+        info: 'fas fa-info',
+        motivation: 'fas fa-lightbulb'
     };
     return icons[type] || icons.info;
 }
@@ -1065,7 +1094,8 @@ function getToastTitle(type) {
         success: 'نجح!',
         error: 'خطأ!',
         warning: 'تحذير!',
-        info: 'معلومات'
+        info: 'معلومات',
+        motivation: 'جرعة تحفيزية 💡'
     };
     return titles[type] || titles.info;
 }
@@ -4480,7 +4510,7 @@ function createCourseSearchField() {
     // Group courses by college
     const ccseMajors = ['مشترك', 'علوم الحاسب', 'نظم المعلومات', 'هندسة البرمجيات', 'هندسة الحاسب'];
     const engMajors = ['الهندسة الصناعية', 'الهندسة الكهربائية', 'الهندسة المدنية', 'الهندسة الميكانيكية'];
-    
+
     const ccseCount = coursesDatabase.filter(c => ccseMajors.includes(c.major)).length;
     const engCount = coursesDatabase.filter(c => engMajors.includes(c.major)).length;
 
