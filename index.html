@@ -341,7 +341,7 @@
     <div id="loading-screen" class="loading-screen">
         <div class="loading-content">
             <div class="loading-logo">
-                <i class="fas fa-bolt"></i>
+                <i class="fas fa-graduation-cap"></i>
             </div>
             <div class="loading-spinner"></div>
             <h3>حاسبة الطالب</h3>
@@ -353,7 +353,7 @@
         <div class="nav-container">
             <div class="nav-brand">
                 <div class="brand-logo">
-                    <i class="fas fa-bolt"></i>
+                    <i class="fas fa-graduation-cap"></i>
                 </div>
                 <div class="brand-text">
                     <h1>حاسبة الطالب</h1>
@@ -1067,7 +1067,7 @@
                         <!-- الحاسبة: حاسبة الإنقاذ ومحاكاة المعدل -->
                         <div class="calculator-card">
                             <div class="card-header">
-                                <div class="header-icon" style="background: var(--gradient-success, linear-gradient(90deg, #34c759 0%, #1976d2 100%));">
+                                <div class="header-icon">
                                     <i class="fas fa-life-ring"></i>
                                 </div>
                                 <div class="header-content">
@@ -1107,6 +1107,9 @@
                                                 المعدل التراكمي المستهدف
                                             </label>
                                             <input type="number" id="sim-target-gpa" min="0" max="5" step="0.01" placeholder="مثال: 3.90" required>
+                                            <div id="sim-target-presets" style="margin-top: var(--space-xs); display: flex; gap: 6px; flex-wrap: wrap;">
+                                                <!-- يتم إنشاؤها برمجياً بواسطة JS لتناسب المقياس المختار (4 أو 5) -->
+                                            </div>
                                         </div>
                                     </div>
                                     <button type="submit" class="submit-btn">
@@ -1120,6 +1123,15 @@
                                     <!-- النتيجة الأساسية -->
                                     <div class="simulation-status-card" style="padding: var(--space-md); border-radius: var(--radius-lg); margin-bottom: var(--space-md); text-align: center;">
                                         <!-- تعبأ بالـ JS -->
+                                    </div>
+
+                                    <!-- مقارنة الساعات الأكاديمية البديلة -->
+                                    <div class="hours-comparison-section" style="margin-bottom: var(--space-lg); padding: var(--space-md); background: rgba(255,255,255,0.03); border-radius: var(--radius-lg); border: 1px solid var(--border-light);">
+                                        <h4 style="margin-bottom: var(--space-sm); color: var(--text-primary); font-size: 1.05rem;"><i class="fas fa-columns" style="color: var(--primary); margin-left: 6px;"></i>مقارنة الجهد حسب الساعات المسجلة هذا الترم:</h4>
+                                        <p style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: var(--space-md);">توضح لك الدرجة المطلوبة فصلياً إذا سجلت عدد ساعات دراسية مختلفة لتعرف الخيار الأسهل لك:</p>
+                                        <div class="hours-comparison-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: var(--space-sm);">
+                                            <!-- تعبأ بالـ JS -->
+                                        </div>
                                     </div>
                                     
                                     <!-- جدول السيناريوهات -->
@@ -1190,7 +1202,7 @@
                 <div class="footer-col brand-col">
                     <div class="footer-brand">
                         <div class="brand-logo">
-                            <i class="fas fa-bolt"></i>
+                            <i class="fas fa-graduation-cap"></i>
                         </div>
                         <div class="brand-text">
                             <h3>حاسبة الطالب</h3>

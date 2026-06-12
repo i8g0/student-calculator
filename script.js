@@ -380,6 +380,83 @@ function initForms() {
     if (gpaSimulatorForm) {
         gpaSimulatorForm.addEventListener('submit', handleGpaSimulation);
     }
+
+    const gpaTypeRadios = document.querySelectorAll('input[name="gpa-type"]');
+    gpaTypeRadios.forEach(radio => {
+        radio.addEventListener('change', () => {
+            initGpaSimulatorPresets();
+        });
+    });
+
+    initGpaSimulatorPresets();
+}
+
+function initGpaSimulatorPresets() {
+    const presetsContainer = document.getElementById('sim-target-presets');
+    if (!presetsContainer) return;
+
+    let scale = 5;
+    const checkedType = document.querySelector('input[name="gpa-type"]:checked');
+    if (checkedType) {
+        scale = parseInt(checkedType.value);
+    }
+
+    const targetInput = document.getElementById('sim-target-gpa');
+    if (!targetInput) return;
+
+    const presets = scale === 5 ? [
+        { label: 'امتياز (4.75)', value: 4.75 },
+        { label: 'جيد جداً مرتفع (4.50)', value: 4.50 },
+        { label: 'جيد جداً (4.00)', value: 4.00 },
+        { label: 'جيد مرتفع (3.75)', value: 3.75 }
+    ] : [
+        { label: 'امتياز (3.75)', value: 3.75 },
+        { label: 'جيد جداً مرتفع (3.50)', value: 3.50 },
+        { label: 'جيد جداً (3.00)', value: 3.00 },
+        { label: 'جيد مرتفع (2.50)', value: 2.50 }
+    ];
+
+    presetsContainer.innerHTML = '';
+    presets.forEach(p => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'preset-btn';
+        btn.style.cssText = `
+            padding: 4px 8px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-light);
+            background: var(--bg-secondary);
+            font-size: 0.8rem;
+            cursor: pointer;
+            color: var(--text-primary);
+            transition: all 0.2s ease;
+        `;
+        btn.textContent = p.label;
+        btn.addEventListener('click', () => {
+            targetInput.value = p.value;
+            presetsContainer.querySelectorAll('.preset-btn').forEach(b => {
+                b.style.borderColor = 'var(--border-light)';
+                b.style.background = 'var(--bg-secondary)';
+                b.style.color = 'var(--text-primary)';
+            });
+            btn.style.borderColor = 'var(--primary)';
+            btn.style.background = 'var(--gradient-primary)';
+            btn.style.color = '#ffffff';
+        });
+        
+        btn.addEventListener('mouseenter', () => {
+            if (targetInput.value != p.value) {
+                btn.style.borderColor = 'var(--primary)';
+            }
+        });
+        btn.addEventListener('mouseleave', () => {
+            if (targetInput.value != p.value) {
+                btn.style.borderColor = 'var(--border-light)';
+            }
+        });
+
+        presetsContainer.appendChild(btn);
+    });
 }
 
 
@@ -759,12 +836,68 @@ function handleGpaSimulation(e) {
     statusCard.className = 'simulation-status-card';
     if (requiredGpa > scale) {
         statusCard.classList.add('danger');
+        
+        // Generate Future Plan or Graduation Check
+        let impossibleDetailHtml = '';
+        if (prevHours < 90) {
+            if (targetGpa >= scale) {
+                impossibleDetailHtml = `
+                    <div style="margin-top: var(--space-md); padding: var(--space-sm); background: rgba(239, 68, 68, 0.1); border-radius: var(--radius-md); font-size: 0.85rem; color: var(--error);">
+                        المعدل المستهدف يساوي أو يتجاوز الحد الأقصى للمعدل، ولا يمكن تحقيقه أبداً.
+                    </div>
+                `;
+            } else {
+                const hoursAtPerfect = ((targetGpa - currentGpa) * prevHours) / (scale - targetGpa);
+                const termsPerfect = Math.ceil(hoursAtPerfect / 15);
+                const realisticTermGpa = scale === 5 ? 4.75 : 3.75;
+                const hoursAtRealistic = ((targetGpa - currentGpa) * prevHours) / (realisticTermGpa - targetGpa);
+                
+                let realisticPath = '';
+                if (targetGpa < realisticTermGpa && hoursAtRealistic > 0) {
+                    const termsRealistic = Math.ceil(hoursAtRealistic / 15);
+                    realisticPath = `<br>• أو دراسة <strong>${Math.round(hoursAtRealistic)} ساعة</strong> (حوالي <strong>${termsRealistic}</strong> فصول) بمعدل فصلي <strong>${realisticTermGpa.toFixed(2)}</strong>.`;
+                }
+
+                // حساب خطة التعويض للترم القادم
+                let nextTermPath = '';
+                const requiredGpaAcrossTwo = ((targetGpa * (prevHours + 2 * termHours)) - (currentGpa * prevHours)) / (2 * termHours);
+                if (requiredGpaAcrossTwo <= scale && requiredGpaAcrossTwo > 0) {
+                    nextTermPath = `<br>• أو تحقيق معدل فصلي لا يقل عن <strong>${requiredGpaAcrossTwo.toFixed(2)}</strong> في هذا الترم والترم القادم (بافتراض تسجيل <strong>${termHours}</strong> ساعة في كل ترم).`;
+                }
+
+                impossibleDetailHtml = `
+                    <div style="margin-top: var(--space-md); padding: var(--space-md); background: rgba(138, 43, 226, 0.08); border-radius: var(--radius-md); text-align: right; border: 1px solid rgba(138, 43, 226, 0.2); font-size: 0.9rem; line-height: 1.6; color: var(--text-primary);">
+                        <h5 style="color: var(--primary); margin-bottom: var(--space-xs); font-size: 0.95rem;"><i class="fas fa-magic"></i> خطة التعويض للأترام القادمة:</h5>
+                        بما أنه لا يمكنك تحقيق الهدف هذا الترم، يمكنك تعويضه مستقبلاً بالخطوات التالية:
+                        <div style="margin-top: var(--space-xs);">
+                            • دراسة <strong>${Math.round(hoursAtPerfect)} ساعة</strong> (حوالي <strong>${termsPerfect}</strong> فصول دراسية) بمعدل فصلي كامل <strong>${scale.toFixed(2)}</strong>.
+                            ${realisticPath}
+                            ${nextTermPath}
+                        </div>
+                    </div>
+                `;
+            }
+        } else {
+            impossibleDetailHtml = `
+                <div style="margin-top: var(--space-md); padding: var(--space-md); background: rgba(239, 68, 68, 0.06); border-radius: var(--radius-md); text-align: right; border: 1px solid rgba(239, 68, 68, 0.2);">
+                    <h5 style="color: var(--error); margin-bottom: var(--space-xs); font-size: 0.95rem;"><i class="fas fa-graduation-cap"></i> أنت قريب من التخرج!</h5>
+                    <p style="font-size: 0.85rem; margin-bottom: var(--space-sm); color: var(--text-secondary);">بما أن عدد ساعاتك المجتازة كبير (${prevHours} ساعة) وقريب من التخرج، يرجى إدخال الساعات المتبقية لك بالكامل حتى التخرج لنرى إذا كان هناك فرصة للتعويض:</p>
+                    <div style="display: flex; gap: var(--space-sm); align-items: center; flex-wrap: wrap;">
+                        <input type="number" id="sim-remaining-graduation-hours" placeholder="الساعات المتبقية للتخرج" style="max-width: 220px; padding: 8px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-light); background: var(--bg-secondary); color: var(--text-primary); font-size: 0.85rem;">
+                        <button type="button" id="btn-calculate-graduation-rescue" class="submit-btn" style="width: auto; padding: 8px 16px; margin: 0; font-size: 0.85rem;">احسب فرصة الإنقاذ</button>
+                    </div>
+                    <div id="graduation-rescue-result" style="margin-top: var(--space-sm); font-size: 0.9rem; font-weight: 700; line-height: 1.5; color: var(--text-primary);"></div>
+                </div>
+            `;
+        }
+
         statusCard.innerHTML = `
             <h3>غير ممكن هذا الترم ❌</h3>
             <p>للوصول للمعدل التراكمي المستهدف <strong>${targetGpa.toFixed(2)}</strong> تحتاج لمعدل فصلي <strong>${requiredGpa.toFixed(2)}</strong>.</p>
             <p>أقصى معدل تراكمي يمكنك الوصول إليه هو <strong>${maxGpa.toFixed(2)}</strong> في حال حصلت على <strong>${scale.toFixed(2)}</strong> فصلي.</p>
-            <div style="margin-top: var(--space-md); padding: var(--space-sm); background: rgba(239, 68, 68, 0.1); border-radius: var(--radius-md); font-size: 0.85rem; color: var(--error);">
-                <i class="fas fa-exclamation-triangle" style="margin-left: 5px;"></i>
+            ${impossibleDetailHtml}
+            <div style="margin-top: var(--space-sm); padding: var(--space-xs); font-size: 0.82rem; color: var(--text-muted); text-align: center;">
+                <i class="fas fa-exclamation-triangle" style="margin-left: 5px; font-size: 0.8rem;"></i>
                 ملاحظة: هذا الحساب يفترض عدم وجود مواد مكررة (إعادة مقرر).
             </div>
         `;
@@ -804,6 +937,51 @@ function handleGpaSimulation(e) {
                 ملاحظة: هذا الحساب يفترض عدم وجود مواد مكررة (إعادة مقرر).
             </div>
         `;
+    }
+
+    // Populate Hours Comparison Grid
+    const comparisonGrid = resultContainer.querySelector('.hours-comparison-grid');
+    if (comparisonGrid) {
+        let hoursHtml = '';
+        const hoursOptions = [12, 15, 18];
+        
+        if (!hoursOptions.includes(termHours) && termHours > 0) {
+            hoursOptions.push(termHours);
+            hoursOptions.sort((a, b) => a - b);
+        }
+
+        hoursOptions.forEach(hoursOption => {
+            const totalHoursOpt = prevHours + hoursOption;
+            const reqGpaOpt = ((targetGpa * totalHoursOpt) - (currentGpa * prevHours)) / hoursOption;
+            let statusText = '';
+            let borderStyle = 'border: 1px solid var(--border-light);';
+            let gpaColor = 'var(--text-primary)';
+            
+            if (reqGpaOpt > scale) {
+                statusText = 'غير ممكن ❌';
+                gpaColor = 'var(--error)';
+            } else if (reqGpaOpt <= 0) {
+                statusText = 'مضمون 🎉';
+                gpaColor = 'var(--success)';
+            } else {
+                statusText = `${reqGpaOpt.toFixed(2)} من ${scale}`;
+                gpaColor = 'var(--primary)';
+            }
+            
+            const isCurrent = hoursOption === termHours;
+            if (isCurrent) {
+                borderStyle = 'border: 1.5px solid var(--primary); background: rgba(138, 43, 226, 0.04);';
+            }
+            
+            hoursHtml += `
+                <div class="hours-card" style="padding: var(--space-md); border-radius: var(--radius-md); text-align: center; transition: all 0.3s ease; ${borderStyle}">
+                    <div style="font-size: 0.8rem; color: var(--text-secondary); font-weight: 700;">${hoursOption} ساعة فصلي</div>
+                    <div style="font-size: 1.15rem; font-weight: 800; color: ${gpaColor}; margin-top: var(--space-xs);">${statusText}</div>
+                    ${isCurrent ? '<small style="color: var(--primary); font-weight: 700; display: block; margin-top: 4px;">(اختيارك الحالي)</small>' : ''}
+                </div>
+            `;
+        });
+        comparisonGrid.innerHTML = hoursHtml;
     }
 
     const scenarios = scale === 5 ? [
@@ -863,6 +1041,41 @@ function handleGpaSimulation(e) {
     resultContainer.style.display = 'block';
     resultContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     showToast('تم إجراء المحاكاة بنجاح! 🚀', 'success');
+
+    // Attach Event Listener for Graduation Rescue (if present)
+    const gradRescueBtn = document.getElementById('btn-calculate-graduation-rescue');
+    if (gradRescueBtn) {
+        gradRescueBtn.addEventListener('click', () => {
+            const remHoursInput = document.getElementById('sim-remaining-graduation-hours');
+            const remHours = parseFloat(remHoursInput.value);
+            const gradResultDiv = document.getElementById('graduation-rescue-result');
+            
+            if (isNaN(remHours) || remHours <= 0) {
+                showToast('يرجى إدخال عدد ساعات صحيح', 'error');
+                return;
+            }
+            
+            const totalGradHours = prevHours + remHours;
+            const reqGpaGrad = ((targetGpa * totalGradHours) - (currentGpa * prevHours)) / remHours;
+            const maxGradGpa = ((currentGpa * prevHours) + (scale * remHours)) / totalGradHours;
+            
+            if (reqGpaGrad > scale) {
+                gradResultDiv.innerHTML = `
+                    <div style="margin-top: var(--space-sm); color: var(--error);">
+                        <i class="fas fa-times-circle" style="margin-left: 5px;"></i> غير ممكن للأسف ❌<br>
+                        حتى لو حصلت على معدل كامل (${scale.toFixed(2)}) في كل الساعات المتبقية (${remHours} ساعة)، فإن أقصى معدل تخرج يمكنك الوصول إليه هو <strong>${maxGradGpa.toFixed(2)}</strong>.
+                    </div>
+                `;
+            } else {
+                gradResultDiv.innerHTML = `
+                    <div style="margin-top: var(--space-sm); color: var(--success);">
+                        <i class="fas fa-check-circle" style="margin-left: 5px;"></i> ممكن إن شاء الله! ✅<br>
+                        تحتاج إلى معدل فصلي تراكمي لا يقل عن <strong>${reqGpaGrad.toFixed(2)}</strong> في كل الساعات المتبقية لك (${remHours} ساعة) لتتخرج بمعدل <strong>${targetGpa.toFixed(2)}</strong>.
+                    </div>
+                `;
+            }
+        });
+    }
 
     saveCalculation({
         type: 'gpa-simulation',
