@@ -688,6 +688,74 @@ function handleGpaSimulation(e) {
     const statusCard = resultContainer.querySelector('.simulation-status-card');
     const scenariosTable = resultContainer.querySelector('.simulation-scenarios-table');
 
+    // Helper for Grade Recommendations
+    function getGradesRecommendation(requiredGpaVal, scaleVal, termHoursVal) {
+        const grades5 = [
+            { label: 'A+', points: 5.0 },
+            { label: 'A', points: 4.75 },
+            { label: 'B+', points: 4.5 },
+            { label: 'B', points: 4.0 },
+            { label: 'C+', points: 3.5 },
+            { label: 'C', points: 3.0 },
+            { label: 'D+', points: 2.5 },
+            { label: 'D', points: 2.0 }
+        ];
+
+        const grades4 = [
+            { label: 'A+', points: 4.0 },
+            { label: 'A', points: 3.75 },
+            { label: 'B+', points: 3.5 },
+            { label: 'B', points: 3.0 },
+            { label: 'C+', points: 2.5 },
+            { label: 'C', points: 2.0 },
+            { label: 'D+', points: 1.5 },
+            { label: 'D', points: 1.0 }
+        ];
+
+        const grades = scaleVal === 5 ? grades5 : grades4;
+        const numCourses = Math.max(2, Math.round(termHoursVal / 3));
+        
+        let courseGrades = Array(numCourses).fill(grades[0]);
+        
+        for (let gradeIdx = 1; gradeIdx < grades.length; gradeIdx++) {
+            let success = false;
+            for (let courseIdx = 0; courseIdx < numCourses; courseIdx++) {
+                const prevGrade = courseGrades[courseIdx];
+                courseGrades[courseIdx] = grades[gradeIdx];
+                
+                const sumPoints = courseGrades.reduce((sum, g) => sum + g.points, 0);
+                const avg = sumPoints / numCourses;
+                
+                if (avg >= requiredGpaVal) {
+                    success = true;
+                } else {
+                    courseGrades[courseIdx] = prevGrade;
+                    break;
+                }
+            }
+            if (!success) {
+                break;
+            }
+        }
+        
+        const counts = {};
+        courseGrades.forEach(g => {
+            counts[g.label] = (counts[g.label] || 0) + 1;
+        });
+        
+        const parts = [];
+        grades.forEach(g => {
+            if (counts[g.label]) {
+                parts.push(`<strong>${counts[g.label]}</strong> مواد بتقدير <strong style="color: var(--primary);">${g.label}</strong>`);
+            }
+        });
+        
+        return {
+            numCourses,
+            text: parts.join(' و ')
+        };
+    }
+
     statusCard.className = 'simulation-status-card';
     if (requiredGpa > scale) {
         statusCard.classList.add('danger');
@@ -695,6 +763,10 @@ function handleGpaSimulation(e) {
             <h3>غير ممكن هذا الترم ❌</h3>
             <p>للوصول للمعدل التراكمي المستهدف <strong>${targetGpa.toFixed(2)}</strong> تحتاج لمعدل فصلي <strong>${requiredGpa.toFixed(2)}</strong>.</p>
             <p>أقصى معدل تراكمي يمكنك الوصول إليه هو <strong>${maxGpa.toFixed(2)}</strong> في حال حصلت على <strong>${scale.toFixed(2)}</strong> فصلي.</p>
+            <div style="margin-top: var(--space-md); padding: var(--space-sm); background: rgba(239, 68, 68, 0.1); border-radius: var(--radius-md); font-size: 0.85rem; color: var(--error);">
+                <i class="fas fa-exclamation-triangle" style="margin-left: 5px;"></i>
+                ملاحظة: هذا الحساب يفترض عدم وجود مواد مكررة (إعادة مقرر).
+            </div>
         `;
     } else if (requiredGpa <= 0) {
         statusCard.classList.add('success');
@@ -702,18 +774,64 @@ function handleGpaSimulation(e) {
             <h3>مضمون بالكامل 🎉</h3>
             <p>معدلك المستهدف <strong>${targetGpa.toFixed(2)}</strong> مضمون للتحقيق في كل الحالات.</p>
             <p>حتى لو حصلت على معدل فصلي <strong>0.00</strong>، سيكون تراكميك الجديد <strong>${minGpa.toFixed(2)}</strong>.</p>
+            <div style="margin-top: var(--space-md); padding: var(--space-sm); background: rgba(52, 199, 89, 0.1); border-radius: var(--radius-md); font-size: 0.85rem; color: var(--success);">
+                <i class="fas fa-exclamation-triangle" style="margin-left: 5px;"></i>
+                ملاحظة: هذا الحساب يفترض عدم وجود مواد مكررة (إعادة مقرر).
+            </div>
         `;
     } else {
         const isHighEffort = requiredGpa >= (scale - 0.5);
         statusCard.classList.add(isHighEffort ? 'warning' : 'success');
+        
+        const rec = getGradesRecommendation(requiredGpa, scale, termHours);
+        
         statusCard.innerHTML = `
             <h3>ممكن بتركيزك 💪</h3>
             <p>لتحقيق هدفك (${targetGpa.toFixed(2)})، تحتاج إلى معدل فصلي لا يقل عن <strong>${requiredGpa.toFixed(2)} من ${scale}</strong>.</p>
             <p>أقصى معدل تراكمي يمكنك الوصول إليه هو <strong>${maxGpa.toFixed(2)}</strong>.</p>
+            
+            <div style="margin-top: var(--space-md); padding: var(--space-md); background: rgba(255,255,255,0.06); border-radius: var(--radius-md); font-size: 0.95rem; line-height: 1.6; text-align: right; border: 1px solid var(--border-light);">
+                <i class="fas fa-info-circle" style="color: var(--primary); margin-left: 6px;"></i>
+                <strong>كيف تحقق هذا المعدل؟</strong><br>
+                بافتراض أن لديك <strong>${rec.numCourses}</strong> مواد هذا الترم (بمتوسط 3 ساعات لكل منها)، يمكنك الحصول على:
+                <div style="margin-top: var(--space-xs); font-size: 1.05rem; color: var(--text-primary); font-weight: 700;">
+                    ${rec.text}
+                </div>
+            </div>
+
+            <div style="margin-top: var(--space-sm); padding: var(--space-xs); font-size: 0.82rem; color: var(--text-muted); text-align: center;">
+                <i class="fas fa-exclamation-triangle" style="margin-left: 5px; font-size: 0.8rem;"></i>
+                ملاحظة: هذا الحساب يفترض عدم وجود مواد مكررة (إعادة مقرر).
+            </div>
         `;
     }
 
-    const scenarios = scale === 5 ? [5.0, 4.75, 4.5, 4.0, 3.5, 3.0, 2.0] : [4.0, 3.75, 3.5, 3.0, 2.5, 2.0, 1.0];
+    const scenarios = scale === 5 ? [
+        { gpa: 5.00, desc: 'A+ في جميع المواد' },
+        { gpa: 4.90, desc: 'معدل فصلي ممتاز مرتفع' },
+        { gpa: 4.75, desc: 'A في جميع المواد' },
+        { gpa: 4.60, desc: 'معدل فصلي جيد جداً مرتفع' },
+        { gpa: 4.50, desc: 'B+ في جميع المواد' },
+        { gpa: 4.25, desc: 'معدل فصلي جيد جداً' },
+        { gpa: 4.00, desc: 'B في جميع المواد' },
+        { gpa: 3.75, desc: 'معدل فصلي جيد مرتفع' },
+        { gpa: 3.50, desc: 'C+ في جميع المواد' },
+        { gpa: 3.00, desc: 'C في جميع المواد' },
+        { gpa: 2.00, desc: 'D في جميع المواد' }
+    ] : [
+        { gpa: 4.00, desc: 'A+ في جميع المواد' },
+        { gpa: 3.90, desc: 'معدل فصلي ممتاز مرتفع' },
+        { gpa: 3.75, desc: 'A في جميع المواد' },
+        { gpa: 3.60, desc: 'معدل فصلي جيد جداً مرتفع' },
+        { gpa: 3.50, desc: 'B+ في جميع المواد' },
+        { gpa: 3.25, desc: 'معدل فصلي جيد جداً' },
+        { gpa: 3.00, desc: 'B في جميع المواد' },
+        { gpa: 2.75, desc: 'معدل فصلي جيد مرتفع' },
+        { gpa: 2.50, desc: 'C+ في جميع المواد' },
+        { gpa: 2.00, desc: 'C في جميع المواد' },
+        { gpa: 1.00, desc: 'D في جميع المواد' }
+    ];
+
     let scenarioHtml = `
         <div class="scenario-row header">
             <div class="scenario-cell">المعدل الفصلي المفترض</div>
@@ -721,15 +839,18 @@ function handleGpaSimulation(e) {
         </div>
     `;
 
-    scenarios.forEach(semGpa => {
-        const newGpa = ((currentGpa * prevHours) + (semGpa * termHours)) / totalHours;
+    scenarios.forEach(item => {
+        const newGpa = ((currentGpa * prevHours) + (item.gpa * termHours)) / totalHours;
         const achieved = newGpa >= targetGpa;
         const statusText = achieved ? 'يحقق الهدف ✅' : 'لا يحقق الهدف ❌';
         const statusClass = achieved ? 'guaranteed' : 'impossible';
         
         scenarioHtml += `
             <div class="scenario-row">
-                <div class="scenario-cell">${semGpa.toFixed(2)} من ${scale}</div>
+                <div class="scenario-cell" style="display: flex; flex-direction: column; gap: 2px;">
+                    <span style="font-weight: 700; color: var(--text-primary);">${item.gpa.toFixed(2)} من ${scale}</span>
+                    <small style="color: var(--text-muted, #64748b); font-size: 0.78rem;">(${item.desc})</small>
+                </div>
                 <div class="scenario-cell" style="text-align: left; font-weight: 600;">
                     <span class="${statusClass}">${newGpa.toFixed(2)}</span>
                     <small style="margin-right: 8px; color: var(--text-muted, #64748b); font-size: 0.8rem;">(${statusText})</small>
