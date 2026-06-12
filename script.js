@@ -381,6 +381,11 @@ function initForms() {
         gpaSimulatorForm.addEventListener('submit', handleGpaSimulation);
     }
 
+    const gpaSimulatorBtn = document.getElementById('gpa-simulator-btn');
+    if (gpaSimulatorBtn) {
+        gpaSimulatorBtn.addEventListener('click', handleGpaSimulation);
+    }
+
     const gpaTypeRadios = document.querySelectorAll('input[name="gpa-type"]');
     gpaTypeRadios.forEach(radio => {
         radio.addEventListener('change', () => {
