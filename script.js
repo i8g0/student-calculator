@@ -769,6 +769,12 @@ function handleGpaSimulation(e) {
         return;
     }
 
+    const isMajorHoursAction = e && e.target && e.target.id === 'gpa-major-hours-btn';
+    if (isMajorHoursAction && (isNaN(totalMajorHours) || totalMajorHours <= 0)) {
+        showToast('أدخل مجموع الساعات ثم اضغط زر أضف توقع التخرج', 'error');
+        return;
+    }
+
     if (!isNaN(totalMajorHours) && totalMajorHours < prevHours + termHours) {
         showToast(`الرجاء إدخال مجموع ساعات تخصص صحيح لا يقل عن ${prevHours + termHours} ساعة`, 'error');
         return;
@@ -781,6 +787,7 @@ function handleGpaSimulation(e) {
     const projectedAfterCurrentTerm = ((currentGpa * prevHours) + (currentGpa * termHours)) / totalHours;
     let graduationSummaryHtml = '';
 
+    let majorHoursSummaryHtml = '';
     if (!isNaN(totalMajorHours) && totalMajorHours > 0) {
         const remainingMajorHours = totalMajorHours - prevHours;
         const requiredFinalGpa = ((targetGpa * totalMajorHours) - (currentGpa * prevHours)) / remainingMajorHours;
@@ -793,6 +800,18 @@ function handleGpaSimulation(e) {
                 <p>المعدل المتوقع بعد هذا الترم إذا حافظت على معدل الترم الحالي (${currentGpa.toFixed(2)}) هو <strong>${projectedAfterCurrentTerm.toFixed(2)}</strong>.</p>
                 <p>أقصى معدل نهائي ممكن عند الحصول على كامل النقاط في الساعات المتبقية هو <strong>${maxPossibleGraduationGpa.toFixed(2)}</strong>.</p>
                 <p>للوصول إلى الهدف <strong>${targetGpa.toFixed(2)}</strong> في نهاية التخصص، تحتاج معدلًا تراكميًا في الساعات المتبقية لا يقل عن <strong>${requiredFinalGpa.toFixed(2)}</strong>.</p>
+            </div>
+        `;
+
+        majorHoursSummaryHtml = `
+            <div style="padding: var(--space-md); background: rgba(59, 130, 246, 0.06); border-radius: var(--radius-md); border: 1px solid rgba(59, 130, 246, 0.18); font-size: 0.95rem; color: var(--text-primary);">
+                <h5 style="margin-bottom: var(--space-xs); font-size: 1rem; color: var(--primary);">توقعات التخرج</h5>
+                <p>بعد إدخال مجموع الساعات الكلي <strong>${totalMajorHours}</strong>، التوقعات التالية صارت متاحة:</p>
+                <ul style="padding-inline-start: 18px; margin: 0; color: var(--text-secondary);">
+                    <li>المتبقي من التخصص: <strong>${remainingMajorHours}</strong> ساعة.</li>
+                    <li>المعدل اللازم في الساعات المتبقية: <strong>${requiredFinalGpa.toFixed(2)}</strong>.</li>
+                    <li>أقصى معدل تراكمي ممكن عند الحصول على كامل النقاط: <strong>${maxPossibleGraduationGpa.toFixed(2)}</strong>.</li>
+                </ul>
             </div>
         `;
     } else {
@@ -1081,8 +1100,18 @@ function handleGpaSimulation(e) {
     scenariosTable.innerHTML = scenarioHtml;
     resultContainer.style.display = 'block';
     const majorHoursSection = document.getElementById('gpa-major-hours-section');
+    const majorHoursSummary = document.getElementById('gpa-major-hours-summary');
     if (majorHoursSection) {
         majorHoursSection.style.display = 'block';
+    }
+    if (majorHoursSummary) {
+        if (!isNaN(totalMajorHours) && totalMajorHours > 0) {
+            majorHoursSummary.style.display = 'block';
+            majorHoursSummary.innerHTML = majorHoursSummaryHtml;
+        } else {
+            majorHoursSummary.style.display = 'none';
+            majorHoursSummary.innerHTML = '';
+        }
     }
     showToast('تم إجراء المحاكاة بنجاح! 🚀', 'success');
 
