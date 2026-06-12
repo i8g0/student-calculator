@@ -1076,41 +1076,56 @@
                                 </div>
                             </div>
                             <div class="card-body">
-                                <form id="gpa-simulator-form" class="calculator-form" onsubmit="event.preventDefault();">
-                                    <div class="form-row">
-                                        <div class="form-group">
-                                            <label for="sim-current-gpa">
-                                                <i class="fas fa-award"></i>
-                                                المعدل التراكمي الحالي
-                                            </label>
-                                            <input type="number" id="sim-current-gpa" min="0" max="5" step="0.01" placeholder="مثال: 3.75" required>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="sim-current-hours">
-                                                <i class="fas fa-history"></i>
-                                                الساعات التراكمية السابقة
-                                            </label>
-                                            <input type="number" id="sim-current-hours" min="0" max="200" step="1" placeholder="مثال: 64" required>
-                                        </div>
+                        <div style="position: relative; margin-bottom: var(--space-lg);">
+                            <a href="rescue-guide.html" target="_blank" class="guide-help-btn"
+                                style="position: absolute; top: 0; right: 0; display: inline-flex; align-items: center; gap: var(--space-sm); padding: var(--space-md) var(--space-lg); background: var(--gradient-primary); color: white; border-radius: var(--radius-lg); text-decoration: none; font-weight: 600; box-shadow: var(--shadow-md); transition: all var(--transition-normal); z-index: 10;">
+                                <i class="fas fa-book-open"></i>
+                                <span class="guide-help-text">شرح حاسبة الإنقاذ</span>
+                            </a>
+                        </div>
+                        <form id="gpa-simulator-form" class="calculator-form" onsubmit="event.preventDefault();">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="sim-current-gpa">
+                                        <i class="fas fa-award"></i>
+                                        المعدل التراكمي الحالي
+                                    </label>
+                                    <input type="number" id="sim-current-gpa" min="0" max="5" step="0.01" placeholder="مثال: 3.75" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="sim-current-hours">
+                                        <i class="fas fa-history"></i>
+                                        الساعات التراكمية السابقة
+                                    </label>
+                                    <input type="number" id="sim-current-hours" min="0" max="200" step="1" placeholder="مثال: 64" required>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="sim-term-hours">
+                                        <i class="fas fa-book-open"></i>
+                                        ساعات الترم الحالي
+                                    </label>
+                                    <input type="number" id="sim-term-hours" min="1" max="30" step="1" placeholder="مثال: 15" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="sim-target-gpa">
+                                        <i class="fas fa-bullseye"></i>
+                                        المعدل التراكمي المستهدف
+                                    </label>
+                                    <input type="number" id="sim-target-gpa" min="0" max="5" step="0.01" placeholder="مثال: 3.90" required>
+                                    <div id="sim-target-presets" style="margin-top: var(--space-xs); display: flex; gap: 6px; flex-wrap: wrap;">
+                                        <!-- يتم إنشاؤها برمجياً بواسطة JS لتناسب المقياس المختار (4 أو 5) -->
                                     </div>
-                                    <div class="form-row">
-                                        <div class="form-group">
-                                            <label for="sim-term-hours">
-                                                <i class="fas fa-book-open"></i>
-                                                ساعات الترم الحالي
-                                            </label>
-                                            <input type="number" id="sim-term-hours" min="1" max="30" step="1" placeholder="مثال: 15" required>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="sim-target-gpa">
-                                                <i class="fas fa-bullseye"></i>
-                                                المعدل التراكمي المستهدف
-                                            </label>
-                                            <input type="number" id="sim-target-gpa" min="0" max="5" step="0.01" placeholder="مثال: 3.90" required>
-                                            <div id="sim-target-presets" style="margin-top: var(--space-xs); display: flex; gap: 6px; flex-wrap: wrap;">
-                                                <!-- يتم إنشاؤها برمجياً بواسطة JS لتناسب المقياس المختار (4 أو 5) -->
-                                            </div>
-                                        </div>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group" style="width: 100%;">
+                                    <label for="sim-total-major-hours">
+                                        <i class="fas fa-layer-group"></i>
+                                        مجموع ساعات التخصص الكامل
+                                    </label>
+                                    <input type="number" id="sim-total-major-hours" min="1" max="300" step="1" placeholder="مثال: 130" required>
                                     </div>
                                     <button type="submit" class="submit-btn">
                                         <i class="fas fa-magic"></i>

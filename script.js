@@ -731,8 +731,9 @@ function handleGpaSimulation(e) {
     const prevHours = parseFloat(document.getElementById('sim-current-hours').value);
     const termHours = parseFloat(document.getElementById('sim-term-hours').value);
     const targetGpa = parseFloat(document.getElementById('sim-target-gpa').value);
+    const totalMajorHours = parseFloat(document.getElementById('sim-total-major-hours').value);
 
-    if (isNaN(currentGpa) || isNaN(prevHours) || isNaN(termHours) || isNaN(targetGpa)) {
+    if (isNaN(currentGpa) || isNaN(prevHours) || isNaN(termHours) || isNaN(targetGpa) || isNaN(totalMajorHours)) {
         showToast('يرجى ملء جميع الحقول المطلوبة', 'error');
         return;
     }
@@ -757,10 +758,28 @@ function handleGpaSimulation(e) {
         return;
     }
 
+    if (totalMajorHours < prevHours + termHours) {
+        showToast(`الرجاء إدخال مجموع ساعات تخصص صحيح لا يقل عن ${prevHours + termHours} ساعة`, 'error');
+        return;
+    }
+
     const totalHours = prevHours + termHours;
     const maxGpa = ((currentGpa * prevHours) + (scale * termHours)) / totalHours;
     const minGpa = (currentGpa * prevHours) / totalHours;
     const requiredGpa = ((targetGpa * totalHours) - (currentGpa * prevHours)) / termHours;
+    const remainingMajorHours = totalMajorHours - prevHours;
+    const projectedAfterCurrentTerm = ((currentGpa * prevHours) + (currentGpa * termHours)) / totalHours;
+    const requiredFinalGpa = ((targetGpa * totalMajorHours) - (currentGpa * prevHours)) / remainingMajorHours;
+    const maxPossibleGraduationGpa = ((currentGpa * prevHours) + (scale * remainingMajorHours)) / totalMajorHours;
+    const graduationSummaryHtml = `
+        <div style="margin-top: var(--space-md); padding: var(--space-md); background: rgba(59, 130, 246, 0.08); border-radius: var(--radius-md); text-align: right; border: 1px solid rgba(59, 130, 246, 0.2); font-size: 0.9rem; line-height: 1.6; color: var(--text-primary);">
+            <h5 style="color: var(--primary); margin-bottom: var(--space-xs); font-size: 0.95rem;"><i class="fas fa-chart-line"></i> توقعات بناءً على مجموع ساعات التخصص</h5>
+            <p>إذا كان مجموع ساعات تخصصك الكلي <strong>${totalMajorHours}</strong> ساعة، فالمتبقي لك <strong>${remainingMajorHours}</strong> ساعة.</p>
+            <p>المعدل المتوقع بعد هذا الترم إذا حافظت على معدل الترم الحالي (${currentGpa.toFixed(2)}) هو <strong>${projectedAfterCurrentTerm.toFixed(2)}</strong>.</p>
+            <p>أقصى معدل نهائي ممكن عند الحصول على كامل النقاط في الساعات المتبقية هو <strong>${maxPossibleGraduationGpa.toFixed(2)}</strong>.</p>
+            <p>للوصول إلى الهدف <strong>${targetGpa.toFixed(2)}</strong> في نهاية التخصص، تحتاج معدلًا تراكميًا في الساعات المتبقية لا يقل عن <strong>${requiredFinalGpa.toFixed(2)}</strong>.</p>
+        </div>
+    `;
 
     const resultContainer = document.getElementById('gpa-simulator-result');
     const statusCard = resultContainer.querySelector('.simulation-status-card');
@@ -882,12 +901,8 @@ function handleGpaSimulation(e) {
             impossibleDetailHtml = `
                 <div style="margin-top: var(--space-md); padding: var(--space-md); background: rgba(239, 68, 68, 0.06); border-radius: var(--radius-md); text-align: right; border: 1px solid rgba(239, 68, 68, 0.2);">
                     <h5 style="color: var(--error); margin-bottom: var(--space-xs); font-size: 0.95rem;"><i class="fas fa-graduation-cap"></i> أنت قريب من التخرج!</h5>
-                    <p style="font-size: 0.85rem; margin-bottom: var(--space-sm); color: var(--text-secondary);">بما أن عدد ساعاتك المجتازة كبير (${prevHours} ساعة) وقريب من التخرج، يرجى إدخال <strong>مجموع الساعات الكلية لخطتك الدراسية بالكامل للتخرج</strong> (مثال: 130 أو 135 ساعة) لنرى إذا كان هناك فرصة للتعويض:</p>
-                    <div style="display: flex; gap: var(--space-sm); align-items: center; flex-wrap: wrap;">
-                        <input type="number" id="sim-total-graduation-hours" placeholder="مجموع ساعات الخطة الدراسية الكلية" style="max-width: 260px; padding: 8px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-light); background: var(--bg-secondary); color: var(--text-primary); font-size: 0.85rem;">
-                        <button type="button" id="btn-calculate-graduation-rescue" class="submit-btn" style="width: auto; padding: 8px 16px; margin: 0; font-size: 0.85rem;">احسب فرصة الإنقاذ</button>
-                    </div>
-                    <div id="graduation-rescue-result" style="margin-top: var(--space-sm); font-size: 0.9rem; font-weight: 700; line-height: 1.5; color: var(--text-primary);"></div>
+                    <p style="font-size: 0.85rem; margin-bottom: var(--space-sm); color: var(--text-secondary);">بما أن عدد ساعاتك المجتازة كبير (${prevHours} ساعة) وقريب من التخرج، تأكد من إدخال <strong>مجموع ساعات تخصصك الكاملة</strong> في الحقل أعلاه.</p>
+                    <p style="font-size: 0.85rem; color: var(--text-secondary);">سنستخدم هذه القيمة لحساب توقع التخرج وفرصة التعويض بدقة أكبر.</p>
                 </div>
             `;
         }
@@ -897,6 +912,7 @@ function handleGpaSimulation(e) {
             <p>للوصول للمعدل التراكمي المستهدف <strong>${targetGpa.toFixed(2)}</strong> تحتاج لمعدل فصلي <strong>${requiredGpa.toFixed(2)}</strong>.</p>
             <p>أقصى معدل تراكمي يمكنك الوصول إليه هو <strong>${maxGpa.toFixed(2)}</strong> في حال حصلت على <strong>${scale.toFixed(2)}</strong> فصلي.</p>
             ${impossibleDetailHtml}
+            ${graduationSummaryHtml}
             <div style="margin-top: var(--space-sm); padding: var(--space-xs); font-size: 0.82rem; color: var(--text-muted); text-align: center;">
                 <i class="fas fa-exclamation-triangle" style="margin-left: 5px; font-size: 0.8rem;"></i>
                 ملاحظة: هذا الحساب يفترض عدم وجود مواد مكررة (إعادة مقرر).
@@ -908,6 +924,7 @@ function handleGpaSimulation(e) {
             <h3>مضمون بالكامل 🎉</h3>
             <p>معدلك المستهدف <strong>${targetGpa.toFixed(2)}</strong> مضمون للتحقيق في كل الحالات.</p>
             <p>حتى لو حصلت على معدل فصلي <strong>0.00</strong>، سيكون تراكميك الجديد <strong>${minGpa.toFixed(2)}</strong>.</p>
+            ${graduationSummaryHtml}
             <div style="margin-top: var(--space-md); padding: var(--space-sm); background: rgba(52, 199, 89, 0.1); border-radius: var(--radius-md); font-size: 0.85rem; color: var(--success);">
                 <i class="fas fa-exclamation-triangle" style="margin-left: 5px;"></i>
                 ملاحظة: هذا الحساب يفترض عدم وجود مواد مكررة (إعادة مقرر).
@@ -1110,6 +1127,7 @@ function handleGpaSimulation(e) {
         prevHours,
         termHours,
         targetGpa,
+        totalMajorHours,
         scale,
         timestamp: new Date().toISOString()
     });

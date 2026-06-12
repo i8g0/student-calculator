@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>شرح حاسبة الإنقاذ | حاسبة الطالب</title>
+    <link rel="stylesheet" href="styles.css?v=10">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            font-family: var(--font-primary) !important;
+        }
+        i, .fas, .far, .fab, .fa, [class*="fa-"], [class*="icon"] {
+            font-family: "Font Awesome 6 Free", "Font Awesome 6 Brands", "Font Awesome 6 Pro" !important;
+        }
+        body {
+            background: var(--bg-secondary);
+            padding: 20px;
+        }
+        .guide-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--bg-card);
+            border-radius: var(--radius-2xl);
+            padding: var(--space-2xl);
+            box-shadow: var(--shadow-xl);
+        }
+        .guide-header {
+            background: var(--gradient-primary);
+            color: white;
+            padding: var(--space-xl);
+            border-radius: var(--radius-xl);
+            margin-bottom: var(--space-xl);
+            text-align: center;
+        }
+        .guide-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: var(--space-sm);
+            color: white;
+        }
+        .back-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-sm);
+            padding: var(--space-md) var(--space-lg);
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            border-radius: var(--radius-lg);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all var(--transition-normal);
+            box-shadow: var(--shadow-xl);
+            z-index: 1000;
+        }
+        .back-btn:hover {
+            background: var(--gradient-secondary);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-2xl);
+        }
+        .section {
+            margin-bottom: var(--space-2xl);
+            padding: var(--space-xl);
+            background: var(--bg-primary);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-light);
+        }
+        .section-title {
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin-bottom: var(--space-lg);
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+        }
+        .section-title i {
+            font-size: 2rem;
+        }
+        .section-content {
+            line-height: 2;
+            font-size: 1.1rem;
+            color: var(--text-primary);
+        }
+        .section-content p {
+            margin-bottom: var(--space-lg);
+        }
+        .highlight-box {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            border-right: 4px solid var(--info);
+            padding: var(--space-lg);
+            border-radius: var(--radius-lg);
+            margin: var(--space-lg) 0;
+        }
+        .highlight-box.danger {
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            border-right-color: var(--error);
+        }
+        .highlight-box.success {
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+            border-right-color: var(--success);
+        }
+        .highlight-box.info {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            border-right-color: var(--info);
+        }
+        .step-list {
+            list-style: none;
+            padding: 0;
+            counter-reset: step-counter;
+        }
+        .step-list li {
+            padding: var(--space-lg);
+            margin-bottom: var(--space-lg);
+            background: var(--bg-secondary);
+            border-radius: var(--radius-lg);
+            border-right: 4px solid var(--primary);
+            position: relative;
+            padding-right: 60px;
+            transition: all var(--transition-normal);
+        }
+        .step-list li::before {
+            content: counter(step-counter);
+            counter-increment: step-counter;
+            position: absolute;
+            right: var(--space-lg);
+            top: var(--space-lg);
+            background: var(--primary);
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1rem;
+            box-shadow: var(--shadow-sm);
+        }
+        .example-box {
+            background: var(--bg-secondary);
+            padding: var(--space-lg);
+            border-radius: var(--radius-lg);
+            margin: var(--space-lg) 0;
+            border: 2px dashed var(--border-medium);
+        }
+        .example-title {
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: var(--space-md);
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+        .formula-box {
+            background: var(--bg-secondary);
+            padding: var(--space-lg);
+            border-radius: var(--radius-lg);
+            text-align: center;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin: var(--space-lg) 0;
+            border: 2px solid var(--primary);
+        }
+        ul.features-list {
+            list-style: none;
+            padding: 0;
+        }
+        ul.features-list li {
+            padding: var(--space-sm) 0;
+            padding-right: var(--space-xl);
+            position: relative;
+        }
+        ul.features-list li::before {
+            content: "✓";
+            position: absolute;
+            right: 0;
+            color: var(--success);
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+        @media (max-width: 768px) {
+            .guide-container {
+                padding: var(--space-md);
+            }
+            .guide-header {
+                padding: var(--space-lg);
+            }
+            .guide-header h1 {
+                font-size: 1.3rem;
+            }
+            .guide-header p {
+                font-size: 0.8rem;
+            }
+            .section {
+                padding: var(--space-md);
+            }
+            .section-title {
+                font-size: 1.1rem;
+            }
+            .section-title i {
+                font-size: 1.3rem;
+            }
+            .section-content {
+                font-size: 0.8rem !important;
+                line-height: 1.6;
+            }
+            .section-content p {
+                margin-bottom: var(--space-md);
+                font-size: 0.8rem;
+            }
+            .step-list li {
+                padding: var(--space-md);
+                padding-right: 45px;
+                font-size: 0.8rem;
+            }
+            .step-list li::before {
+                width: 28px;
+                height: 28px;
+                font-size: 0.75rem;
+                right: var(--space-md);
+                top: var(--space-md);
+            }
+            .highlight-box, .example-box, .formula-box {
+                padding: var(--space-md);
+                font-size: 0.85rem;
+            }
+            .back-btn {
+                bottom: 20px;
+                right: 20px;
+                padding: var(--space-sm) var(--space-md);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="guide-container">
+        <div class="guide-header">
+            <h1><i class="fas fa-life-ring"></i> شرح حاسبة الإنقاذ</h1>
+            <p>دليل شامل لاستخدام حاسبة الإنقاذ وتوقعات المعدل التراكمي بناءً على ساعات تخصصك</p>
+        </div>
+        <div class="section">
+            <h2 class="section-title">
+                <i class="fas fa-info-circle"></i>
+                ما هي حاسبة الإنقاذ؟
+            </h2>
+            <div class="section-content">
+                <p>
+                    حاسبة الإنقاذ تساعدك على معرفة تأثير هذا الترم على المعدل التراكمي الخاص بك، وتحدد ما إذا كان بإمكانك
+                    الوصول إلى الهدف المطلوب أو التغلب على العوائق الدراسية.
+                </p>
+                <div class="highlight-box info">
+                    <strong>💡 فكرة الحاسبة:</strong> تعتمد على معدل سابق وساعات سابقة وساعات الترم الحالي ومجموع ساعات التخصص الكامل
+                    لتقدير نتائجك القادمة بشكل أكثر دقة.
+                </div>
+            </div>
+        </div>
+        <div class="section">
+            <h2 class="section-title">
+                <i class="fas fa-book-open"></i>
+                ما هي البيانات التي تحتاجها؟
+            </h2>
+            <div class="section-content">
+                <ol class="step-list">
+                    <li>
+                        <strong>المعدل التراكمي الحالي</strong>
+                        <p>اكتب معدلك التراكمي الحالي كما هو مسجل في النظام.</p>
+                    </li>
+                    <li>
+                        <strong>الساعات التراكمية السابقة</strong>
+                        <p>الأيام المحسوبة حتى الآن في النظام، بدون ساعات الترم الحالي.</p>
+                    </li>
+                    <li>
+                        <strong>ساعات الترم الحالي</strong>
+                        <p>عدد الساعات التي تسجلها هذا الترم الدراسي.</p>
+                    </li>
+                    <li>
+                        <strong>المعدل التراكمي المستهدف</strong>
+                        <p>المعدل الذي ترغب في الوصول إليه أو الحفاظ عليه بعد هذا الترم.</p>
+                    </li>
+                    <li>
+                        <strong>مجموع ساعات التخصص الكامل</strong>
+                        <p>عدد الساعات الكلي المطلوب للتخرج في تخصصك، مثل 120 أو 130 أو 135 ساعة.
+                        هذه القيمة مهمة لاحتساب التوقع النهائي لمعدل التخرج.</p>
+                    </li>
+                </ol>
+            </div>
+        </div>
+        <div class="section">
+            <h2 class="section-title">
+                <i class="fas fa-calculator"></i>
+                ماذا تحسب الحاسبة؟
+            </h2>
+            <div class="section-content">
+                <p>الحاسبة تعرض لك عدة نتائج مهمة بعد ملء البيانات:</p>
+                <ul class="features-list">
+                    <li>المعدل المطلوب هذا الترم للوصول إلى الهدف.</li>
+                    <li>أقصى معدل تراكمي يمكن تحقيقه إذا حققت أعلى تقدير في هذا الترم.</li>
+                    <li>توقع معدل التخرج النهائي بناءً على مجموع ساعات التخصص.</li>
+                    <li>الفرق بين ما هو مطلوب الآن وما يمكنك توقعه إذا حافظت على أدائك الحالي.</li>
+                </ul>
+            </div>
+        </div>
+        <div class="section">
+            <h2 class="section-title">
+                <i class="fas fa-lightbulb"></i>
+                كيف تستخدم الحاسبة خطوة بخطوة
+            </h2>
+            <div class="section-content">
+                <ol class="step-list">
+                    <li>
+                        <strong>افتح تبويب "حاسبة الإنقاذ" في الصفحة الرئيسية</strong>
+                        <p>هذا التبويب مخصص لمحاكاة المعدل والتخطيط الأكاديمي.</p>
+                    </li>
+                    <li>
+                        <strong>أدخل بياناتك الدقيقة</strong>
+                        <p>استخدم أرقاماً حقيقية من سجلك الأكاديمي ونظام الجامعة.</p>
+                    </li>
+                    <li>
+                        <strong>أدخل مجموع ساعات تخصصك</strong>
+                        <p>هذه القيمة تساعد الحاسبة على تقدير تأثير الساعات المتبقية حتى التخرج.</p>
+                    </li>
+                    <li>
+                        <strong>اضغط زر "ابدأ محاكاة المعدل"</strong>
+                        <p>ستظهر النتائج في نفس الصفحة مع شرح مفصل.</p>
+                    </li>
+                    <li>
+                        <strong>اقرأ التوقعات واحتفظ بخطة واضحة</strong>
+                        <p>يمكنك استخدام النتائج لتحديد ما إذا كنت بحاجة إلى رفع أداءك هذا الترم أو تعديل خطة التخصص.</p>
+                    </li>
+                </ol>
+            </div>
+        </div>
+        <div class="section">
+            <h2 class="section-title">
+                <i class="fas fa-award"></i>
+                مثال عملي
+            </h2>
+            <div class="section-content">
+                <div class="example-box">
+                    <div class="example-title"><i class="fas fa-user-graduate"></i> مثال افتراضي</div>
+                    <p><strong>المعدل التراكمي الحالي:</strong> 3.20</p>
+                    <p><strong>الساعات السابقة:</strong> 80</p>
+                    <p><strong>ساعات الترم الحالي:</strong> 15</p>
+                    <p><strong>المعدل المستهدف:</strong> 3.75</p>
+                    <p><strong>مجموع ساعات التخصص:</strong> 130</p>
+                    <p style="margin-top: var(--space-md); font-weight: 700; color: var(--primary);">
+                        الحاسبة ستوضح لك المعدل المطلوب هذا الترم، وما إذا كان بإمكانك أن تصل لهذا الهدف، وما هو التوقع النهائي لمعدل التخرج عند انتهاء كل الساعات المتبقية.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="section">
+            <h2 class="section-title">
+                <i class="fas fa-exclamation-triangle"></i>
+                نصائح هامة
+            </h2>
+            <div class="section-content">
+                <ul class="features-list">
+                    <li>كلما زادت الساعات الكلية لتخصصك، كان من الضروري معرفة تأثير كل ترم على المعدل النهائي.</li>
+                    <li>إذا كان المطلوب هذا الترم أعلى من الحد الأقصى المحتمل، قد تحتاج إلى إعادة حساب هدفك أو تقليل الساعات.</li>
+                    <li>الحفاظ على معدل ثابت أو أعلى من المعدل الحالي يساعد في تحسين التوقع النهائي.</li>
+                    <li>استخدم نتائج الحاسبة لتخطيط الفترات القادمة ومراجعة المواد الصعبة.
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="section">
+            <div class="highlight-box success">
+                <strong>🎓 استخدم هذه الحاسبة بذكاء!</strong>
+                <p>إنها أداة تساعدك على وضع خطة واضحة لتحقيق الهدف، وليست بديلاً عن نصائح المشرف الأكاديمي أو المنسق.</p>
+            </div>
+        </div>
+    </div>
+    <a href="index.html#term-forecasts" class="back-btn">
+        <i class="fas fa-arrow-right"></i>
+        <span class="back-btn-text-desktop">العودة إلى حاسبة الإنقاذ</span>
+        <span class="back-btn-text-mobile">العودة</span>
+    </a>
+</body>
+</html>
