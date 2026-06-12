@@ -150,6 +150,7 @@ body {
     line-height: 1.6;
     transition: background-color var(--transition-normal), color var(--transition-normal);
     overflow-x: hidden;
+    padding-bottom: env(safe-area-inset-bottom);
 }
 
 /* ============================================
@@ -1225,6 +1226,9 @@ i,
     box-shadow: var(--shadow-lg);
     position: relative;
     overflow: hidden;
+    z-index: 1;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .submit-btn::before {
@@ -1524,7 +1528,7 @@ i,
 
 .footer {
     background: var(--gradient-primary);
-    padding: var(--space-3xl) 0 var(--space-xl);
+    padding: var(--space-3xl) 0 calc(var(--space-xl) + env(safe-area-inset-bottom));
     position: relative;
     overflow: hidden;
 }

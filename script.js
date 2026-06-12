@@ -735,14 +735,21 @@ function handleAppliedCollegeCalculation(e) {
 
 
 function handleGpaSimulation(e) {
-    if (e) e.preventDefault();
+    if (e && e.type === 'touchstart') {
+        e.preventDefault();
+    }
+    if (e && e.preventDefault) e.preventDefault();
     try {
         const currentGpa = parseFloat(document.getElementById('sim-current-gpa').value);
-    const prevHours = parseFloat(document.getElementById('sim-current-hours').value);
-    const termHours = parseFloat(document.getElementById('sim-term-hours').value);
-    const targetGpa = parseFloat(document.getElementById('sim-target-gpa').value);
-    const totalMajorHoursInput = document.getElementById('sim-total-major-hours');
-    const totalMajorHours = totalMajorHoursInput ? parseFloat(totalMajorHoursInput.value) : NaN;
+        const prevHours = parseFloat(document.getElementById('sim-current-hours').value);
+        const termHours = parseFloat(document.getElementById('sim-term-hours').value);
+        const targetGpa = parseFloat(document.getElementById('sim-target-gpa').value);
+        const totalMajorHoursInput = document.getElementById('sim-total-major-hours');
+        const totalMajorHours = totalMajorHoursInput ? parseFloat(totalMajorHoursInput.value) : NaN;
+        const targetButton = e && e.target && typeof e.target.closest === 'function'
+            ? e.target.closest('button')
+            : (e && e.currentTarget ? e.currentTarget : null);
+        const isMajorHoursAction = targetButton && targetButton.id === 'gpa-major-hours-btn';
 
     if (isNaN(currentGpa) || isNaN(prevHours) || isNaN(termHours) || isNaN(targetGpa)) {
         showToast('يرجى ملء جميع الحقول المطلوبة', 'error');
@@ -768,8 +775,6 @@ function handleGpaSimulation(e) {
         showToast(`المعدل المدخل لا يمكن أن يتجاوز الحد الأقصى للمعدل (${scale})`, 'error');
         return;
     }
-
-    const isMajorHoursAction = e && e.target && e.target.id === 'gpa-major-hours-btn';
     if (isMajorHoursAction && (isNaN(totalMajorHours) || totalMajorHours <= 0)) {
         showToast('أدخل مجموع الساعات ثم اضغط زر أضف توقع التخرج', 'error');
         return;
