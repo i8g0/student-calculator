@@ -725,8 +725,9 @@ function handleAppliedCollegeCalculation(e) {
 
 
 function handleGpaSimulation(e) {
-    e.preventDefault();
-    const currentGpa = parseFloat(document.getElementById('sim-current-gpa').value);
+    if (e) e.preventDefault();
+    try {
+        const currentGpa = parseFloat(document.getElementById('sim-current-gpa').value);
     const prevHours = parseFloat(document.getElementById('sim-current-hours').value);
     const termHours = parseFloat(document.getElementById('sim-term-hours').value);
     const targetGpa = parseFloat(document.getElementById('sim-target-gpa').value);
@@ -881,9 +882,9 @@ function handleGpaSimulation(e) {
             impossibleDetailHtml = `
                 <div style="margin-top: var(--space-md); padding: var(--space-md); background: rgba(239, 68, 68, 0.06); border-radius: var(--radius-md); text-align: right; border: 1px solid rgba(239, 68, 68, 0.2);">
                     <h5 style="color: var(--error); margin-bottom: var(--space-xs); font-size: 0.95rem;"><i class="fas fa-graduation-cap"></i> أنت قريب من التخرج!</h5>
-                    <p style="font-size: 0.85rem; margin-bottom: var(--space-sm); color: var(--text-secondary);">بما أن عدد ساعاتك المجتازة كبير (${prevHours} ساعة) وقريب من التخرج، يرجى إدخال الساعات المتبقية لك بالكامل حتى التخرج لنرى إذا كان هناك فرصة للتعويض:</p>
+                    <p style="font-size: 0.85rem; margin-bottom: var(--space-sm); color: var(--text-secondary);">بما أن عدد ساعاتك المجتازة كبير (${prevHours} ساعة) وقريب من التخرج، يرجى إدخال <strong>مجموع الساعات الكلية لخطتك الدراسية بالكامل للتخرج</strong> (مثال: 130 أو 135 ساعة) لنرى إذا كان هناك فرصة للتعويض:</p>
                     <div style="display: flex; gap: var(--space-sm); align-items: center; flex-wrap: wrap;">
-                        <input type="number" id="sim-remaining-graduation-hours" placeholder="الساعات المتبقية للتخرج" style="max-width: 220px; padding: 8px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-light); background: var(--bg-secondary); color: var(--text-primary); font-size: 0.85rem;">
+                        <input type="number" id="sim-total-graduation-hours" placeholder="مجموع ساعات الخطة الدراسية الكلية" style="max-width: 260px; padding: 8px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-light); background: var(--bg-secondary); color: var(--text-primary); font-size: 0.85rem;">
                         <button type="button" id="btn-calculate-graduation-rescue" class="submit-btn" style="width: auto; padding: 8px 16px; margin: 0; font-size: 0.85rem;">احسب فرصة الإنقاذ</button>
                     </div>
                     <div id="graduation-rescue-result" style="margin-top: var(--space-sm); font-size: 0.9rem; font-weight: 700; line-height: 1.5; color: var(--text-primary);"></div>
@@ -1039,38 +1040,64 @@ function handleGpaSimulation(e) {
 
     scenariosTable.innerHTML = scenarioHtml;
     resultContainer.style.display = 'block';
-    resultContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     showToast('تم إجراء المحاكاة بنجاح! 🚀', 'success');
+
+    // Safe scrolling to results with timeout to allow rendering to complete
+    setTimeout(() => {
+        try {
+            resultContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        } catch (err) {
+            try {
+                resultContainer.scrollIntoView(true);
+            } catch (e) {
+                console.error("Scroll error:", e);
+            }
+        }
+    }, 100);
 
     // Attach Event Listener for Graduation Rescue (if present)
     const gradRescueBtn = document.getElementById('btn-calculate-graduation-rescue');
     if (gradRescueBtn) {
         gradRescueBtn.addEventListener('click', () => {
-            const remHoursInput = document.getElementById('sim-remaining-graduation-hours');
-            const remHours = parseFloat(remHoursInput.value);
+            const totalHoursInput = document.getElementById('sim-total-graduation-hours');
+            const totalGradHours = parseFloat(totalHoursInput.value);
             const gradResultDiv = document.getElementById('graduation-rescue-result');
             
-            if (isNaN(remHours) || remHours <= 0) {
-                showToast('يرجى إدخال عدد ساعات صحيح', 'error');
+            if (isNaN(totalGradHours) || totalGradHours <= prevHours) {
+                showToast(`يرجى إدخال ساعات كلية صحيحة أكبر من ساعاتك السابقة (${prevHours})`, 'error');
                 return;
             }
             
-            const totalGradHours = prevHours + remHours;
+            const remHours = totalGradHours - prevHours;
             const reqGpaGrad = ((targetGpa * totalGradHours) - (currentGpa * prevHours)) / remHours;
             const maxGradGpa = ((currentGpa * prevHours) + (scale * remHours)) / totalGradHours;
+            
+            const remHoursAfterCurrentTerm = remHours - termHours;
+            let hoursBreakdownText = `المتبقي لك هو <strong>${remHours} ساعة</strong>`;
+            
+            if (remHoursAfterCurrentTerm > 0) {
+                hoursBreakdownText += ` (تشمل <strong>${termHours}</strong> ساعة للترم الحالي و <strong>${remHoursAfterCurrentTerm}</strong> ساعة للأترام القادمة)`;
+            } else if (remHoursAfterCurrentTerm === 0) {
+                hoursBreakdownText += ` (وهي ساعات الترم الحالي فقط)`;
+            } else {
+                showToast(`يرجى إدخال ساعات كلية أكبر من أو تساوي مجموع ساعاتك الحالية (${prevHours + termHours})`, 'error');
+                return;
+            }
             
             if (reqGpaGrad > scale) {
                 gradResultDiv.innerHTML = `
                     <div style="margin-top: var(--space-sm); color: var(--error);">
                         <i class="fas fa-times-circle" style="margin-left: 5px;"></i> غير ممكن للأسف ❌<br>
-                        حتى لو حصلت على معدل كامل (${scale.toFixed(2)}) في كل الساعات المتبقية (${remHours} ساعة)، فإن أقصى معدل تخرج يمكنك الوصول إليه هو <strong>${maxGradGpa.toFixed(2)}</strong>.
+                        ${hoursBreakdownText}.<br>
+                        حتى لو حصلت على معدل كامل (${scale.toFixed(2)}) في كل الساعات المتبقية، فإن أقصى معدل تخرج يمكنك الوصول إليه هو <strong>${maxGradGpa.toFixed(2)}</strong>.
                     </div>
                 `;
             } else {
                 gradResultDiv.innerHTML = `
                     <div style="margin-top: var(--space-sm); color: var(--success);">
                         <i class="fas fa-check-circle" style="margin-left: 5px;"></i> ممكن إن شاء الله! ✅<br>
-                        تحتاج إلى معدل فصلي تراكمي لا يقل عن <strong>${reqGpaGrad.toFixed(2)}</strong> في كل الساعات المتبقية لك (${remHours} ساعة) لتتخرج بمعدل <strong>${targetGpa.toFixed(2)}</strong>.
+                        ${hoursBreakdownText}.<br>
+                        تحتاج إلى معدل فصلي تراكمي لا يقل عن <strong>${reqGpaGrad.toFixed(2)}</strong> في كل الساعات المتبقية لك لتتخرج بمعدل <strong>${targetGpa.toFixed(2)}</strong>.
                     </div>
                 `;
             }
@@ -1086,6 +1113,10 @@ function handleGpaSimulation(e) {
         scale,
         timestamp: new Date().toISOString()
     });
+    } catch (error) {
+        console.error("Simulation error:", error);
+        showToast("حدث خطأ أثناء إجراء المحاكاة، يرجى التحقق من المدخلات", "error");
+    }
 }
 
 function calculateRate(major, gpa, sa, g1, w1, g2, w2) {

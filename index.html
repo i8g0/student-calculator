@@ -1076,7 +1076,7 @@
                                 </div>
                             </div>
                             <div class="card-body">
-                                <form id="gpa-simulator-form" class="calculator-form">
+                                <form id="gpa-simulator-form" class="calculator-form" onsubmit="event.preventDefault();">
                                     <div class="form-row">
                                         <div class="form-group">
                                             <label for="sim-current-gpa">
@@ -1129,7 +1129,7 @@
                                     <div class="hours-comparison-section" style="margin-bottom: var(--space-lg); padding: var(--space-md); background: rgba(255,255,255,0.03); border-radius: var(--radius-lg); border: 1px solid var(--border-light);">
                                         <h4 style="margin-bottom: var(--space-sm); color: var(--text-primary); font-size: 1.05rem;"><i class="fas fa-columns" style="color: var(--primary); margin-left: 6px;"></i>مقارنة الجهد حسب الساعات المسجلة هذا الترم:</h4>
                                         <p style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: var(--space-md);">توضح لك الدرجة المطلوبة فصلياً إذا سجلت عدد ساعات دراسية مختلفة لتعرف الخيار الأسهل لك:</p>
-                                        <div class="hours-comparison-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: var(--space-sm);">
+                                        <div class="hours-comparison-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(90px, 1fr)); gap: var(--space-sm);">
                                             <!-- تعبأ بالـ JS -->
                                         </div>
                                     </div>

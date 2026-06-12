@@ -1737,6 +1737,9 @@ i,
     font-weight: 700;
     color: var(--text-primary);
     border-bottom: 2px solid var(--border-light);
+    position: sticky;
+    top: 70px;
+    z-index: 10;
 }
 
 .forecast-cell.grade {
@@ -5027,4 +5030,34 @@ transition: opacity 0.5s ease;
     background: linear-gradient(90deg, #6366f1, #8b5cf6, #a855f7, #06b6d4);
     background-size: 300% 100%;
     animation: gradientFlow 3s ease infinite;
+}
+
+/* === تحسينات التجاوب لوضع الجوال (Mobile Responsiveness) === */
+@media (max-width: 768px) {
+    /* جعل الهيدر الملتصق يتناسب مع الجوال */
+    .forecast-row.header, .scenario-row.header {
+        top: 60px !important;
+    }
+
+    /* جعل الصفوف أصغر ومريحة للقراءة في شاشات الجوال */
+    .forecast-row, .scenario-row {
+        padding: var(--space-sm) var(--space-md) !important;
+        font-size: 0.8rem !important;
+    }
+
+    /* تقليل حجم الخط الصغير للتفاصيل في خلايا الجدول لتفادي النزول المزعج للسطر */
+    .scenario-cell small, .forecast-cell small {
+        font-size: 0.68rem !important;
+    }
+
+    /* تحسين زر وحقول إدخال الساعات المتبقية/الكلية للتخرج لتاخذ كامل العرض */
+    #sim-total-graduation-hours {
+        max-width: 100% !important;
+        width: 100% !important;
+    }
+
+    #btn-calculate-graduation-rescue {
+        width: 100% !important;
+        justify-content: center !important;
+    }
 }
