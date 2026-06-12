@@ -1691,6 +1691,110 @@ i,
 }
 
 
+/* === حواسب توقعات نهاية الترم === */
+.forecasts-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-xl);
+    align-items: start;
+}
+
+.forecast-card {
+    height: auto;
+}
+
+.forecast-results-table, .simulation-scenarios-table {
+    width: 100%;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    border: 1px solid var(--border-light);
+    margin-top: var(--space-sm);
+}
+
+.forecast-row, .scenario-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding: var(--space-md) var(--space-lg);
+    border-bottom: 1px solid var(--border-light);
+    align-items: center;
+    font-size: 0.95rem;
+}
+
+.forecast-row:last-child, .scenario-row:last-child {
+    border-bottom: none;
+}
+
+.forecast-row.header, .scenario-row.header {
+    background: var(--bg-secondary);
+    font-weight: 700;
+    color: var(--text-primary);
+    border-bottom: 2px solid var(--border-light);
+}
+
+.forecast-cell.grade {
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.forecast-cell.score {
+    text-align: left;
+    font-weight: 600;
+}
+
+.forecast-cell.score.impossible {
+    color: var(--error);
+}
+
+.forecast-cell.score.guaranteed {
+    color: var(--success);
+}
+
+.forecast-cell.score.required {
+    color: var(--primary);
+}
+
+.simulation-status-card {
+    border: 1px solid transparent;
+}
+
+.simulation-status-card.success {
+    background: rgba(52, 199, 89, 0.1);
+    border-color: rgba(52, 199, 89, 0.2);
+    color: var(--success);
+}
+
+.simulation-status-card.warning {
+    background: rgba(255, 179, 0, 0.1);
+    border-color: rgba(255, 179, 0, 0.2);
+    color: var(--warning);
+}
+
+.simulation-status-card.danger {
+    background: rgba(255, 82, 82, 0.1);
+    border-color: rgba(255, 82, 82, 0.2);
+    color: var(--error);
+}
+
+.simulation-status-card h3 {
+    font-size: 1.8rem;
+    font-weight: 900;
+    margin: var(--space-xs) 0;
+}
+
+.simulation-status-card p {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 600;
+}
+
+/* responsive grid */
+@media (max-width: 992px) {
+    .forecasts-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+
 .toast-container {
     position: fixed;
     top: 100px;

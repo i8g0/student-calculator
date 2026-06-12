@@ -374,6 +374,16 @@ function initForms() {
     if (rateNumInput) createCourseInputs(rateCoursesContainer, parseInt(rateNumInput.value) || 2, 'rate');
     if (cumulativeNumInput) createCourseInputs(cumulativeCoursesContainer, parseInt(cumulativeNumInput.value) || 2, 'cumulative');
     if (semesterNumInput) createCourseInputs(semesterCoursesContainer, parseInt(semesterNumInput.value) || 2, 'semester');
+
+    const finalTargetForm = document.getElementById('final-target-form');
+    if (finalTargetForm) {
+        finalTargetForm.addEventListener('submit', handleFinalTargetCalculation);
+    }
+
+    const gpaSimulatorForm = document.getElementById('gpa-simulator-form');
+    if (gpaSimulatorForm) {
+        gpaSimulatorForm.addEventListener('submit', handleGpaSimulation);
+    }
 }
 
 
@@ -639,6 +649,190 @@ function handleAppliedCollegeCalculation(e) {
     updateAnalytics();
 }
 
+function handleFinalTargetCalculation(e) {
+    e.preventDefault();
+    const currentCoursework = parseFloat(document.getElementById('current-coursework').value);
+    const totalCoursework = parseFloat(document.getElementById('total-coursework').value);
+    const finalWeight = parseFloat(document.getElementById('final-weight').value);
+
+    if (isNaN(currentCoursework) || isNaN(totalCoursework) || isNaN(finalWeight)) {
+        showToast('يرجى ملء جميع الحقول المطلوبة', 'error');
+        return;
+    }
+
+    if (currentCoursework < 0 || currentCoursework > totalCoursework) {
+        showToast('درجة أعمال السنة يجب أن تكون بين 0 والدرجة الكلية لأعمال السنة', 'error');
+        return;
+    }
+
+    const totalWeight = totalCoursework + finalWeight;
+    const resultContainer = document.getElementById('final-target-result');
+    const resultsTable = resultContainer.querySelector('.forecast-results-table');
+
+    const grades = [
+        { label: 'A+ (ممتاز مرتفع)', minPercent: 0.95 },
+        { label: 'A (ممتاز)', minPercent: 0.90 },
+        { label: 'B+ (جيد جداً مرتفع)', minPercent: 0.85 },
+        { label: 'B (جيد جداً)', minPercent: 0.80 },
+        { label: 'C+ (جيد مرتفع)', minPercent: 0.75 },
+        { label: 'C (جيد)', minPercent: 0.70 },
+        { label: 'D+ (مقبول مرتفع)', minPercent: 0.65 },
+        { label: 'D (مقبول)', minPercent: 0.60 }
+    ];
+
+    let tableHtml = `
+        <div class="forecast-row header">
+            <div class="forecast-cell grade">التقدير (النسبة المطلوبة)</div>
+            <div class="forecast-cell score" style="text-align: left;">الدرجة المطلوبة في الفاينل</div>
+        </div>
+    `;
+
+    grades.forEach(grade => {
+        const minMarkRequired = grade.minPercent * totalWeight;
+        const requiredScore = minMarkRequired - currentCoursework;
+        let display = '';
+        let className = '';
+
+        if (requiredScore <= 0) {
+            display = 'مضمونة 🎉 (تحتاج 0)';
+            className = 'guaranteed';
+        } else if (requiredScore > finalWeight) {
+            display = 'مستحيلة ❌';
+            className = 'impossible';
+        } else {
+            const percentage = (requiredScore / finalWeight) * 100;
+            display = `${requiredScore.toFixed(1)} من ${finalWeight} (${percentage.toFixed(0)}%)`;
+            className = 'required';
+        }
+
+        tableHtml += `
+            <div class="forecast-row">
+                <div class="forecast-cell grade">${grade.label} (≥ ${(grade.minPercent * 100).toFixed(0)}%)</div>
+                <div class="forecast-cell score ${className}" style="text-align: left;">${display}</div>
+            </div>
+        `;
+    });
+
+    resultsTable.innerHTML = tableHtml;
+    resultContainer.style.display = 'block';
+    resultContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    showToast('تم حساب الدرجات المطلوبة بنجاح! 🎯', 'success');
+
+    saveCalculation({
+        type: 'final-target',
+        currentCoursework,
+        totalCoursework,
+        finalWeight,
+        timestamp: new Date().toISOString()
+    });
+}
+
+function handleGpaSimulation(e) {
+    e.preventDefault();
+    const currentGpa = parseFloat(document.getElementById('sim-current-gpa').value);
+    const prevHours = parseFloat(document.getElementById('sim-current-hours').value);
+    const termHours = parseFloat(document.getElementById('sim-term-hours').value);
+    const targetGpa = parseFloat(document.getElementById('sim-target-gpa').value);
+
+    if (isNaN(currentGpa) || isNaN(prevHours) || isNaN(termHours) || isNaN(targetGpa)) {
+        showToast('يرجى ملء جميع الحقول المطلوبة', 'error');
+        return;
+    }
+
+    if (currentGpa < 0 || prevHours < 0 || termHours <= 0 || targetGpa < 0) {
+        showToast('الرجاء التأكد من صحة المدخلات الساعات والمعدل', 'error');
+        return;
+    }
+
+    // Detect scale
+    let scale = 5;
+    const checkedType = document.querySelector('input[name="gpa-type"]:checked');
+    if (checkedType) {
+        scale = parseInt(checkedType.value);
+    }
+    if (currentGpa > 4.0 || targetGpa > 4.0) {
+        scale = 5;
+    }
+
+    if (currentGpa > scale || targetGpa > scale) {
+        showToast(`المعدل المدخل لا يمكن أن يتجاوز الحد الأقصى للمعدل (${scale})`, 'error');
+        return;
+    }
+
+    const totalHours = prevHours + termHours;
+    const maxGpa = ((currentGpa * prevHours) + (scale * termHours)) / totalHours;
+    const minGpa = (currentGpa * prevHours) / totalHours;
+    const requiredGpa = ((targetGpa * totalHours) - (currentGpa * prevHours)) / termHours;
+
+    const resultContainer = document.getElementById('gpa-simulator-result');
+    const statusCard = resultContainer.querySelector('.simulation-status-card');
+    const scenariosTable = resultContainer.querySelector('.simulation-scenarios-table');
+
+    statusCard.className = 'simulation-status-card';
+    if (requiredGpa > scale) {
+        statusCard.classList.add('danger');
+        statusCard.innerHTML = `
+            <h3>غير ممكن هذا الترم ❌</h3>
+            <p>للوصول للمعدل التراكمي المستهدف <strong>${targetGpa.toFixed(2)}</strong> تحتاج لمعدل فصلي <strong>${requiredGpa.toFixed(2)}</strong>.</p>
+            <p>أقصى معدل تراكمي يمكنك الوصول إليه هو <strong>${maxGpa.toFixed(2)}</strong> في حال حصلت على <strong>${scale.toFixed(2)}</strong> فصلي.</p>
+        `;
+    } else if (requiredGpa <= 0) {
+        statusCard.classList.add('success');
+        statusCard.innerHTML = `
+            <h3>مضمون بالكامل 🎉</h3>
+            <p>معدلك المستهدف <strong>${targetGpa.toFixed(2)}</strong> مضمون للتحقيق في كل الحالات.</p>
+            <p>حتى لو حصلت على معدل فصلي <strong>0.00</strong>، سيكون تراكميك الجديد <strong>${minGpa.toFixed(2)}</strong>.</p>
+        `;
+    } else {
+        const isHighEffort = requiredGpa >= (scale - 0.5);
+        statusCard.classList.add(isHighEffort ? 'warning' : 'success');
+        statusCard.innerHTML = `
+            <h3>ممكن بتركيزك 💪</h3>
+            <p>لتحقيق هدفك (${targetGpa.toFixed(2)})، تحتاج إلى معدل فصلي لا يقل عن <strong>${requiredGpa.toFixed(2)} من ${scale}</strong>.</p>
+            <p>أقصى معدل تراكمي يمكنك الوصول إليه هو <strong>${maxGpa.toFixed(2)}</strong>.</p>
+        `;
+    }
+
+    const scenarios = scale === 5 ? [5.0, 4.75, 4.5, 4.0, 3.5, 3.0, 2.0] : [4.0, 3.75, 3.5, 3.0, 2.5, 2.0, 1.0];
+    let scenarioHtml = `
+        <div class="scenario-row header">
+            <div class="scenario-cell">المعدل الفصلي المفترض</div>
+            <div class="scenario-cell" style="text-align: left;">المعدل التراكمي الجديد</div>
+        </div>
+    `;
+
+    scenarios.forEach(semGpa => {
+        const newGpa = ((currentGpa * prevHours) + (semGpa * termHours)) / totalHours;
+        const achieved = newGpa >= targetGpa;
+        const statusText = achieved ? 'يحقق الهدف ✅' : 'لا يحقق الهدف ❌';
+        const statusClass = achieved ? 'guaranteed' : 'impossible';
+        
+        scenarioHtml += `
+            <div class="scenario-row">
+                <div class="scenario-cell">${semGpa.toFixed(2)} من ${scale}</div>
+                <div class="scenario-cell" style="text-align: left; font-weight: 600;">
+                    <span class="${statusClass}">${newGpa.toFixed(2)}</span>
+                    <small style="margin-right: 8px; color: var(--text-muted, #64748b); font-size: 0.8rem;">(${statusText})</small>
+                </div>
+            </div>
+        `;
+    });
+
+    scenariosTable.innerHTML = scenarioHtml;
+    resultContainer.style.display = 'block';
+    resultContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    showToast('تم إجراء المحاكاة بنجاح! 🚀', 'success');
+
+    saveCalculation({
+        type: 'gpa-simulation',
+        currentGpa,
+        prevHours,
+        termHours,
+        targetGpa,
+        scale,
+        timestamp: new Date().toISOString()
+    });
+}
 
 function calculateRate(major, gpa, sa, g1, w1, g2, w2) {
 
@@ -1040,7 +1234,10 @@ function updateAnalytics() {
     document.getElementById('avg-rate').innerText = avgRate;
     document.getElementById('avg-semester').innerText = avgSemester;
     document.getElementById('avg-gpa').innerText = avgGpa;
-    document.getElementById('total-calculations').innerText = calculations.length;
+    const totalCalculationsEl = document.getElementById('total-calculations');
+    if (totalCalculationsEl) {
+        totalCalculationsEl.innerText = calculations.length;
+    }
 }
 
 
