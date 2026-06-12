@@ -281,16 +281,24 @@
 
         @media (max-width: 768px) {
             .guide-help-btn {
+                position: static !important;
+                right: auto !important;
+                top: auto !important;
+                margin-bottom: var(--space-md) !important;
                 padding: var(--space-sm) var(--space-md) !important;
                 border-radius: var(--radius-lg) !important;
-                width: auto !important;
+                width: 100% !important;
+                max-width: 100% !important;
                 height: auto !important;
                 justify-content: center !important;
-                font-size: 0.85rem !important;
+                text-align: center !important;
+                transform: none !important;
+                box-shadow: var(--shadow-md) !important;
             }
 
             .guide-help-text {
                 display: inline !important;
+                white-space: normal !important;
             }
 
             .guide-help-btn i {
