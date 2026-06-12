@@ -386,6 +386,11 @@ function initForms() {
         gpaSimulatorBtn.addEventListener('click', handleGpaSimulation);
     }
 
+    const gpaMajorHoursBtn = document.getElementById('gpa-major-hours-btn');
+    if (gpaMajorHoursBtn) {
+        gpaMajorHoursBtn.addEventListener('click', handleGpaSimulation);
+    }
+
     const gpaTypeRadios = document.querySelectorAll('input[name="gpa-type"]');
     gpaTypeRadios.forEach(radio => {
         radio.addEventListener('change', () => {
@@ -736,9 +741,10 @@ function handleGpaSimulation(e) {
     const prevHours = parseFloat(document.getElementById('sim-current-hours').value);
     const termHours = parseFloat(document.getElementById('sim-term-hours').value);
     const targetGpa = parseFloat(document.getElementById('sim-target-gpa').value);
-    const totalMajorHours = parseFloat(document.getElementById('sim-total-major-hours').value);
+    const totalMajorHoursInput = document.getElementById('sim-total-major-hours');
+    const totalMajorHours = totalMajorHoursInput ? parseFloat(totalMajorHoursInput.value) : NaN;
 
-    if (isNaN(currentGpa) || isNaN(prevHours) || isNaN(termHours) || isNaN(targetGpa) || isNaN(totalMajorHours)) {
+    if (isNaN(currentGpa) || isNaN(prevHours) || isNaN(termHours) || isNaN(targetGpa)) {
         showToast('يرجى ملء جميع الحقول المطلوبة', 'error');
         return;
     }
@@ -763,7 +769,7 @@ function handleGpaSimulation(e) {
         return;
     }
 
-    if (totalMajorHours < prevHours + termHours) {
+    if (!isNaN(totalMajorHours) && totalMajorHours < prevHours + termHours) {
         showToast(`الرجاء إدخال مجموع ساعات تخصص صحيح لا يقل عن ${prevHours + termHours} ساعة`, 'error');
         return;
     }
@@ -772,19 +778,31 @@ function handleGpaSimulation(e) {
     const maxGpa = ((currentGpa * prevHours) + (scale * termHours)) / totalHours;
     const minGpa = (currentGpa * prevHours) / totalHours;
     const requiredGpa = ((targetGpa * totalHours) - (currentGpa * prevHours)) / termHours;
-    const remainingMajorHours = totalMajorHours - prevHours;
     const projectedAfterCurrentTerm = ((currentGpa * prevHours) + (currentGpa * termHours)) / totalHours;
-    const requiredFinalGpa = ((targetGpa * totalMajorHours) - (currentGpa * prevHours)) / remainingMajorHours;
-    const maxPossibleGraduationGpa = ((currentGpa * prevHours) + (scale * remainingMajorHours)) / totalMajorHours;
-    const graduationSummaryHtml = `
-        <div style="margin-top: var(--space-md); padding: var(--space-md); background: rgba(59, 130, 246, 0.08); border-radius: var(--radius-md); text-align: right; border: 1px solid rgba(59, 130, 246, 0.2); font-size: 0.9rem; line-height: 1.6; color: var(--text-primary);">
-            <h5 style="color: var(--primary); margin-bottom: var(--space-xs); font-size: 0.95rem;"><i class="fas fa-chart-line"></i> توقعات بناءً على مجموع ساعات التخصص</h5>
-            <p>إذا كان مجموع ساعات تخصصك الكلي <strong>${totalMajorHours}</strong> ساعة، فالمتبقي لك <strong>${remainingMajorHours}</strong> ساعة.</p>
-            <p>المعدل المتوقع بعد هذا الترم إذا حافظت على معدل الترم الحالي (${currentGpa.toFixed(2)}) هو <strong>${projectedAfterCurrentTerm.toFixed(2)}</strong>.</p>
-            <p>أقصى معدل نهائي ممكن عند الحصول على كامل النقاط في الساعات المتبقية هو <strong>${maxPossibleGraduationGpa.toFixed(2)}</strong>.</p>
-            <p>للوصول إلى الهدف <strong>${targetGpa.toFixed(2)}</strong> في نهاية التخصص، تحتاج معدلًا تراكميًا في الساعات المتبقية لا يقل عن <strong>${requiredFinalGpa.toFixed(2)}</strong>.</p>
-        </div>
-    `;
+    let graduationSummaryHtml = '';
+
+    if (!isNaN(totalMajorHours) && totalMajorHours > 0) {
+        const remainingMajorHours = totalMajorHours - prevHours;
+        const requiredFinalGpa = ((targetGpa * totalMajorHours) - (currentGpa * prevHours)) / remainingMajorHours;
+        const maxPossibleGraduationGpa = ((currentGpa * prevHours) + (scale * remainingMajorHours)) / totalMajorHours;
+
+        graduationSummaryHtml = `
+            <div style="margin-top: var(--space-md); padding: var(--space-md); background: rgba(59, 130, 246, 0.08); border-radius: var(--radius-md); text-align: right; border: 1px solid rgba(59, 130, 246, 0.2); font-size: 0.9rem; line-height: 1.6; color: var(--text-primary);">
+                <h5 style="color: var(--primary); margin-bottom: var(--space-xs); font-size: 0.95rem;"><i class="fas fa-chart-line"></i> توقعات بناءً على مجموع ساعات التخصص</h5>
+                <p>إذا كان مجموع ساعات تخصصك الكلي <strong>${totalMajorHours}</strong> ساعة، فالمتبقي لك <strong>${remainingMajorHours}</strong> ساعة.</p>
+                <p>المعدل المتوقع بعد هذا الترم إذا حافظت على معدل الترم الحالي (${currentGpa.toFixed(2)}) هو <strong>${projectedAfterCurrentTerm.toFixed(2)}</strong>.</p>
+                <p>أقصى معدل نهائي ممكن عند الحصول على كامل النقاط في الساعات المتبقية هو <strong>${maxPossibleGraduationGpa.toFixed(2)}</strong>.</p>
+                <p>للوصول إلى الهدف <strong>${targetGpa.toFixed(2)}</strong> في نهاية التخصص، تحتاج معدلًا تراكميًا في الساعات المتبقية لا يقل عن <strong>${requiredFinalGpa.toFixed(2)}</strong>.</p>
+            </div>
+        `;
+    } else {
+        graduationSummaryHtml = `
+            <div style="margin-top: var(--space-md); padding: var(--space-md); background: rgba(59, 130, 246, 0.08); border-radius: var(--radius-md); text-align: right; border: 1px solid rgba(59, 130, 246, 0.2); font-size: 0.9rem; line-height: 1.6; color: var(--text-primary);">
+                <h5 style="color: var(--primary); margin-bottom: var(--space-xs); font-size: 0.95rem;"><i class="fas fa-chart-line"></i> أضف ساعات التخصص لتوقع التخرج</h5>
+                <p>أدخل مجموع ساعات تخصصك بالكامل في الحقل الإضافي أدناه بعد الحساب الأولي للحصول على توقع دقيق للمعدل النهائي وفرصة التعويض.</p>
+            </div>
+        `;
+    }
 
     const resultContainer = document.getElementById('gpa-simulator-result');
     const statusCard = resultContainer.querySelector('.simulation-status-card');
@@ -1062,6 +1080,10 @@ function handleGpaSimulation(e) {
 
     scenariosTable.innerHTML = scenarioHtml;
     resultContainer.style.display = 'block';
+    const majorHoursSection = document.getElementById('gpa-major-hours-section');
+    if (majorHoursSection) {
+        majorHoursSection.style.display = 'block';
+    }
     showToast('تم إجراء المحاكاة بنجاح! 🚀', 'success');
 
     // Safe scrolling to results with timeout to allow rendering to complete

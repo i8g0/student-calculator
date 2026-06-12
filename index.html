@@ -1127,15 +1127,6 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-row">
-                                <div class="form-group" style="width: 100%;">
-                                    <label for="sim-total-major-hours">
-                                        <i class="fas fa-layer-group"></i>
-                                        مجموع ساعات التخصص الكامل
-                                    </label>
-                                    <input type="number" id="sim-total-major-hours" min="1" max="300" step="1" placeholder="مثال: 130" required>
-                                </div>
-                            </div>
                             <button type="button" id="gpa-simulator-btn" class="submit-btn">
                                 <i class="fas fa-magic"></i>
                                 <span>ابدأ محاكاة المعدل</span>
@@ -1157,7 +1148,25 @@
                                             <!-- تعبأ بالـ JS -->
                                         </div>
                                     </div>
-                                    
+
+                                    <div id="gpa-major-hours-section" class="additional-info-section" style="display: none; margin-bottom: var(--space-lg); padding: var(--space-md); background: rgba(248, 250, 252, 0.9); border-radius: var(--radius-lg); border: 1px solid var(--border-light);">
+                                        <h4 style="margin-bottom: var(--space-sm); color: var(--text-primary); font-size: 1.05rem;"><i class="fas fa-layer-group" style="color: var(--primary); margin-left: 6px;"></i>اضف مجموع الساعات لتوقع التخرج</h4>
+                                        <p style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: var(--space-md);">بعد الحساب الأولي، يمكن إضافة مجموع الساعات الكاملة لحساب توقع معدل التخرج وفرصة التعويض بدقة أكبر.</p>
+                                        <div class="form-row" style="gap: var(--space-sm); align-items: flex-end; flex-wrap: wrap;">
+                                            <div class="form-group" style="flex: 1 1 220px; min-width: 220px; margin-bottom: 0;">
+                                                <label for="sim-total-major-hours">
+                                                    <i class="fas fa-layer-group"></i>
+                                                    مجموع ساعات التخصص الكامل
+                                                </label>
+                                                <input type="number" id="sim-total-major-hours" min="1" max="300" step="1" placeholder="مثال: 130">
+                                            </div>
+                                            <button type="button" id="gpa-major-hours-btn" class="submit-btn" style="margin-top: 0; white-space: nowrap;">
+                                                <i class="fas fa-check-circle"></i>
+                                                <span>أضف توقع التخرج</span>
+                                            </button>
+                                        </div>
+                                    </div>
+
                                     <!-- جدول السيناريوهات -->
                                     <h4 style="margin-bottom: var(--space-md); color: var(--text-primary);"><i class="fas fa-random" style="color: var(--primary); margin-left: 6px;"></i>سيناريوهات المعدل الفصلي وتأثيرها:</h4>
                                     <div class="simulation-scenarios-table">
