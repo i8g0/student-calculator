@@ -375,10 +375,6 @@ function initForms() {
     if (cumulativeNumInput) createCourseInputs(cumulativeCoursesContainer, parseInt(cumulativeNumInput.value) || 2, 'cumulative');
     if (semesterNumInput) createCourseInputs(semesterCoursesContainer, parseInt(semesterNumInput.value) || 2, 'semester');
 
-    const finalTargetForm = document.getElementById('final-target-form');
-    if (finalTargetForm) {
-        finalTargetForm.addEventListener('submit', handleFinalTargetCalculation);
-    }
 
     const gpaSimulatorForm = document.getElementById('gpa-simulator-form');
     if (gpaSimulatorForm) {
@@ -649,83 +645,7 @@ function handleAppliedCollegeCalculation(e) {
     updateAnalytics();
 }
 
-function handleFinalTargetCalculation(e) {
-    e.preventDefault();
-    const currentCoursework = parseFloat(document.getElementById('current-coursework').value);
-    const totalCoursework = parseFloat(document.getElementById('total-coursework').value);
-    const finalWeight = parseFloat(document.getElementById('final-weight').value);
 
-    if (isNaN(currentCoursework) || isNaN(totalCoursework) || isNaN(finalWeight)) {
-        showToast('يرجى ملء جميع الحقول المطلوبة', 'error');
-        return;
-    }
-
-    if (currentCoursework < 0 || currentCoursework > totalCoursework) {
-        showToast('درجة أعمال السنة يجب أن تكون بين 0 والدرجة الكلية لأعمال السنة', 'error');
-        return;
-    }
-
-    const totalWeight = totalCoursework + finalWeight;
-    const resultContainer = document.getElementById('final-target-result');
-    const resultsTable = resultContainer.querySelector('.forecast-results-table');
-
-    const grades = [
-        { label: 'A+ (ممتاز مرتفع)', minPercent: 0.95 },
-        { label: 'A (ممتاز)', minPercent: 0.90 },
-        { label: 'B+ (جيد جداً مرتفع)', minPercent: 0.85 },
-        { label: 'B (جيد جداً)', minPercent: 0.80 },
-        { label: 'C+ (جيد مرتفع)', minPercent: 0.75 },
-        { label: 'C (جيد)', minPercent: 0.70 },
-        { label: 'D+ (مقبول مرتفع)', minPercent: 0.65 },
-        { label: 'D (مقبول)', minPercent: 0.60 }
-    ];
-
-    let tableHtml = `
-        <div class="forecast-row header">
-            <div class="forecast-cell grade">التقدير (النسبة المطلوبة)</div>
-            <div class="forecast-cell score" style="text-align: left;">الدرجة المطلوبة في الفاينل</div>
-        </div>
-    `;
-
-    grades.forEach(grade => {
-        const minMarkRequired = grade.minPercent * totalWeight;
-        const requiredScore = minMarkRequired - currentCoursework;
-        let display = '';
-        let className = '';
-
-        if (requiredScore <= 0) {
-            display = 'مضمونة 🎉 (تحتاج 0)';
-            className = 'guaranteed';
-        } else if (requiredScore > finalWeight) {
-            display = 'مستحيلة ❌';
-            className = 'impossible';
-        } else {
-            const percentage = (requiredScore / finalWeight) * 100;
-            display = `${requiredScore.toFixed(1)} من ${finalWeight} (${percentage.toFixed(0)}%)`;
-            className = 'required';
-        }
-
-        tableHtml += `
-            <div class="forecast-row">
-                <div class="forecast-cell grade">${grade.label} (≥ ${(grade.minPercent * 100).toFixed(0)}%)</div>
-                <div class="forecast-cell score ${className}" style="text-align: left;">${display}</div>
-            </div>
-        `;
-    });
-
-    resultsTable.innerHTML = tableHtml;
-    resultContainer.style.display = 'block';
-    resultContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    showToast('تم حساب الدرجات المطلوبة بنجاح! 🎯', 'success');
-
-    saveCalculation({
-        type: 'final-target',
-        currentCoursework,
-        totalCoursework,
-        finalWeight,
-        timestamp: new Date().toISOString()
-    });
-}
 
 function handleGpaSimulation(e) {
     e.preventDefault();

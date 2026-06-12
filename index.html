@@ -459,8 +459,8 @@
                             <span>المعدل</span>
                         </button>
                         <button class="tab-btn" data-tab="term-forecasts">
-                            <i class="fas fa-bullseye"></i>
-                            <span>توقعات نهاية الترم</span>
+                            <i class="fas fa-life-ring"></i>
+                            <span>حاسبة الإنقاذ</span>
                         </button>
                         <button class="tab-btn" data-tab="analytics">
                             <i class="fas fa-chart-pie"></i>
@@ -1064,125 +1064,68 @@
 
 
                     <div id="term-forecasts" class="tab-content">
-                        <div class="forecasts-grid">
-                            <!-- الحاسبة الأولى: درجة الفاينل المطلوبة -->
-                            <div class="calculator-card forecast-card">
-                                <div class="card-header">
-                                    <div class="header-icon" style="background: var(--gradient-primary);">
-                                        <i class="fas fa-bullseye"></i>
-                                    </div>
-                                    <div class="header-content">
-                                        <h3>حاسبة درجة الفاينل المطلوبة</h3>
-                                        <p>اعرف الدرجة التي تحتاجها في الفاينل لتضمن تقديرك المستهدف</p>
-                                    </div>
+                        <!-- الحاسبة: حاسبة الإنقاذ ومحاكاة المعدل -->
+                        <div class="calculator-card">
+                            <div class="card-header">
+                                <div class="header-icon" style="background: var(--gradient-success, linear-gradient(90deg, #34c759 0%, #1976d2 100%));">
+                                    <i class="fas fa-life-ring"></i>
                                 </div>
-                                <div class="card-body">
-                                    <form id="final-target-form" class="calculator-form">
-                                        <div class="form-group">
-                                            <label for="current-coursework">
-                                                <i class="fas fa-marker"></i>
-                                                درجة أعمال السنة الحالية
-                                            </label>
-                                            <input type="number" id="current-coursework" min="0" max="100" step="0.1" placeholder="أدخل درجتك الحالية (مثال: 42)" required>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="total-coursework">
-                                                <i class="fas fa-check-double"></i>
-                                                الدرجة الكلية لأعمال السنة
-                                            </label>
-                                            <input type="number" id="total-coursework" min="0" max="100" step="1" value="50" placeholder="الدرجة الكلية (غالباً 50 أو 60)" required>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="final-weight">
-                                                <i class="fas fa-percentage"></i>
-                                                وزن الاختبار النهائي (درجة الفاينل الكلية)
-                                            </label>
-                                            <select id="final-weight" required>
-                                                <option value="50">50 درجة (الافتراضي)</option>
-                                                <option value="40">40 درجة</option>
-                                                <option value="60">60 درجة</option>
-                                                <option value="30">30 درجة</option>
-                                            </select>
-                                        </div>
-                                        <button type="submit" class="submit-btn">
-                                            <i class="fas fa-calculator"></i>
-                                            <span>احسب الدرجة المطلوبة</span>
-                                        </button>
-                                    </form>
-
-                                    <!-- قسم نتائج الفاينل -->
-                                    <div id="final-target-result" class="result-container" style="display: none; margin-top: var(--space-lg);">
-                                        <h4 style="margin-bottom: var(--space-md); color: var(--text-primary);"><i class="fas fa-table" style="color: var(--primary); margin-left: 6px;"></i>الدرجات المطلوبة في الفاينل لكل تقدير:</h4>
-                                        <div class="forecast-results-table">
-                                            <!-- سيتم تعبئة الجدول برمجياً بواسطة JS -->
-                                        </div>
-                                    </div>
+                                <div class="header-content">
+                                    <h3>حاسبة الإنقاذ</h3>
+                                    <p>محاكاة دقيقة لمعرفة تأثير هذا الترم على معدلك التراكمي وطريقة إنقاذه للوصول لهدفك</p>
                                 </div>
                             </div>
-
-                            <!-- الحاسبة الثانية: محاكاة المعدل والإنقاذ -->
-                            <div class="calculator-card forecast-card">
-                                <div class="card-header">
-                                    <div class="header-icon" style="background: var(--gradient-success, linear-gradient(90deg, #34c759 0%, #1976d2 100%));">
-                                        <i class="fas fa-chart-line"></i>
+                            <div class="card-body">
+                                <form id="gpa-simulator-form" class="calculator-form">
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="sim-current-gpa">
+                                                <i class="fas fa-award"></i>
+                                                المعدل التراكمي الحالي
+                                            </label>
+                                            <input type="number" id="sim-current-gpa" min="0" max="5" step="0.01" placeholder="مثال: 3.75" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="sim-current-hours">
+                                                <i class="fas fa-history"></i>
+                                                الساعات التراكمية السابقة
+                                            </label>
+                                            <input type="number" id="sim-current-hours" min="0" max="200" step="1" placeholder="مثال: 64" required>
+                                        </div>
                                     </div>
-                                    <div class="header-content">
-                                        <h3>حاسبة إنقاذ ومحاكاة المعدل</h3>
-                                        <p>محاكاة دقيقة لمعرفة تأثير هذا الترم على معدلك التراكمي</p>
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="sim-term-hours">
+                                                <i class="fas fa-book-open"></i>
+                                                ساعات الترم الحالي
+                                            </label>
+                                            <input type="number" id="sim-term-hours" min="1" max="30" step="1" placeholder="مثال: 15" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="sim-target-gpa">
+                                                <i class="fas fa-bullseye"></i>
+                                                المعدل التراكمي المستهدف
+                                            </label>
+                                            <input type="number" id="sim-target-gpa" min="0" max="5" step="0.01" placeholder="مثال: 3.90" required>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="card-body">
-                                    <form id="gpa-simulator-form" class="calculator-form">
-                                        <div class="form-row">
-                                            <div class="form-group">
-                                                <label for="sim-current-gpa">
-                                                    <i class="fas fa-award"></i>
-                                                    المعدل التراكمي الحالي
-                                                </label>
-                                                <input type="number" id="sim-current-gpa" min="0" max="5" step="0.01" placeholder="مثال: 3.75" required>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="sim-current-hours">
-                                                    <i class="fas fa-history"></i>
-                                                    الساعات التراكمية السابقة
-                                                </label>
-                                                <input type="number" id="sim-current-hours" min="0" max="200" step="1" placeholder="مثال: 64" required>
-                                            </div>
-                                        </div>
-                                        <div class="form-row">
-                                            <div class="form-group">
-                                                <label for="sim-term-hours">
-                                                    <i class="fas fa-book-open"></i>
-                                                    ساعات الترم الحالي
-                                                </label>
-                                                <input type="number" id="sim-term-hours" min="1" max="30" step="1" placeholder="مثال: 15" required>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="sim-target-gpa">
-                                                    <i class="fas fa-bullseye"></i>
-                                                    المعدل التراكمي المستهدف
-                                                </label>
-                                                <input type="number" id="sim-target-gpa" min="0" max="5" step="0.01" placeholder="مثال: 3.90" required>
-                                            </div>
-                                        </div>
-                                        <button type="submit" class="submit-btn">
-                                            <i class="fas fa-magic"></i>
-                                            <span>ابدأ محاكاة المعدل</span>
-                                        </button>
-                                    </form>
+                                    <button type="submit" class="submit-btn">
+                                        <i class="fas fa-magic"></i>
+                                        <span>ابدأ محاكاة المعدل</span>
+                                    </button>
+                                </form>
 
-                                    <!-- قسم نتائج محاكاة المعدل -->
-                                    <div id="gpa-simulator-result" class="result-container" style="display: none; margin-top: var(--space-lg);">
-                                        <!-- النتيجة الأساسية -->
-                                        <div class="simulation-status-card" style="padding: var(--space-md); border-radius: var(--radius-lg); margin-bottom: var(--space-md); text-align: center;">
-                                            <!-- تعبأ بالـ JS -->
-                                        </div>
-                                        
-                                        <!-- جدول السيناريوهات -->
-                                        <h4 style="margin-bottom: var(--space-md); color: var(--text-primary);"><i class="fas fa-random" style="color: var(--primary); margin-left: 6px;"></i>سيناريوهات المعدل الفصلي وتأثيرها:</h4>
-                                        <div class="simulation-scenarios-table">
-                                            <!-- تعبأ بالـ JS -->
-                                        </div>
+                                <!-- قسم نتائج محاكاة المعدل -->
+                                <div id="gpa-simulator-result" class="result-container" style="display: none; margin-top: var(--space-lg);">
+                                    <!-- النتيجة الأساسية -->
+                                    <div class="simulation-status-card" style="padding: var(--space-md); border-radius: var(--radius-lg); margin-bottom: var(--space-md); text-align: center;">
+                                        <!-- تعبأ بالـ JS -->
+                                    </div>
+                                    
+                                    <!-- جدول السيناريوهات -->
+                                    <h4 style="margin-bottom: var(--space-md); color: var(--text-primary);"><i class="fas fa-random" style="color: var(--primary); margin-left: 6px;"></i>سيناريوهات المعدل الفصلي وتأثيرها:</h4>
+                                    <div class="simulation-scenarios-table">
+                                        <!-- تعبأ بالـ JS -->
                                     </div>
                                 </div>
                             </div>
