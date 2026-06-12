@@ -587,7 +587,33 @@
                                 </div>
 
                                 <div class="new-absence-form-section">
-                                    <h4><i class="fas fa-plus-circle"></i> إضافة مادة جديدة</h4>
+                                    <!-- Search Section (injected by JS via createCourseSearchField) -->
+                                    
+                                    <!-- Divider between search and manual add -->
+                                    <div class="absence-section-divider" style="
+                                        display: flex;
+                                        align-items: center;
+                                        gap: 12px;
+                                        margin: 24px 0 20px;
+                                        padding: 0 4px;
+                                    ">
+                                        <div style="flex: 1; height: 2px; background: linear-gradient(to left, transparent, var(--border-light), transparent); border-radius: 2px;"></div>
+                                        <span style="
+                                            font-size: 0.85rem;
+                                            font-weight: 600;
+                                            color: var(--text-muted);
+                                            white-space: nowrap;
+                                            padding: 6px 16px;
+                                            background: var(--bg-secondary);
+                                            border-radius: 20px;
+                                            border: 1px solid var(--border-light);
+                                        ">
+                                            <i class="fas fa-edit" style="margin-left: 4px;"></i>
+                                            لإضافة مادة غير موجودة
+                                        </span>
+                                        <div style="flex: 1; height: 2px; background: linear-gradient(to right, transparent, var(--border-light), transparent); border-radius: 2px;"></div>
+                                    </div>
+
                                     <form id="new-absence-form">
                                         <div class="form-group">
                                             <label for="new-course-name">

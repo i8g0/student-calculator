@@ -4477,6 +4477,13 @@ function createCourseSearchField() {
     const formSection = document.querySelector('.new-absence-form-section');
     const coursesDatabase = universityCourses;
 
+    // Group courses by college
+    const ccseMajors = ['مشترك', 'علوم الحاسب', 'نظم المعلومات', 'هندسة البرمجيات', 'هندسة الحاسب'];
+    const engMajors = ['الهندسة الصناعية', 'الهندسة الكهربائية', 'الهندسة المدنية', 'الهندسة الميكانيكية'];
+    
+    const ccseCount = coursesDatabase.filter(c => ccseMajors.includes(c.major)).length;
+    const engCount = coursesDatabase.filter(c => engMajors.includes(c.major)).length;
+
     console.log(`✅ تحميل ${coursesDatabase.length} مادة من قاعدة البيانات`);
 
     if (!formSection) return;
@@ -4490,22 +4497,51 @@ function createCourseSearchField() {
                 display: flex;
                 align-items: center;
                 gap: 0.5rem;
-                margin-bottom: 0.5rem;
+                margin-bottom: 0.75rem;
                 font-weight: 600;
                 color: var(--text-primary);
                 font-size: 1rem;
             ">
                 <i class="fas fa-search" style="color: #667eea;"></i>
-                <span> البحث</span>
-                <span style="
-                    color: var(--text-muted);
-                    font-size: 0.85rem;
-                    font-weight: 400;
-                    background: var(--bg-secondary);
-                    padding: 2px 8px;
-                    border-radius: 12px;
-                ">(${coursesDatabase.length} مادة)</span>
+                <span> البحث عن المادة</span>
             </label>
+            <div style="
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+                margin-bottom: 12px;
+            ">
+                <span style="
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 6px;
+                    font-size: 0.8rem;
+                    font-weight: 600;
+                    color: #667eea;
+                    background: rgba(102, 126, 234, 0.1);
+                    padding: 5px 12px;
+                    border-radius: 20px;
+                    border: 1px solid rgba(102, 126, 234, 0.2);
+                ">
+                    <i class="fas fa-laptop-code" style="font-size: 0.75rem;"></i>
+                    مواد كلية هندسة وعلوم الحاسب (${ccseCount})
+                </span>
+                <span style="
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 6px;
+                    font-size: 0.8rem;
+                    font-weight: 600;
+                    color: #f59e0b;
+                    background: rgba(245, 158, 11, 0.1);
+                    padding: 5px 12px;
+                    border-radius: 20px;
+                    border: 1px solid rgba(245, 158, 11, 0.2);
+                ">
+                    <i class="fas fa-cogs" style="font-size: 0.75rem;"></i>
+                    مواد كلية الهندسة (${engCount})
+                </span>
+            </div>
             <input
                 type="text"
                 id="course-search"
@@ -4541,13 +4577,8 @@ function createCourseSearchField() {
         </div>
     `;
 
-
-    const courseNameLabel = formSection.querySelector('label[for="new-course-name"]');
-    if (courseNameLabel) {
-        courseNameLabel.parentElement.insertAdjacentHTML('beforebegin', searchHTML);
-    } else {
-        formSection.insertAdjacentHTML('afterbegin', searchHTML);
-    }
+    // Insert search at the very beginning of the form section (before divider)
+    formSection.insertAdjacentHTML('afterbegin', searchHTML);
 
 
     setupCourseSearchEvents(coursesDatabase);
@@ -4559,6 +4590,10 @@ function setupCourseSearchEvents(coursesDatabase) {
     const suggestionsDiv = document.getElementById('course-suggestions');
 
     if (!searchInput || !suggestionsDiv) return;
+
+    // College grouping definitions
+    const ccseMajors = ['مشترك', 'علوم الحاسب', 'نظم المعلومات', 'هندسة البرمجيات', 'هندسة الحاسب'];
+    const engMajors = ['الهندسة الصناعية', 'الهندسة الكهربائية', 'الهندسة المدنية', 'الهندسة الميكانيكية'];
 
     searchInput.addEventListener('input', function () {
         const query = this.value.trim().toLowerCase();
@@ -4588,14 +4623,19 @@ function setupCourseSearchEvents(coursesDatabase) {
                         opacity: 0.4;
                     "></i>
                     <p style="font-size: 1rem; margin: 0;">لم يتم العثور على مادة</p>
+                    <p style="font-size: 0.85rem; margin: 8px 0 0; opacity: 0.7;">يمكنك إضافتها يدوياً من الأسفل</p>
                 </div>
             `;
             suggestionsDiv.style.display = 'block';
             return;
         }
 
+        // Group filtered results by college
+        const ccseCourses = filtered.filter(c => ccseMajors.includes(c.major));
+        const engCourses = filtered.filter(c => engMajors.includes(c.major));
 
-        suggestionsDiv.innerHTML = filtered.slice(0, 12).map((course, index) => `
+        function renderCourseItem(course, index) {
+            return `
             <div class="suggestion-item" style="
                 padding: 14px 16px;
                 border-bottom: 1px solid var(--border-light);
@@ -4643,9 +4683,63 @@ function setupCourseSearchEvents(coursesDatabase) {
                 ">
                     ⏱️ ${course.hours}h
                 </span>
-            </div>
-        `).join('');
+            </div>`;
+        }
 
+        function renderGroupHeader(title, icon, color, bgColor, count) {
+            return `
+            <div style="
+                padding: 10px 16px;
+                background: ${bgColor};
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                font-size: 0.85rem;
+                font-weight: 700;
+                color: ${color};
+                border-bottom: 2px solid ${color}22;
+                position: sticky;
+                top: 0;
+                z-index: 1;
+            ">
+                <i class="${icon}" style="font-size: 0.8rem;"></i>
+                ${title}
+                <span style="
+                    background: ${color};
+                    color: white;
+                    padding: 2px 8px;
+                    border-radius: 12px;
+                    font-size: 0.75rem;
+                    margin-right: auto;
+                ">${count}</span>
+            </div>`;
+        }
+
+        let html = '';
+
+        if (ccseCourses.length > 0) {
+            html += renderGroupHeader(
+                'مواد كلية هندسة وعلوم الحاسب',
+                'fas fa-laptop-code',
+                '#667eea',
+                'rgba(102, 126, 234, 0.08)',
+                ccseCourses.length
+            );
+            html += ccseCourses.slice(0, 8).map((c, i) => renderCourseItem(c, i)).join('');
+        }
+
+        if (engCourses.length > 0) {
+            html += renderGroupHeader(
+                'مواد كلية الهندسة',
+                'fas fa-cogs',
+                '#f59e0b',
+                'rgba(245, 158, 11, 0.08)',
+                engCourses.length
+            );
+            html += engCourses.slice(0, 8).map((c, i) => renderCourseItem(c, ccseCourses.length + i)).join('');
+        }
+
+        suggestionsDiv.innerHTML = html;
         suggestionsDiv.style.display = 'block';
 
 

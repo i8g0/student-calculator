@@ -44,6 +44,44 @@
     let courseRows = [];
     let currentCourseCount = DEFAULT_ROWS;
 
+    // ========== نظام حفظ السجل (History/Autocomplete) ==========
+    const HISTORY_KEY = 'gpaCoursesHistory';
+
+    /** تحميل السجل من localStorage */
+    function loadHistory() {
+        try {
+            return JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
+        } catch {
+            return [];
+        }
+    }
+
+    /** حفظ مادة واحدة في السجل (بدون تكرار الاسم) */
+    function saveToHistory(name, grade, hours) {
+        if (!name || name.trim() === '') return;
+        let history = loadHistory();
+        // حذف نسخة قديمة بنفس الاسم
+        history = history.filter(h => h.name.toLowerCase() !== name.toLowerCase());
+        // إضافة في البداية
+        history.unshift({ name: name.trim(), grade, hours, savedAt: Date.now() });
+        // الحد الأقصى 100 مادة
+        if (history.length > 100) history = history.slice(0, 100);
+        localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+    }
+
+    /** حفظ جميع المواد الحالية في السجل */
+    function saveAllCurrentCourses() {
+        courseRows.forEach((row, index) => {
+            const i = index + 1;
+            const checkbox = document.getElementById(`gpa-check-${i}`);
+            if (!checkbox?.checked) return;
+            const name = document.getElementById(`gpa-name-${i}`)?.value?.trim();
+            const grade = document.getElementById(`gpa-grade-${i}`)?.value || '';
+            const hours = document.getElementById(`gpa-hours-${i}`)?.value || '';
+            if (name) saveToHistory(name, grade, hours);
+        });
+    }
+
     /**
      * تهيئة الحاسبة
      */
@@ -158,10 +196,26 @@
             </div>
             
             <!-- اسم المادة -->
-            <div class="gpa-course-name-cell">
+            <div class="gpa-course-name-cell" style="position: relative;">
                 <input type="text" class="gpa-course-name-input" 
                        id="gpa-name-${index}" 
-                       placeholder="مادة رقم ${index}">
+                       placeholder="مادة رقم ${index}"
+                       autocomplete="off">
+                <div class="gpa-autocomplete-list" id="gpa-autocomplete-${index}" style="
+                    display: none;
+                    position: absolute;
+                    top: 100%;
+                    right: 0;
+                    left: 0;
+                    background: var(--bg-primary, #fff);
+                    border: 2px solid var(--primary, #6366f1);
+                    border-top: none;
+                    border-radius: 0 0 12px 12px;
+                    max-height: 220px;
+                    overflow-y: auto;
+                    z-index: 999;
+                    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+                "></div>
             </div>
             
             <!-- التقدير -->
@@ -185,7 +239,159 @@
         const checkbox = row.querySelector('.gpa-course-checkbox');
         checkbox.addEventListener('change', () => updateRowState(row, checkbox.checked));
 
+        // ربط أحداث الاقتراحات (Autocomplete)
+        const nameInput = row.querySelector('.gpa-course-name-input');
+        const autocompleteList = row.querySelector('.gpa-autocomplete-list');
+        setupAutocomplete(nameInput, autocompleteList, index);
+
         return row;
+    }
+
+    /**
+     * ربط أحداث الاقتراحات التلقائية
+     */
+    function setupAutocomplete(input, listEl, rowIndex) {
+        if (!input || !listEl) return;
+
+        // عند الكتابة
+        input.addEventListener('input', function () {
+            const query = this.value.trim().toLowerCase();
+            const history = loadHistory();
+
+            if (query.length === 0 || history.length === 0) {
+                listEl.style.display = 'none';
+                return;
+            }
+
+            const filtered = history.filter(h =>
+                h.name.toLowerCase().includes(query)
+            ).slice(0, 8);
+
+            if (filtered.length === 0) {
+                listEl.style.display = 'none';
+                return;
+            }
+
+            listEl.innerHTML = filtered.map(h => `
+                <div class="gpa-autocomplete-item" data-name="${h.name}" data-grade="${h.grade || ''}" data-hours="${h.hours || ''}" style="
+                    padding: 10px 14px;
+                    cursor: pointer;
+                    transition: background 0.15s;
+                    border-bottom: 1px solid rgba(0,0,0,0.06);
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    gap: 8px;
+                ">
+                    <div style="flex: 1;">
+                        <div style="font-weight: 600; font-size: 0.95rem; color: var(--text-primary, #1e293b);">${h.name}</div>
+                        ${(h.grade || h.hours) ? `<div style="font-size: 0.78rem; color: var(--text-muted, #94a3b8); margin-top: 2px;">التقدير: ${h.grade || '—'}  •  الساعات: ${h.hours || '—'}</div>` : ''}
+                    </div>
+                    <i class="fas fa-history" style="color: var(--primary, #6366f1); font-size: 0.8rem; opacity: 0.5;"></i>
+                </div>
+            `).join('');
+
+            listEl.style.display = 'block';
+
+            // عند الضغط على اقتراح
+            listEl.querySelectorAll('.gpa-autocomplete-item').forEach(item => {
+                item.addEventListener('click', function () {
+                    const name = this.dataset.name;
+                    const grade = this.dataset.grade;
+                    const hours = this.dataset.hours;
+
+                    input.value = name;
+
+                    // تعبئة التقدير والساعات تلقائياً
+                    const gradeSelect = document.getElementById(`gpa-grade-${rowIndex}`);
+                    const hoursSelect = document.getElementById(`gpa-hours-${rowIndex}`);
+
+                    if (gradeSelect && grade) {
+                        gradeSelect.value = grade;
+                    }
+                    if (hoursSelect && hours) {
+                        hoursSelect.value = hours;
+                    }
+
+                    listEl.style.display = 'none';
+                });
+
+                item.addEventListener('mouseenter', function () {
+                    this.style.background = 'var(--bg-secondary, #f1f5f9)';
+                });
+                item.addEventListener('mouseleave', function () {
+                    this.style.background = 'transparent';
+                });
+            });
+        });
+
+        // عند التركيز - عرض كل السجل
+        input.addEventListener('focus', function () {
+            const history = loadHistory();
+            const query = this.value.trim().toLowerCase();
+
+            if (history.length === 0) return;
+
+            const filtered = query.length > 0
+                ? history.filter(h => h.name.toLowerCase().includes(query)).slice(0, 8)
+                : history.slice(0, 8);
+
+            if (filtered.length === 0) return;
+
+            listEl.innerHTML = filtered.map(h => `
+                <div class="gpa-autocomplete-item" data-name="${h.name}" data-grade="${h.grade || ''}" data-hours="${h.hours || ''}" style="
+                    padding: 10px 14px;
+                    cursor: pointer;
+                    transition: background 0.15s;
+                    border-bottom: 1px solid rgba(0,0,0,0.06);
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    gap: 8px;
+                ">
+                    <div style="flex: 1;">
+                        <div style="font-weight: 600; font-size: 0.95rem; color: var(--text-primary, #1e293b);">${h.name}</div>
+                        ${(h.grade || h.hours) ? `<div style="font-size: 0.78rem; color: var(--text-muted, #94a3b8); margin-top: 2px;">التقدير: ${h.grade || '—'}  •  الساعات: ${h.hours || '—'}</div>` : ''}
+                    </div>
+                    <i class="fas fa-history" style="color: var(--primary, #6366f1); font-size: 0.8rem; opacity: 0.5;"></i>
+                </div>
+            `).join('');
+
+            listEl.style.display = 'block';
+
+            listEl.querySelectorAll('.gpa-autocomplete-item').forEach(item => {
+                item.addEventListener('click', function () {
+                    const name = this.dataset.name;
+                    const grade = this.dataset.grade;
+                    const hours = this.dataset.hours;
+
+                    input.value = name;
+                    const gradeSelect = document.getElementById(`gpa-grade-${rowIndex}`);
+                    const hoursSelect = document.getElementById(`gpa-hours-${rowIndex}`);
+                    if (gradeSelect && grade) gradeSelect.value = grade;
+                    if (hoursSelect && hours) hoursSelect.value = hours;
+                    listEl.style.display = 'none';
+                });
+
+                item.addEventListener('mouseenter', function () {
+                    this.style.background = 'var(--bg-secondary, #f1f5f9)';
+                });
+                item.addEventListener('mouseleave', function () {
+                    this.style.background = 'transparent';
+                });
+            });
+        });
+
+        // إخفاء القائمة عند الضغط خارجها
+        document.addEventListener('click', function (e) {
+            if (e.target !== input && !listEl.contains(e.target)) {
+                listEl.style.display = 'none';
+            }
+        });
+
+        input.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') listEl.style.display = 'none';
+        });
     }
 
     /**
@@ -301,6 +507,9 @@
             semesterPoints += (gradeInfo.points * hours);
             validCourses++;
         });
+
+        // حفظ جميع المواد في السجل للاستخدام لاحقاً
+        saveAllCurrentCourses();
 
         // حساب المعدل الفصلي
         const semesterGpa = semesterHours > 0 ? (semesterPoints / semesterHours) : 0;
